@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.2.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.htuozhou.wvp</groupId>
+    <artifactId>wvp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <!--启动模块-->
+        <module>wvp-bootstrap</module>
+        <!--通用模块-->
+        <module>wvp-common</module>
+        <!--持久层模块-->
+        <module>wvp-persistence</module>
+        <!--服务层模块-->
+        <module>wvp-business</module>
+        <!--自身系统api模块-->
+        <module>wvp-webapi</module>
+        <!--内部其它系统api模块-->
+        <module>wvp-api</module>
+        <!--外部系统api模块-->
+        <module>wvp-openapi</module>
+    </modules>
+
+    <properties>
+        <springcloud.version>Hoxton.SR12</springcloud.version>
+        <springcloud.alibaba.version>2.2.7.RELEASE</springcloud.alibaba.version>
+
+        <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+
+        <fastjson.version>1.2.73</fastjson.version>
+        <hutool.all.version>5.4.0</hutool.all.version>
+
+        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <screw.core.version>1.0.5</screw.core.version>
+
+        <easyexcell.version>2.2.10</easyexcell.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${springcloud.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${springcloud.alibaba.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.all.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.smallbun.screw</groupId>
+                <artifactId>screw-core</artifactId>
+                <version>${screw.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcell.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
