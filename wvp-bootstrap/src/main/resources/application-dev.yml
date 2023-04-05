@@ -11,21 +11,73 @@ spring:
   # mysql数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8
+    url: jdbc:mysql://192.168.8.4:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8
     username: root
     password: 123456
   # redis配置
   cache:
     type: redis
   redis:
-    host: localhost
+    host: 192.168.8.4
     port: 6379
     password: 123456
-    database: 1
+    database: 0
 
 # mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.htuozhou.wvp.persistence.po
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# sip服务配置
+sip:
+  # 本机的ip
+  ip: 192.168.8.4
+  # sip服务监听的端口
+  port: 5060
+  # 根据国标6.1.2中规定，domain宜采用ID统一编码的前十位编码。国标附录D中定义前8位为中心编码（由省级、市级、区级、基层编号组成，参照GB/T 2260-2007）
+  # 后两位为行业编码，定义参照附录D.3
+  domain: 3402000000
+  id: 34020000002000000002
+  # 设备认证密码
+  password: admin123
+  # 国标级联注册失败，再次发起注册的时间间隔。 默认60秒
+  register-time-interval: 60
+  # 云台控制速度
+  ptz-speed: 50
+  # 是否存储alarm信息
+  alarm: false
+
+# zlm服务器配置
+zlm:
+  # zlm服务器唯一id，用于触发hook时区别是哪台服务器,general.mediaServerId
+  unique_id: FQ3TF8yT83wh5Wvz
+  # zlm服务器的hook.admin_params=secret
+  secret: 035c73f7-bb6b-4889-a715-d9eb2d1925cc
+  # zlm服务器ip
+  ip: 192.168.8.4
+  # 返回流地址ip
+  stream-ip: 192.168.8.4
+  # 国标信令中使用的ip，此ip为摄像机可以访问到的ip
+  sdp-ip: 192.168.8.4
+  # zlm服务器的hook所使用的ip
+  hook-ip: 192.168.8.4
+  # zlm服务器的http.port
+  http-port: 8080
+  # zlm服务器的http.sslport
+  http-ssl-port: 443
+  # zlm服务器的rtsp.port
+  rtsp-port: 8554
+  # zlm服务器的rtsp.sslport
+  rtsp-ssl-port: 0
+  # zlm服务器的rtmp.port
+  rtmp-port: 8935
+  # zlm服务器的rtmp.sslport
+  rtmp-ssl-port: 0
+  # 启用多端口模式, 多端口模式使用端口区分每路流，兼容性更好。 单端口使用流的ssrc区分， 点播超时建议使用多端口测试
+  rtp-enable: true # 是否启用多端口模式, 开启后会在port-range范围内选择端口用于媒体流传输
+  rtp-port-range: 30000,30500 # 端口范围 在此范围内选择端口用于媒体流传输, 必须提前在zlm上配置该属性，不然自动配置此属性可能不成功
+  # zlm服务器的rtp_proxy.port
+  rtp-proxy-port: 10000
+  hook_alive_interval: 60

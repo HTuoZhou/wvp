@@ -16,13 +16,13 @@ import java.util.Collections;
 public class MybatisPlusGenerator {
 
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/randomDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8", "root", "123456")
+        FastAutoGenerator.create("jdbc:mysql://localhost:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8", "root", "123456")
                 .globalConfig(builder -> builder.author("HTuoZhou")
                         // .enableSwagger()
                         // .fileOverride()
                         .outputDir(System.getProperty("user.dir") + "/mybatis-plus-generator" + "/src/main/java")
                         .disableOpenDir())
-                .packageConfig(builder -> builder.parent("com.htuozhou.random.persistence")
+                .packageConfig(builder -> builder.parent("com.htuozhou.wvp.persistence")
                         // .moduleName("")
                         .pathInfo(Collections.singletonMap(OutputFile.mapperXml, System.getProperty("user.dir") + "/mybatis-plus-generator" + "/src/main/resources/mapper")))
                 .strategyConfig(builder -> builder.addInclude("user")

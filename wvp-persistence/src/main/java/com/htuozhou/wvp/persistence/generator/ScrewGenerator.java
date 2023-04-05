@@ -23,7 +23,7 @@ public class ScrewGenerator {
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/randomDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8");
+        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8");
         hikariConfig.setUsername("root");
         hikariConfig.setPassword("123456");
         //设置可以获取tables remarks信息

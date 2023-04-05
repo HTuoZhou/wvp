@@ -20,4 +20,8 @@ public class QuartzJobConstant {
 
     public static final Integer TEST2_INTERVAL = 30;
 
+    public static final String ZLM_STATUS_JOB = "zlmStatusJob";
+
+    public static final String ZLM_STATUS_GROUP = "zlmStatusGroup";
+
 }
