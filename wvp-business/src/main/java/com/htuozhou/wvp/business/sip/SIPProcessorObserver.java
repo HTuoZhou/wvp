@@ -35,7 +35,7 @@ public class SIPProcessorObserver implements ISIPProcessorObserver{
         String method = requestEvent.getRequest().getMethod();
         ISIPRequestProcessor sipRequestProcessor = requestProcessorMap.get(method);
         if (Objects.isNull(sipRequestProcessor)) {
-            log.warn("[Request Method:{}] 暂不支持", method);
+            log.warn("[SIP REQUEST :{}] 暂不支持", method);
             return;
         }
         requestProcessorMap.get(method).process(requestEvent);

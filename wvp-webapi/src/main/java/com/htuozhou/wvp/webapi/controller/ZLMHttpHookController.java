@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 /**
  * @author hanzai
  * @date 2023/4/1
@@ -34,13 +36,18 @@ public class ZLMHttpHookController {
 
     @PostMapping("/on_server_keepalive")
     public JSONObject onServerKeepAlive(@RequestBody OnServerKeepAliveVO onServerKeepAliveVO) {
-        log.info("[ZLM HTTP HOOK] 收到 [ZLM UniqueId：{}] 心跳上报", onServerKeepAliveVO.getMediaServerId());
+        log.info("[ZLM HTTP HOOK] 收到 [ZLM ID：{}] 心跳上报", onServerKeepAliveVO.getMediaServerId());
+
+        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
+                .eq(ZlmServerPO::getUniqueId,onServerKeepAliveVO.getMediaServerId())
+                .set(ZlmServerPO::getHookAliveTime, LocalDateTime.now()));
+
         return ZLM_RES_SUCCESS;
     }
 
     @PostMapping("/on_server_started")
     public JSONObject onServerStarted(@RequestBody OnServerStartedVO onServerStartedVO) {
-        log.info("[ZLM HTTP HOOK] 收到 [ZLM UniqueId：{}] 启动上报", onServerStartedVO.getMediaServerId());
+        log.info("[ZLM HTTP HOOK] 收到 [ZLM ID：{}] 启动上报", onServerStartedVO.getMediaServerId());
 
         zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
                 .eq(ZlmServerPO::getUniqueId,onServerStartedVO.getMediaServerId())

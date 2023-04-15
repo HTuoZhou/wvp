@@ -24,7 +24,7 @@ public class ZLMStatusJob implements Job {
         ZLMProperties zlmProperties = (ZLMProperties) jobExecutionContext.getJobDetail().getJobDataMap().get("zlmProperties");
 
         if (!zlmManager.getServerConfig()) {
-            log.info("[ZLM] [ZLM UniqueId:{}] 心跳检测离线",zlmProperties.getUniqueId());
+            log.info("[ZLM] [ZLM ID:{}] 心跳检测离线",zlmProperties.getUniqueId());
             zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
                     .eq(ZlmServerPO::getUniqueId,zlmProperties.getUniqueId())
                     .set(ZlmServerPO::getStatus,0));

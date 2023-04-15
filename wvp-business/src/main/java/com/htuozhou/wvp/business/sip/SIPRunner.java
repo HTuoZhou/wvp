@@ -7,7 +7,9 @@ import gov.nist.javax.sip.SipStackImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import javax.sip.ListeningPoint;
 import javax.sip.PeerUnavailableException;
@@ -23,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2023/4/5
  */
 @Component
+@Order(2)
 @Slf4j
 public class SIPRunner implements CommandLineRunner {
 
@@ -63,7 +66,7 @@ public class SIPRunner implements CommandLineRunner {
         try {
             sipStack = (SipStackImpl) sipFactory.createSipStack(DefaultProperties.getProperties(monitorIp, false));
         } catch (PeerUnavailableException e) {
-            log.error("[Sip Ip:{}] 启动失败,请检查ip是否正确", monitorIp);
+            log.error("[SIP IP:{}] 启动失败,请检查ip是否正确", monitorIp);
             return;
         }
 
@@ -75,9 +78,9 @@ public class SIPRunner implements CommandLineRunner {
             tcpSipProvider.addSipListener(sipProcessorObserver);
             tcpSipProviderMap.put(monitorIp, tcpSipProvider);
 
-            log.info("[Sip Tcp Address:{}] 启动成功", monitorIp + "://" + port);
+            log.info("[SIP TCP ADDRESS:{}] 启动成功", monitorIp + "://" + port);
         } catch (Exception e) {
-            log.error("[Sip Tcp Address:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
+            log.error("[SIP TCP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
         }
 
         try {
@@ -88,9 +91,28 @@ public class SIPRunner implements CommandLineRunner {
 
             udpSipProviderMap.put(monitorIp, udpSipProvider);
 
-            log.info("[Sip Udp Address:{}] 启动成功", monitorIp + "://" + port);
+            log.info("[SIP UDP ADDRESS:{}] 启动成功", monitorIp + "://" + port);
         } catch (Exception e) {
-            log.error("[Sip Udp Address:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
+            log.error("[SIP UDP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
         }
     }
+
+    public SipFactory getSipFactory() {
+        return sipFactory;
+    }
+
+    public SipProviderImpl getUdpSipProvider(String ip) {
+        if (ObjectUtils.isEmpty(ip)) {
+            return null;
+        }
+        return udpSipProviderMap.get(ip);
+    }
+
+    public SipProviderImpl getTcpSipProvider(String ip) {
+        if (ObjectUtils.isEmpty(ip)) {
+            return null;
+        }
+        return tcpSipProviderMap.get(ip);
+    }
+
 }

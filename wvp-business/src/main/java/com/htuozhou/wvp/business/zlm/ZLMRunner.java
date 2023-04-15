@@ -1,12 +1,10 @@
 package com.htuozhou.wvp.business.zlm;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.htuozhou.wvp.business.properties.ZLMProperties;
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
-import com.htuozhou.wvp.persistence.service.IZlmServerService;
+import com.htuozhou.wvp.business.service.IZLMService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,23 +12,19 @@ import org.springframework.stereotype.Component;
  * @date 2023/4/1
  */
 @Component
+@Order(1)
 @Slf4j
 public class ZLMRunner implements CommandLineRunner {
 
     @Autowired
-    private ZLMProperties zlmProperties;
-
-    @Autowired
-    private IZlmServerService zlmServerService;
+    private IZLMService zlmService;
 
     @Autowired
     private ZLMManager zlmManager;
 
     @Override
     public void run(String... args) throws Exception {
-        ZlmServerPO zlmServerPO = zlmServerService.getOne(Wrappers.<ZlmServerPO>lambdaQuery()
-                .eq(ZlmServerPO::getDefaultServer, 1));
-        zlmServerService.saveOrUpdate(zlmProperties.properties2po(zlmServerPO));
+        zlmService.saveZlmServer();
 
         zlmManager.setServerConfig();
     }

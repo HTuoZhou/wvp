@@ -1,6 +1,6 @@
 package com.htuozhou.wvp.business.properties;
 
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
+import com.htuozhou.wvp.business.bo.ZlmServerBO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -36,16 +36,16 @@ public class ZLMProperties {
     private Integer rtpProxyPort;
     private Integer hookAliveInterval;
 
-    public ZlmServerPO properties2po(ZlmServerPO po) {
-        if (Objects.isNull(po)) {
-            po = new ZlmServerPO();
+    public ZlmServerBO properties2bo(ZlmServerBO bo) {
+        if (Objects.isNull(bo)) {
+            bo = new ZlmServerBO();
         }
 
-        BeanUtils.copyProperties(this,po);
-        po.setRtpEnable(this.getRtpEnable() ? 1 : 0);
-        po.setDefaultServer(1);
+        BeanUtils.copyProperties(this,bo);
+        bo.setRtpEnable(this.getRtpEnable() ? 1 : 0);
+        bo.setDefaultServer(1);
 
-        return po;
+        return bo;
     }
 
 }

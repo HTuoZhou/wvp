@@ -37,11 +37,11 @@ public class ZLMManager {
         try {
             ZLMResult result = postForm(ZLMConstant.GET_SERVER_CONFIG,null);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM UniqueId:{}] 获取服务器配置成功", zlmProperties.getUniqueId());
+                log.info("[ZLM ID:{}] 获取服务器配置成功", zlmProperties.getUniqueId());
                 return Boolean.TRUE;
             }
         } catch (Exception e) {
-            log.error("[ZLM UniqueId:{}] 获取服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM ID:{}] 获取服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
         }
 
         return Boolean.FALSE;
@@ -86,14 +86,14 @@ public class ZLMManager {
             ZLMResult result = postForm(ZLMConstant.SET_SERVER_CONFIG, param);
             if (Objects.nonNull(result) && result.getCode() == 0) {
                 if (result.getChanged() > 0) {
-                    log.info("[ZLM UniqueId:{}] 设置服务器配置成功,存在配置变更,需要重启以保证配置生效", zlmProperties.getUniqueId());
+                    log.info("[ZLM ID:{}] 设置服务器配置成功,存在配置变更,需要重启以保证配置生效", zlmProperties.getUniqueId());
                     restartServer();
                 } else {
-                    log.info("[ZLM UniqueId:{}] 设置服务器配置成功,不存在配置变更", zlmProperties.getUniqueId());
+                    log.info("[ZLM ID:{}] 设置服务器配置成功,不存在配置变更", zlmProperties.getUniqueId());
                 }
             }
         } catch (Exception e) {
-            log.error("[ZLM UniqueId:{}] 设置服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM ID:{}] 设置服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
         }
     }
 
@@ -104,10 +104,10 @@ public class ZLMManager {
         try {
             ZLMResult result = postForm(ZLMConstant.RESTART_SERVER, null);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM UniqueId:{}] 重启服务器成功,{}", zlmProperties.getUniqueId(), result.getMsg());
+                log.info("[ZLM ID:{}] 重启服务器成功,{}", zlmProperties.getUniqueId(), result.getMsg());
             }
         } catch (Exception e) {
-            log.error("[ZLM UniqueId:{}] 重启服务器失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM ID:{}] 重启服务器失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
         }
     }
 
