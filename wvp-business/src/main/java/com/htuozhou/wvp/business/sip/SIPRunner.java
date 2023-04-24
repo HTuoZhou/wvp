@@ -101,6 +101,21 @@ public class SIPRunner implements CommandLineRunner {
         return sipFactory;
     }
 
+    public SipProviderImpl getUdpSipProvider() {
+        if (udpSipProviderMap.size() != 1) {
+            return null;
+        }
+        return udpSipProviderMap.values().stream().findFirst().get();
+    }
+
+    public SipProviderImpl getTcpSipProvider() {
+        if (tcpSipProviderMap.size() != 1) {
+            return null;
+        }
+        return tcpSipProviderMap.values().stream().findFirst().get();
+    }
+
+
     public SipProviderImpl getUdpSipProvider(String ip) {
         if (ObjectUtils.isEmpty(ip)) {
             return null;
