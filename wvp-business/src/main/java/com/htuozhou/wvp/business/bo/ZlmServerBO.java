@@ -19,23 +19,20 @@ public class ZlmServerBO {
     private Integer id;
 
     /**
-     * zlm服务器唯一id
+     * zlm流媒体服务器id
      */
-    private String uniqueId;
+    private String mediaServerId;
 
     /**
-     * zlm服务器secret
+     * zlm流媒体服务器secret
      */
     private String secret;
 
     /**
-     * zlm服务器ip
+     * zlm流媒体服务器ip
      */
     private String ip;
 
-    /**
-     * 返回流地址ip
-     */
     private String streamIp;
 
     private String sdpIp;

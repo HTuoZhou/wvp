@@ -13,10 +13,10 @@ CREATE TABLE `user` (
 
 CREATE TABLE `zlm_server` (
                                 `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
-                                `unique_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm服务器唯一id',
-                                `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm服务器secret',
-                                `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm服务器ip',
-                                `stream_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '返回流地址ip',
+                                `media_server_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器id',
+                                `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器secret',
+                                `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器ip',
+                                `stream_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
                                 `sdp_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
                                 `hook_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
                                 `http_port` int NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `zlm_server` (
                                 `deleted` int NOT NULL DEFAULT '0' COMMENT '删除标识（0、逻辑删除 1、物理删除）',
                                 `version` int NOT NULL DEFAULT '0' COMMENT '版本号',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='zlm服务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='zlm流媒体服务器表';
 
 CREATE TABLE `device` (
                           `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
@@ -50,9 +50,9 @@ CREATE TABLE `device` (
                           `model` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '设备型号',
                           `firmware` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '设备固件版本',
                           `transport` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '传输协议（UDP/TCP）',
-                          `streamMode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据流传输模式（UDP:UDP传输/TCP-ACTIVE:TCP主动模式/TCP-PASSIVE:TCP被动模式）',
+                          `streamMode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据流传输模式（UDP/TCP-ACTIVE/TCP-PASSIVE）',
                           `status` int NOT NULL DEFAULT 1 COMMENT '0、离线 1、在线',
-                          `zlm_server_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'zlm服务id',
+                          `zlm_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'zlm id',
                           `register_time` datetime NOT NULL COMMENT '注册时间',
                           `expires` int NOT NULL COMMENT '注册有效期',
                           `keep_alive_time` datetime DEFAULT  NULL COMMENT '心跳时间',

@@ -31,26 +31,23 @@ public class ZlmServerPO implements Serializable {
     private Integer id;
 
     /**
-     * zlm服务器唯一id
+     * zlm流媒体服务器id
      */
-    @TableField("unique_id")
-    private String uniqueId;
+    @TableField("media_server_id")
+    private String mediaServerId;
 
     /**
-     * zlm服务器secret
+     * zlm流媒体服务器secret
      */
     @TableField("secret")
     private String secret;
 
     /**
-     * zlm服务器ip
+     * zlm流媒体服务器ip
      */
     @TableField("ip")
     private String ip;
 
-    /**
-     * 返回流地址ip
-     */
     @TableField("stream_ip")
     private String streamIp;
 

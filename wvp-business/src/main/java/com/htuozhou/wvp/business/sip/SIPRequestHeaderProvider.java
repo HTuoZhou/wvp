@@ -32,13 +32,13 @@ public class SIPRequestHeaderProvider {
     @Autowired
     private Environment environment;
 
-    public Request createMessageRequest(DeviceBO deviceBO, String content, String viaTag, String fromTag, String toTag, CallIdHeader callIdHeader) throws Exception {
+    public Request createMessageRequest(DeviceBO deviceBO, String content, String branch, String fromTag, String toTag, CallIdHeader callIdHeader) throws Exception {
         Request request = null;
         // sipuri
         SipURI requestURI = sipRunner.getSipFactory().createAddressFactory().createSipURI(deviceBO.getDeviceId(), deviceBO.getAddress());
         // via
         ArrayList<ViaHeader> viaHeaders = new ArrayList<ViaHeader>();
-        ViaHeader viaHeader = sipRunner.getSipFactory().createHeaderFactory().createViaHeader(sipProperties.getIp(), sipProperties.getPort(), deviceBO.getTransport(), viaTag);
+        ViaHeader viaHeader = sipRunner.getSipFactory().createHeaderFactory().createViaHeader(sipProperties.getIp(), sipProperties.getPort(), deviceBO.getTransport(), branch);
         viaHeader.setRPort();
         viaHeaders.add(viaHeader);
         // from

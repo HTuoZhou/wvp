@@ -85,7 +85,7 @@ public class DevicePO implements Serializable {
     private String transport;
 
     /**
-     * 数据流传输模式（UDP:UDP传输/TCP-ACTIVE:TCP主动模式/TCP-PASSIVE:TCP被动模式）
+     * 数据流传输模式（UDP/TCP-ACTIVE/TCP-PASSIVE）
      */
     @TableField("streamMode")
     private String streamMode;
@@ -97,10 +97,10 @@ public class DevicePO implements Serializable {
     private Integer status;
 
     /**
-     * zlm服务id
+     * zlm id
      */
-    @TableField("zlm_server_id")
-    private String zlmServerId;
+    @TableField("zlm_id")
+    private String zlmId;
 
     /**
      * 注册时间

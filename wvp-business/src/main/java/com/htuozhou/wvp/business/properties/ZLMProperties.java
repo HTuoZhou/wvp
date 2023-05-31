@@ -19,7 +19,7 @@ import java.util.Objects;
 @Setter
 public class ZLMProperties {
 
-    private String uniqueId;
+    private String mediaServerId;
     private String secret;
     private String ip;
     private String streamIp;

@@ -64,7 +64,7 @@ public class DeviceBO {
     private String transport;
 
     /**
-     * 数据流传输模式（UDP:UDP传输/TCP-ACTIVE:TCP主动模式/TCP-PASSIVE:TCP被动模式）
+     * 数据流传输模式（UDP/TCP-ACTIVE/TCP-PASSIVE）
      */
     private String streamMode;
 
@@ -74,9 +74,9 @@ public class DeviceBO {
     private Integer status;
 
     /**
-     * zlm服务id
+     * zlm id
      */
-    private String zlmServerId;
+    private String zlmId;
 
     /**
      * 注册时间

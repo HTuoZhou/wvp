@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.sip.request.impl;
 
+import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPProcessorObserver;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
@@ -67,6 +68,12 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
         AddressImpl address = (AddressImpl) fromHeader.getAddress();
         SipUri uri = (SipUri) address.getURI();
         String deviceId = uri.getUser();
+        DeviceBO deviceBO = sipService.getDevice(deviceId);
+        if (Objects.isNull(deviceBO) || Objects.equals(deviceBO.getStatus(),0)) {
+            log.warn("[设备 {}]不存在或离线]",deviceId);
+            return;
+        }
+
         messageHandlerMap.get(name).handForDevice(requestEvent,sipService.getDevice(deviceId),rootElement);
     }
 }

@@ -50,16 +50,7 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
         SIPRequest request = (SIPRequest) requestEvent.getRequest();
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
-        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICEINFO] 请求",requestAddress);
-        log.debug("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICEINFO] 请求，请求内容\n{}",requestAddress,request);
-
-        FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
-        AddressImpl address = (AddressImpl) fromHeader.getAddress();
-        SipUri uri = (SipUri) address.getURI();
-        String deviceId = uri.getUser();
-        if (Objects.isNull(deviceBO) || Objects.equals(deviceBO.getStatus(),0)) {
-            log.warn("[设备 {}]不存在或离线]",deviceId);
-            return;
-        }
+        // log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICE INFO] 请求",requestAddress);
+        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICE INFO] 请求，请求内容\n{}",requestAddress,request);
     }
 }

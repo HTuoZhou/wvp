@@ -6,6 +6,8 @@ import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
 import gov.nist.javax.sip.RequestEventExt;
+import gov.nist.javax.sip.address.AddressImpl;
+import gov.nist.javax.sip.address.SipUri;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sip.RequestEvent;
+import javax.sip.header.FromHeader;
 import javax.sip.message.Response;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author hanzai
@@ -48,11 +52,13 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         SIPRequest request = (SIPRequest) requestEvent.getRequest();
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
-        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求",requestAddress);
-        log.debug("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求，请求内容\n{}",requestAddress,request);
+        // log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求",requestAddress);
+        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求，请求内容\n{}",requestAddress,request);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
+        // log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200",requestAddress);
+        log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200，回复内容\n{}",requestAddress,response);
 
         deviceBO.setKeepAliveTime(LocalDateTime.now());
         sipService.saveDevice(deviceBO);

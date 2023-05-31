@@ -24,12 +24,12 @@ public class ZLMStatusJob implements Job {
         ZLMProperties zlmProperties = (ZLMProperties) jobExecutionContext.getJobDetail().getJobDataMap().get("zlmProperties");
 
         if (!zlmManager.getServerConfig()) {
-            log.info("[ZLM] [ZLM ID:{}] 心跳检测离线",zlmProperties.getUniqueId());
+            log.info("[ZLM] [ZLM MEDIA SERVER ID:{}] 心跳检测离线",zlmProperties.getMediaServerId());
             zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
-                    .eq(ZlmServerPO::getUniqueId,zlmProperties.getUniqueId())
+                    .eq(ZlmServerPO::getMediaServerId,zlmProperties.getMediaServerId())
                     .set(ZlmServerPO::getStatus,0));
         } else {
-            log.info("[ZLM UniqueId:{}] 心跳检测在线",zlmProperties.getUniqueId());
+            log.info("[ZLM MEDIA SERVER ID:{}] 心跳检测在线",zlmProperties.getMediaServerId());
         }
     }
 }

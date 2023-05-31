@@ -50,10 +50,10 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK-ViaDeviceInfo-" + time, "FromDev" + time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息",deviceBO.getAddress());
-        log.debug("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息，请求内容\n{}",deviceBO.getAddress(),request);
+        // log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息",deviceBO.getAddress());
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息，请求内容\n{}",deviceBO.getAddress(),request);
     }
 
 }

@@ -37,11 +37,11 @@ public class ZLMManager {
         try {
             ZLMResult result = postForm(ZLMConstant.GET_SERVER_CONFIG,null);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM ID:{}] 获取服务器配置成功", zlmProperties.getUniqueId());
+                log.info("[ZLM MEDIA SERVER ID:{}] 获取服务器配置成功", zlmProperties.getMediaServerId());
                 return Boolean.TRUE;
             }
         } catch (Exception e) {
-            log.error("[ZLM ID:{}] 获取服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM MEDIA SERVER ID:{}] 获取服务器配置失败,请确认ZLM是否启动", zlmProperties.getMediaServerId());
         }
 
         return Boolean.FALSE;
@@ -62,7 +62,7 @@ public class ZLMManager {
 
         Map<String, Object> param = new HashMap<>();
         param.put("api.secret", zlmProperties.getSecret());
-        param.put("general.mediaServerId", zlmProperties.getUniqueId());
+        param.put("general.mediaServerId", zlmProperties.getMediaServerId());
         param.put("hook.alive_interval", zlmProperties.getHookAliveInterval());
         param.put("hook.enable", "1");
         param.put("hook.on_flow_report", String.format("%s/on_flow_report", hookPrefix));
@@ -86,14 +86,14 @@ public class ZLMManager {
             ZLMResult result = postForm(ZLMConstant.SET_SERVER_CONFIG, param);
             if (Objects.nonNull(result) && result.getCode() == 0) {
                 if (result.getChanged() > 0) {
-                    log.info("[ZLM ID:{}] 设置服务器配置成功,存在配置变更,需要重启以保证配置生效", zlmProperties.getUniqueId());
+                    log.info("[ZLM MEDIA SERVER ID:{}] 设置服务器配置成功,存在配置变更,重启以保证配置生效", zlmProperties.getMediaServerId());
                     restartServer();
                 } else {
-                    log.info("[ZLM ID:{}] 设置服务器配置成功,不存在配置变更", zlmProperties.getUniqueId());
+                    log.info("[ZLM MEDIA SERVER ID:{}] 设置服务器配置成功,不存在配置变更", zlmProperties.getMediaServerId());
                 }
             }
         } catch (Exception e) {
-            log.error("[ZLM ID:{}] 设置服务器配置失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM MEDIA SERVER ID:{}] 设置服务器配置失败,请确认ZLM是否启动", zlmProperties.getMediaServerId());
         }
     }
 
@@ -104,10 +104,10 @@ public class ZLMManager {
         try {
             ZLMResult result = postForm(ZLMConstant.RESTART_SERVER, null);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM ID:{}] 重启服务器成功,{}", zlmProperties.getUniqueId(), result.getMsg());
+                log.info("[ZLM MEDIA SERVER ID:{}] 重启服务器成功,{}", zlmProperties.getMediaServerId(), result.getMsg());
             }
         } catch (Exception e) {
-            log.error("[ZLM ID:{}] 重启服务器失败,请确认ZLM是否启动", zlmProperties.getUniqueId());
+            log.error("[ZLM MEDIA SERVER ID:{}] 重启服务器失败,请确认ZLM是否启动", zlmProperties.getMediaServerId());
         }
     }
 
