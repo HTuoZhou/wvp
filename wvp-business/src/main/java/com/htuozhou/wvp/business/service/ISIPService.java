@@ -1,6 +1,9 @@
 package com.htuozhou.wvp.business.service;
 
 import com.htuozhou.wvp.business.bo.DeviceBO;
+import com.htuozhou.wvp.business.bo.DeviceChannelBO;
+
+import java.util.List;
 
 /**
  * @author hanzai
@@ -9,5 +12,10 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 public interface ISIPService {
     DeviceBO getDevice(String deviceId);
 
-    void saveDevice(DeviceBO deviceBO);
+    void saveOrUpdateDevice(DeviceBO deviceBO);
+
+    void offline(String deviceId);
+
+    void saveBatchDeviceChannel(List<DeviceChannelBO> bos,String deviceId);
+
 }

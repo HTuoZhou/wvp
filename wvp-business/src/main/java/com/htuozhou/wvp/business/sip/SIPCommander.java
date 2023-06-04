@@ -56,4 +56,29 @@ public class SIPCommander {
         log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息，请求内容\n{}",deviceBO.getAddress(),request);
     }
 
+    /**
+     * 查询设备通道信息
+     * @param deviceBO
+     */
+    public void catalogQuery(DeviceBO deviceBO) throws Exception{
+        StringBuffer catalogXml = new StringBuffer(200);
+        String charset = deviceBO.getCharset();
+        catalogXml.append("<?xml version=\"1.0\" encoding=\"" + charset + "\"?>\r\n");
+        catalogXml.append("<Query>\r\n");
+        catalogXml.append("  <CmdType>Catalog</CmdType>\r\n");
+        catalogXml.append("  <SN>" + (int) ((Math.random() * 9 + 1) * 100000) + "</SN>\r\n");
+        catalogXml.append("  <DeviceID>" + deviceBO.getDeviceId() + "</DeviceID>\r\n");
+        catalogXml.append("</Query>\r\n");
+
+        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
+        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
+        String time = Long.toString(System.currentTimeMillis());
+
+        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
+                : udpSipProvider.getNewCallId();
+        Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
+        sipSender.transmitRequest(sipProperties.getIp(), request);
+        // log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息",deviceBO.getAddress());
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息，请求内容\n{}",deviceBO.getAddress(),request);
+    }
 }

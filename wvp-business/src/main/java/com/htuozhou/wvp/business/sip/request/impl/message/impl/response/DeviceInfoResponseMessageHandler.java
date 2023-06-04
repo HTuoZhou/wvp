@@ -5,9 +5,8 @@ import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
+import com.htuozhou.wvp.business.util.XmlUtils;
 import gov.nist.javax.sip.RequestEventExt;
-import gov.nist.javax.sip.address.AddressImpl;
-import gov.nist.javax.sip.address.SipUri;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sip.RequestEvent;
-import javax.sip.header.FromHeader;
-import java.util.Objects;
+import javax.sip.message.Response;
 
 /**
  * @author hanzai
@@ -41,7 +39,7 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        responseMessageHandler.addMessageHandler(cmdType,this);
+        responseMessageHandler.addMessageHandler(cmdType, this);
     }
 
     @Override
@@ -51,6 +49,17 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
         // log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICE INFO] 请求",requestAddress);
-        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICE INFO] 请求，请求内容\n{}",requestAddress,request);
+        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} DEVICE INFO] 请求，请求内容\n{}", requestAddress, request);
+
+        Response response = getMessageFactory().createResponse(Response.OK, request);
+        sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
+        // log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200",requestAddress);
+        log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200，回复内容\n{}",requestAddress,response);
+
+        deviceBO.setName(XmlUtils.getText(rootElement, "DeviceName"));
+        deviceBO.setManufacturer(XmlUtils.getText(rootElement, "Manufacturer"));
+        deviceBO.setModel(XmlUtils.getText(rootElement, "Model"));
+        deviceBO.setFirmware(XmlUtils.getText(rootElement, "Firmware"));
+        sipService.saveOrUpdateDevice(deviceBO);
     }
 }

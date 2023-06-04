@@ -44,17 +44,17 @@ public class DeviceBO {
     private String name;
 
     /**
-     * 设备厂商
+     * 生产厂商
      */
     private String manufacturer;
 
     /**
-     * 设备型号
+     * 型号
      */
     private String model;
 
     /**
-     * 设备固件版本
+     * 固件版本
      */
     private String firmware;
 

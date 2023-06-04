@@ -1,19 +1,19 @@
 package com.htuozhou.wvp.webapi.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
-import com.htuozhou.wvp.persistence.service.IZlmServerService;
+import com.htuozhou.wvp.business.properties.ZLMProperties;
+import com.htuozhou.wvp.business.service.IZLMService;
 import com.htuozhou.wvp.webapi.vo.OnServerKeepAliveVO;
 import com.htuozhou.wvp.webapi.vo.OnServerStartedVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * @author hanzai
@@ -25,7 +25,13 @@ import java.time.LocalDateTime;
 public class ZLMHttpHookController {
 
     @Autowired
-    private IZlmServerService zlmServerService;
+    private IZLMService zlmService;
+
+    @Autowired
+    private ZLMProperties zlmProperties;
+
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private static final JSONObject ZLM_RES_SUCCESS = new JSONObject();
 
@@ -38,10 +44,10 @@ public class ZLMHttpHookController {
     public JSONObject onServerKeepAlive(@RequestBody OnServerKeepAliveVO onServerKeepAliveVO) {
         log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ID：{}] 心跳上报", onServerKeepAliveVO.getMediaServerId());
 
-        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
-                .eq(ZlmServerPO::getMediaServerId,onServerKeepAliveVO.getMediaServerId())
-                .set(ZlmServerPO::getHookAliveTime, LocalDateTime.now()));
+        zlmService.setKeepAliveTime(onServerKeepAliveVO.getMediaServerId());
 
+        threadPoolTaskScheduler.schedule(() -> zlmService.offline(onServerKeepAliveVO.getMediaServerId()),
+                Instant.now().plusMillis((long) zlmProperties.getHookAliveInterval() * 3 * 1000));
         return ZLM_RES_SUCCESS;
     }
 
@@ -49,9 +55,7 @@ public class ZLMHttpHookController {
     public JSONObject onServerStarted(@RequestBody OnServerStartedVO onServerStartedVO) {
         log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ID：{}] 启动上报", onServerStartedVO.getMediaServerId());
 
-        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
-                .eq(ZlmServerPO::getMediaServerId,onServerStartedVO.getMediaServerId())
-                .set(ZlmServerPO::getStatus,1));
+       zlmService.online(onServerStartedVO.getMediaServerId());
 
         return ZLM_RES_SUCCESS;
     }

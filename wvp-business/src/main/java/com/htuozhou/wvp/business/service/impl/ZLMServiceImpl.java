@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -36,5 +37,27 @@ public class ZLMServiceImpl implements IZLMService {
         zlmProperties.properties2bo(bo);
 
         zlmServerService.saveOrUpdate(bo.bo2po());
+    }
+
+    @Override
+    public void online(String mediaServerId) {
+        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
+                .eq(ZlmServerPO::getMediaServerId,mediaServerId)
+                .set(ZlmServerPO::getStatus, 1));
+    }
+
+    @Override
+    public void setKeepAliveTime(String mediaServerId) {
+        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
+                .eq(ZlmServerPO::getMediaServerId,mediaServerId)
+                .set(ZlmServerPO::getStatus, 1)
+                .set(ZlmServerPO::getHookAliveTime, LocalDateTime.now()));
+    }
+
+    @Override
+    public void offline(String mediaServerId) {
+        zlmServerService.update(Wrappers.<ZlmServerPO>lambdaUpdate()
+                .eq(ZlmServerPO::getMediaServerId,mediaServerId)
+                .set(ZlmServerPO::getStatus, 0));
     }
 }

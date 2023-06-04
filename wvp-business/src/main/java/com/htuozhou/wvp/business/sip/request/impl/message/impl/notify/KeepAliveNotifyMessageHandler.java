@@ -6,21 +6,19 @@ import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
 import gov.nist.javax.sip.RequestEventExt;
-import gov.nist.javax.sip.address.AddressImpl;
-import gov.nist.javax.sip.address.SipUri;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.sip.RequestEvent;
-import javax.sip.header.FromHeader;
 import javax.sip.message.Response;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * @author hanzai
@@ -41,6 +39,9 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
     @Autowired
     private ISIPService sipService;
 
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         notifyMessageHandler.addMessageHandler(cmdType,this);
@@ -60,7 +61,14 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         // log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200",requestAddress);
         log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200，回复内容\n{}",requestAddress,response);
 
+        deviceBO.setStatus(1);
+        deviceBO.setIp(request.getRemoteAddress().getHostAddress());
+        deviceBO.setPort(request.getRemotePort());
+        deviceBO.setAddress(String.join(":",request.getRemoteAddress().getHostAddress(), String.valueOf(request.getRemotePort())));
         deviceBO.setKeepAliveTime(LocalDateTime.now());
-        sipService.saveDevice(deviceBO);
+        sipService.saveOrUpdateDevice(deviceBO);
+
+        threadPoolTaskScheduler.schedule(() -> sipService.offline(deviceBO.getDeviceId()),
+                Instant.now().plusMillis((long) deviceBO.getKeepAliveInterval() * 3 * 1000));
     }
 }

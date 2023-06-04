@@ -61,19 +61,19 @@ public class DevicePO implements Serializable {
     private String name;
 
     /**
-     * 设备厂商
+     * 生产厂商
      */
     @TableField("manufacturer")
     private String manufacturer;
 
     /**
-     * 设备型号
+     * 型号
      */
     @TableField("model")
     private String model;
 
     /**
-     * 设备固件版本
+     * 固件版本
      */
     @TableField("firmware")
     private String firmware;

@@ -4,13 +4,15 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.constant.SIPConstant;
 import com.htuozhou.wvp.business.properties.SIPProperties;
 import com.htuozhou.wvp.business.service.ISIPService;
-import com.htuozhou.wvp.business.sip.*;
+import com.htuozhou.wvp.business.sip.DigestServerAuthenticationHelper;
+import com.htuozhou.wvp.business.sip.SIPCommander;
+import com.htuozhou.wvp.business.sip.SIPProcessorObserver;
+import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.ISIPRequestProcessor;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.address.AddressImpl;
 import gov.nist.javax.sip.address.SipUri;
-import gov.nist.javax.sip.header.SIPDateHeader;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +22,11 @@ import org.springframework.stereotype.Component;
 
 import javax.sip.RequestEvent;
 import javax.sip.header.AuthorizationHeader;
-import javax.sip.header.ContactHeader;
 import javax.sip.header.FromHeader;
 import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -96,12 +95,6 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
 
         // 请求已认证且密码正确
         Response response = getMessageFactory().createResponse(Response.OK, request);
-        SIPDateHeader sipDateHeader = new SIPDateHeader();
-        WvpSIPDate wvpSipDate = new WvpSIPDate(Calendar.getInstance(Locale.ENGLISH).getTimeInMillis());
-        sipDateHeader.setDate(wvpSipDate);
-        response.addHeader(sipDateHeader);
-        response.addHeader(request.getHeader(ContactHeader.NAME));
-        response.addHeader(request.getExpires());
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
         // log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确，回复200",requestAddress,type);
         log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确，回复200，回复内容\n{}",requestAddress,type,response);
@@ -131,8 +124,11 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
 
             // 查询设备信息
             sipCommander.deviceInfoQuery(deviceBO);
+
+            // 查询设备通道信息
+            sipCommander.catalogQuery(deviceBO);
         }
 
-        sipService.saveDevice(deviceBO);
+        sipService.saveOrUpdateDevice(deviceBO);
     }
 }

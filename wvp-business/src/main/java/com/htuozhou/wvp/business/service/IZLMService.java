@@ -8,4 +8,10 @@ public interface IZLMService {
 
     void saveZlmServer();
 
+    void online(String mediaServerId);
+
+    void setKeepAliveTime(String mediaServerId);
+
+    void offline(String mediaServerId);
+
 }
