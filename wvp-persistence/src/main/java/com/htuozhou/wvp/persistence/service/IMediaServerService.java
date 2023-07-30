@@ -1,7 +1,7 @@
 package com.htuozhou.wvp.persistence.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
+import com.htuozhou.wvp.persistence.po.MediaServerPO;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.htuozhou.wvp.persistence.po.ZlmServerPO;
  * @author HTuoZhou
  * @since 2023-04-01
  */
-public interface IZlmServerService extends IService<ZlmServerPO> {
+public interface IMediaServerService extends IService<MediaServerPO> {
 
 }

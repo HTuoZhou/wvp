@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.quartz.auto;
+package com.htuozhou.wvp.business.task;
 
 import com.htuozhou.wvp.common.constant.QuartzConstant;
 import com.htuozhou.wvp.persistence.service.cache.ISystemInfoCacheService;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2023/7/29
  */
 @Configuration
-public class SystemInfoSchedule {
+public class SystemInfoTask {
 
     @Autowired
     private ISystemInfoCacheService systemInfoCacheService;

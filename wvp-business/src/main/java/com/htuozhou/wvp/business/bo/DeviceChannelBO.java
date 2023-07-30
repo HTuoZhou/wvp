@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class DeviceChannelBO {
 
     /**
-     * 主键，自增
+     * 主键,自增
      */
     private Integer id;
 
@@ -134,7 +134,7 @@ public class DeviceChannelBO {
     private Double latitude;
 
     /**
-     * 流id，存在表示正在直播
+     * 流id,存在表示正在直播
      */
     private String streamId;
 

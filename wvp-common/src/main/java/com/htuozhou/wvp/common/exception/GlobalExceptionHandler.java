@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 
         Set<ConstraintViolation<?>> constraintViolationSet = e.getConstraintViolations();
         for (ConstraintViolation<?> x : constraintViolationSet) {
-            stringBuilder.append(x.getMessageTemplate()).append("，");
+            stringBuilder.append(x.getMessageTemplate()).append(",");
         }
         stringBuilder.substring(0, stringBuilder.length() - 1);
 
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
         BeanPropertyBindingResult result = (BeanPropertyBindingResult) e.getBindingResult();
         List<ObjectError> errors = result.getAllErrors();
         for (ObjectError x : errors) {
-            stringBuilder.append(x.getDefaultMessage()).append("，");
+            stringBuilder.append(x.getDefaultMessage()).append(",");
         }
         stringBuilder.substring(0, stringBuilder.length() - 1);
 

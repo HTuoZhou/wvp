@@ -1,7 +1,7 @@
 package com.htuozhou.wvp.persistence.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
+import com.htuozhou.wvp.persistence.po.MediaServerPO;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.htuozhou.wvp.persistence.po.ZlmServerPO;
  * @author HTuoZhou
  * @since 2023-04-01
  */
-public interface ZlmServerMapper extends BaseMapper<ZlmServerPO> {
+public interface MediaServerMapper extends BaseMapper<MediaServerPO> {
 
 }

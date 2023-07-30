@@ -3,16 +3,16 @@ package com.htuozhou.wvp.business.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.htuozhou.wvp.business.bean.ResourceBaseInfo;
+import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.bo.MediaServerLoadBO;
 import com.htuozhou.wvp.business.bo.ResourceInfoBO;
 import com.htuozhou.wvp.business.bo.SystemInfoBO;
-import com.htuozhou.wvp.business.bo.ZlmServerBO;
 import com.htuozhou.wvp.business.service.ISystemService;
 import com.htuozhou.wvp.common.constant.RedisConstant;
 import com.htuozhou.wvp.common.utils.RedisUtil;
 import com.htuozhou.wvp.common.utils.SystemInfoUtil;
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
-import com.htuozhou.wvp.persistence.service.IZlmServerService;
+import com.htuozhou.wvp.persistence.po.MediaServerPO;
+import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class SystemServiceImpl implements ISystemService {
     private RedisUtil redisUtil;
 
     @Autowired
-    private IZlmServerService zlmServerService;
+    private IMediaServerService zlmServerService;
 
     /**
      * 获取系统信息
@@ -65,14 +65,14 @@ public class SystemServiceImpl implements ISystemService {
     public List<MediaServerLoadBO> getMediaServerLoad() {
         List<MediaServerLoadBO> loadBos = new ArrayList<>();
 
-        List<ZlmServerPO> pos = zlmServerService.list(Wrappers.<ZlmServerPO>lambdaQuery()
-                .eq(ZlmServerPO::getStatus, 1));
+        List<MediaServerPO> pos = zlmServerService.list(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(MediaServerPO::getStatus, 1));
         if (CollectionUtil.isEmpty(pos)){
             return Collections.emptyList();
         }
 
-        List<ZlmServerBO> bos = pos.stream().map(ZlmServerBO::po2bo).collect(Collectors.toList());
-        for (ZlmServerBO bo : bos) {
+        List<MediaServerBO> bos = pos.stream().map(MediaServerBO::po2bo).collect(Collectors.toList());
+        for (MediaServerBO bo : bos) {
             MediaServerLoadBO loadBo = new MediaServerLoadBO();
             loadBo.setId(bo.getMediaServerId());
             loadBo.setPush(0);

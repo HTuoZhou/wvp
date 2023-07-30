@@ -23,7 +23,7 @@ public class ScrewGenerator {
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8");
+        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/wvp_db?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true");
         hikariConfig.setUsername("root");
         hikariConfig.setPassword("123456");
         //设置可以获取tables remarks信息
@@ -42,14 +42,14 @@ public class ScrewGenerator {
                 //生成模板实现
                 .produceType(EngineTemplateType.freemarker)
                 //自定义文件名称
-                .fileName("数据库表结构文档").build();
+                .fileName("WVP数据库表结构文档").build();
 
         ProcessConfig processConfig = ProcessConfig.builder()
-                //指定生成逻辑、当存在指定表、指定表前缀、指定表后缀时，将生成指定表，其余表不生成、并跳过忽略表配置
+                //指定生成逻辑、当存在指定表、指定表前缀、指定表后缀时,将生成指定表,其余表不生成、并跳过忽略表配置
                 //根据名称指定表生成
-                .designatedTableName(new ArrayList<>(Collections.singletonList("user")))
+                .designatedTableName(new ArrayList<>())
                 //根据表前缀生成
-                .designatedTablePrefix(new ArrayList<>())
+                .designatedTablePrefix(Collections.singletonList("wvp"))
                 //根据表后缀生成
                 .designatedTableSuffix(new ArrayList<>())
                 //忽略表名
@@ -63,7 +63,7 @@ public class ScrewGenerator {
                 //版本
                 .version("V1.0")
                 //描述
-                .description("数据库设计文档")
+                .description("WVP数据库设计文档")
                 //数据源
                 .dataSource(dataSource)
                 //生成配置

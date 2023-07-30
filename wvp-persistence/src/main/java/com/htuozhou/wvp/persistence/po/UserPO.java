@@ -19,13 +19,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("user")
+@TableName("wvp_user")
 public class UserPO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键，自增
+     * 主键,自增
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;

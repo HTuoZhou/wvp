@@ -16,7 +16,7 @@ import java.util.Collections;
 public class MybatisPlusGenerator {
 
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8", "root", "123456")
+        FastAutoGenerator.create("jdbc:mysql://localhost:3306/wvp_db?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true", "root", "123456")
                 .globalConfig(builder -> builder.author("HTuoZhou")
                         // .enableSwagger()
                         // .fileOverride()
@@ -25,7 +25,9 @@ public class MybatisPlusGenerator {
                 .packageConfig(builder -> builder.parent("com.htuozhou.wvp.persistence")
                         // .moduleName("")
                         .pathInfo(Collections.singletonMap(OutputFile.mapperXml, System.getProperty("user.dir") + "/mybatis-plus-generator" + "/src/main/resources/mapper")))
-                .strategyConfig(builder -> builder.addInclude("user")
+                .strategyConfig(builder -> builder
+                        .addExclude("flyway_schema_history")
+                        .addTablePrefix("wvp")
                         .entityBuilder()
                         .formatFileName("%sPO")
                         .enableLombok()
@@ -38,7 +40,7 @@ public class MybatisPlusGenerator {
                         .versionColumnName("version")
                         .controllerBuilder()
                         .enableRestStyle()
-                        .enableHyphenStyle())// 使用Freemarker引擎模板，默认的是Velocity引擎模板
+                        .enableHyphenStyle())// 使用Freemarker引擎模板,默认的是Velocity引擎模板
                 .templateEngine(new FreemarkerTemplateEngine())
                 .execute();
     }

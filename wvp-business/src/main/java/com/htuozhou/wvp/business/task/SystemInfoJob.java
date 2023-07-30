@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.quartz.auto;
+package com.htuozhou.wvp.business.task;
 
 import com.htuozhou.wvp.common.constant.QuartzConstant;
 import com.htuozhou.wvp.persistence.service.cache.ISystemInfoCacheService;
@@ -16,7 +16,7 @@ public class SystemInfoJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.debug("定时任务执行，jobName：{}，jobGroup：{}",
+        log.debug("定时任务执行,jobName：{},jobGroup：{}",
                 String.format(QuartzConstant.JOB_NAME_FMT, QuartzConstant.SYSTEM_INFO_JOB),
                 String.format(QuartzConstant.GROUP_NAME_FMT, QuartzConstant.SYSTEM_INFO_GROUP));
 

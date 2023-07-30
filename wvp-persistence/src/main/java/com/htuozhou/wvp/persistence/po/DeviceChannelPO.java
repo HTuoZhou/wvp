@@ -19,13 +19,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("device_channel")
+@TableName("wvp_device_channel")
 public class DeviceChannelPO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键，自增
+     * 主键,自增
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -169,7 +169,7 @@ public class DeviceChannelPO implements Serializable {
     private Double latitude;
 
     /**
-     * 流id，存在表示正在直播
+     * 流id,存在表示正在直播
      */
     @TableField("stream_id")
     private String streamId;

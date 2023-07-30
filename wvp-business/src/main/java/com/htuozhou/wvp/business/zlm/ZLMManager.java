@@ -98,7 +98,7 @@ public class ZLMManager {
     }
 
     /**
-     * 重启服务器，只有Daemon方式才能重启，否则是直接关闭
+     * 重启服务器,只有Daemon方式才能重启,否则是直接关闭
      */
     public void restartServer() {
         try {

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class DeviceBO {
 
     /**
-     * 主键，自增
+     * 主键,自增
      */
     private Integer id;
 

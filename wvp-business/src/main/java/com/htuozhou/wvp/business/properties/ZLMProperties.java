@@ -1,6 +1,6 @@
 package com.htuozhou.wvp.business.properties;
 
-import com.htuozhou.wvp.business.bo.ZlmServerBO;
+import com.htuozhou.wvp.business.bo.MediaServerBO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -36,9 +36,9 @@ public class ZLMProperties {
     private Integer rtpProxyPort;
     private Integer hookAliveInterval;
 
-    public ZlmServerBO properties2bo(ZlmServerBO bo) {
+    public MediaServerBO properties2bo(MediaServerBO bo) {
         if (Objects.isNull(bo)) {
-            bo = new ZlmServerBO();
+            bo = new MediaServerBO();
         }
 
         BeanUtils.copyProperties(this,bo);

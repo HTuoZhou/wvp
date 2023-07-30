@@ -53,7 +53,7 @@ public class SIPCommander {
         Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
         sipSender.transmitRequest(sipProperties.getIp(), request);
         // log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息",deviceBO.getAddress());
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息，请求内容\n{}",deviceBO.getAddress(),request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息,请求内容\n{}",deviceBO.getAddress(),request);
     }
 
     /**
@@ -79,6 +79,6 @@ public class SIPCommander {
         Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
         sipSender.transmitRequest(sipProperties.getIp(), request);
         // log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息",deviceBO.getAddress());
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息，请求内容\n{}",deviceBO.getAddress(),request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息,请求内容\n{}",deviceBO.getAddress(),request);
     }
 }

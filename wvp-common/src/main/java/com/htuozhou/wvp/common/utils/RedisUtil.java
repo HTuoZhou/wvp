@@ -444,7 +444,7 @@ public class RedisUtil {
      * 通过索引 获取list中的值
      *
      * @param key   键
-     * @param index 索引 index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
+     * @param index 索引 index>=0时, 0 表头,1 第二个元素,依次类推；index<0时,-1,表尾,-2倒数第二个元素,依次类推
      */
     public Object lGetIndex(String key, long index) {
         try {

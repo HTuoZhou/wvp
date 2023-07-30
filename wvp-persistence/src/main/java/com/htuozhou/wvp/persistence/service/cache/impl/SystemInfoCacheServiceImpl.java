@@ -50,7 +50,7 @@ public class SystemInfoCacheServiceImpl implements ISystemInfoCacheService {
         infoMap.put("time", DateUtil.getNow());
         infoMap.put("data", String.valueOf(cpuInfo));
         redisUtil.lSet(key, infoMap);
-        // 每秒一个，最多只存30个
+        // 每秒一个,最多只存30个
         Long size = redisUtil.lGetListSize(key);
         if (size != null && size >= 30) {
             for (int i = 0; i < size - 30; i++) {
@@ -65,7 +65,7 @@ public class SystemInfoCacheServiceImpl implements ISystemInfoCacheService {
         infoMap.put("time", DateUtil.getNow());
         infoMap.put("data", String.valueOf(memInfo));
         redisUtil.lSet(key, infoMap);
-        // 每秒一个，最多只存30个
+        // 每秒一个,最多只存30个
         Long size = redisUtil.lGetListSize(key);
         if (size != null && size >= 30) {
             for (int i = 0; i < size - 30; i++) {
@@ -82,7 +82,7 @@ public class SystemInfoCacheServiceImpl implements ISystemInfoCacheService {
             infoMap.put(netKey, networkInterfaces.get(netKey));
         }
         redisUtil.lSet(key, infoMap);
-        // 每秒一个，最多只存30个
+        // 每秒一个,最多只存30个
         Long size = redisUtil.lGetListSize(key);
         if (size != null && size >= 30) {
             for (int i = 0; i < size - 30; i++) {

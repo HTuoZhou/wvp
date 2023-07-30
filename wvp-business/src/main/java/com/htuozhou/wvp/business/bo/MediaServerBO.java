@@ -1,6 +1,6 @@
 package com.htuozhou.wvp.business.bo;
 
-import com.htuozhou.wvp.persistence.po.ZlmServerPO;
+import com.htuozhou.wvp.persistence.po.MediaServerPO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
  * @date 2023/4/14
  */
 @Data
-public class ZlmServerBO {
+public class MediaServerBO {
 
     /**
-     * 主键，自增
+     * 主键,自增
      */
     private Integer id;
 
@@ -97,15 +97,15 @@ public class ZlmServerBO {
      */
     private Integer version;
 
-    public ZlmServerPO bo2po() {
-        ZlmServerPO po = new ZlmServerPO();
+    public MediaServerPO bo2po() {
+        MediaServerPO po = new MediaServerPO();
         BeanUtils.copyProperties(this,po);
 
         return po;
     }
 
-    public static ZlmServerBO po2bo(ZlmServerPO po) {
-        ZlmServerBO bo = new ZlmServerBO();
+    public static MediaServerBO po2bo(MediaServerPO po) {
+        MediaServerBO bo = new MediaServerBO();
         BeanUtils.copyProperties(po,bo);
 
         return bo;

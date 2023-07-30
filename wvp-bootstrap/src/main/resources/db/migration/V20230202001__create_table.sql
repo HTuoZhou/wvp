@@ -1,5 +1,5 @@
-CREATE TABLE `user` (
-                        `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
+CREATE TABLE `wvp_user` (
+                        `id` int NOT NULL AUTO_INCREMENT COMMENT '主键,自增',
                         `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT '姓名',
                         `nickname` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT '昵称',
                         `sex` int NOT NULL COMMENT '性别（0、男 1、女）',
@@ -11,8 +11,8 @@ CREATE TABLE `user` (
                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户表';
 
-CREATE TABLE `zlm_server` (
-                                `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
+CREATE TABLE `wvp_media_server` (
+                                `id` int NOT NULL AUTO_INCREMENT COMMENT '主键,自增',
                                 `media_server_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器id',
                                 `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器secret',
                                 `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'zlm流媒体服务器ip',
@@ -37,10 +37,10 @@ CREATE TABLE `zlm_server` (
                                 `deleted` int NOT NULL DEFAULT '0' COMMENT '删除标识（0、逻辑删除 1、物理删除）',
                                 `version` int NOT NULL DEFAULT '0' COMMENT '版本号',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='zlm流媒体服务器表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='流媒体服务表';
 
-CREATE TABLE `device` (
-                          `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
+CREATE TABLE `wvp_device` (
+                          `id` int NOT NULL AUTO_INCREMENT COMMENT '主键,自增',
                           `device_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '设备id',
                           `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '设备ip',
                           `port` int NOT NULL COMMENT '设备端口',
@@ -66,8 +66,8 @@ CREATE TABLE `device` (
                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='设备表';
 
-CREATE TABLE `device_channel` (
-                                  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
+CREATE TABLE `wvp_device_channel` (
+                                  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键,自增',
                                   `channel_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通道id',
                                   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL  COMMENT '通道名称',
                                   `manufacturer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '生产厂商',
@@ -91,7 +91,7 @@ CREATE TABLE `device_channel` (
                                   `status` int DEFAULT NULL COMMENT '0、离线 1、在线',
                                   `longitude` double DEFAULT NULL COMMENT '经度',
                                   `latitude` double DEFAULT NULL COMMENT '经度',
-                                  `stream_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '流id，存在表示正在直播',
+                                  `stream_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '流id,存在表示正在直播',
                                   `device_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '设备id',
                                   `parental` int DEFAULT NULL COMMENT '是否有子设备（1、有 0、没有）',
                                   `has_audio` int DEFAULT NULL COMMENT '是否含有音频（1、有 0、没有）',

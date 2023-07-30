@@ -18,7 +18,7 @@ public class DefaultProperties {
             properties.setProperty("gov.nist.javax.sip.LOG_MESSAGE_CONTENT", "false");
         }
 
-        // 接收所有notify请求，即使没有订阅
+        // 接收所有notify请求,即使没有订阅
         properties.setProperty("gov.nist.javax.sip.DELIVER_UNSOLICITED_NOTIFY", "true");
         properties.setProperty("gov.nist.javax.sip.AUTOMATIC_DIALOG_ERROR_HANDLING", "false");
         properties.setProperty("gov.nist.javax.sip.CANCEL_CLIENT_TRANSACTION_CHECKED", "false");
@@ -28,7 +28,7 @@ public class DefaultProperties {
         properties.setProperty("gov.nist.javax.sip.RELEASE_REFERENCES_STRATEGY", "Normal");
         // 处理由该服务器处理的基于底层TCP的保持生存超时
         properties.setProperty("gov.nist.javax.sip.RELIABLE_CONNECTION_KEEP_ALIVE_TIMEOUT", "60");
-        // 获取实际内容长度，不使用header中的长度信息
+        // 获取实际内容长度,不使用header中的长度信息
         properties.setProperty("gov.nist.javax.sip.COMPUTE_CONTENT_LENGTH_FROM_MESSAGE_BODY", "true");
 
         /**

@@ -58,12 +58,12 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
         // log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} CATALOG] 请求",requestAddress);
-        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} CATALOG] 请求，请求内容\n{}", requestAddress, request);
+        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{} CATALOG] 请求,请求内容\n{}", requestAddress, request);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
         // log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} CATALOG] 回复200",requestAddress);
-        log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} CATALOG] 回复200，回复内容\n{}", requestAddress, response);
+        log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} CATALOG] 回复200,回复内容\n{}", requestAddress, response);
 
         List<DeviceChannelBO> deviceChannelBOS = new ArrayList<>();
         Iterator<Element> deviceListIterator = rootElement.element("DeviceList").elementIterator();
@@ -105,13 +105,13 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
 
             if (StrUtil.isBlank(civilCode) && Objects.equals(channelType, ChannelTypeEnum.CivilCode)) {
                 deviceChannelBO.setParental(1);
-                // 行政区划如果没有传递具体值，则推测一个
+                // 行政区划如果没有传递具体值,则推测一个
                 if (channelId.length() > 2) {
                     deviceChannelBO.setCivilCode(channelId.substring(0, channelId.length() - 2));
                 }
             }
             if (Objects.equals(channelType, ChannelTypeEnum.CivilCode)) {
-                // 行政区划其他字段没必要识别了，默认在线即可
+                // 行政区划其他字段没必要识别了,默认在线即可
                 deviceChannelBO.setStatus(1);
                 deviceChannelBO.setParental(1);
             }
@@ -135,7 +135,7 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
             }
             deviceChannelBO.setGroupId(businessGroupId);
             if (Objects.equals(channelType, ChannelTypeEnum.BusinessGroup) || Objects.equals(channelType, ChannelTypeEnum.VirtualOrganization)) {
-                // 业务分组和虚拟组织 其他字段没必要识别了，默认在线即可
+                // 业务分组和虚拟组织 其他字段没必要识别了,默认在线即可
                 deviceChannelBO.setStatus(1);
                 deviceChannelBO.setParental(1);
             }

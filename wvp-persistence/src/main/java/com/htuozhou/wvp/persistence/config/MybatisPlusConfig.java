@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @date 2023/2/2
  */
 @Configuration
-public class MybatisConfig implements MetaObjectHandler {
+public class MybatisPlusConfig implements MetaObjectHandler {
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

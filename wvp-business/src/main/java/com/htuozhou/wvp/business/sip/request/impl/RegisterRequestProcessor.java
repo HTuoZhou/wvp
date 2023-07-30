@@ -69,7 +69,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         String type = (expires == 0) ? "注销" : "注册";
 
         // log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求",requestAddress,type);
-        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求，请求内容\n{}",requestAddress,type,request);
+        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求,请求内容\n{}",requestAddress,type,request);
 
         // 请求未认证
         AuthorizationHeader authorizationHeader = (AuthorizationHeader) request.getHeader(AuthorizationHeader.NAME);
@@ -77,8 +77,8 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             Response response = getMessageFactory().createResponse(Response.UNAUTHORIZED, request);
             new DigestServerAuthenticationHelper().generateChallenge(getHeaderFactory(), response, sipProperties.getDomain());
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求未认证，回复401",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求未认证，回复401，回复内容\n{}",requestAddress,type,response);
+            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求未认证,回复401",requestAddress,type);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求未认证,回复401,回复内容\n{}",requestAddress,type,response);
 
             return;
         }
@@ -87,8 +87,8 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         if (!new DigestServerAuthenticationHelper().doAuthenticatePlainTextPassword(request,sipProperties.getPassword())) {
             Response response = getMessageFactory().createResponse(Response.FORBIDDEN, request);
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求密码不正确，回复403",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求密码不正确，回复403，回复内容\n{}",requestAddress,type,response);
+            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求密码不正确,回复403",requestAddress,type);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求密码不正确,回复403,回复内容\n{}",requestAddress,type,response);
 
             return;
         }
@@ -96,8 +96,8 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         // 请求已认证且密码正确
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-        // log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确，回复200",requestAddress,type);
-        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确，回复200，回复内容\n{}",requestAddress,type,response);
+        // log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200",requestAddress,type);
+        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200,回复内容\n{}",requestAddress,type,response);
 
         FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
         AddressImpl address = (AddressImpl) fromHeader.getAddress();
