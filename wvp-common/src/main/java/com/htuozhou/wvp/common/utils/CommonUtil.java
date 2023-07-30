@@ -8,7 +8,6 @@ import com.htuozhou.wvp.common.service.I18nService;
 import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Enumeration;
 
 /**

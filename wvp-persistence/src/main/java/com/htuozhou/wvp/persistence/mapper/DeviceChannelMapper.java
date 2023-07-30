@@ -1,7 +1,7 @@
 package com.htuozhou.wvp.persistence.mapper;
 
-import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 
 /**
  * <p>

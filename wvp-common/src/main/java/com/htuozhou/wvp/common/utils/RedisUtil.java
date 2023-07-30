@@ -1,9 +1,9 @@
-package com.htuozhou.wvp.persistence.utils;
+package com.htuozhou.wvp.common.utils;
 
+import cn.hutool.core.collection.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -68,12 +68,12 @@ public class RedisUtil {
      * @param key 可以传一个值 或多个
      */
     @SuppressWarnings("unchecked")
-    public void del(String... key) {
+    public void delete(String... key) {
         if (key != null && key.length > 0) {
             if (key.length == 1) {
                 redisTemplate.delete(key[0]);
             } else {
-                redisTemplate.delete(CollectionUtils.arrayToList(key));
+                redisTemplate.delete(CollectionUtil.list(false,key));
             }
         }
     }
@@ -569,6 +569,21 @@ public class RedisUtil {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    /**
+     * 移除key
+     * @param key
+     * @return
+     */
+    public Object lRemove(String key) {
+        try {
+            Object o = redisTemplate.opsForList().leftPop(key);
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

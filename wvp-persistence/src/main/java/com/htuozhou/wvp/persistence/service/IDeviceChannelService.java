@@ -1,7 +1,7 @@
 package com.htuozhou.wvp.persistence.service;
 
-import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 
 /**
  * <p>

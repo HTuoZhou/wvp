@@ -5,7 +5,7 @@ import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
-import com.htuozhou.wvp.business.util.XmlUtils;
+import com.htuozhou.wvp.common.utils.XmlUtil;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
@@ -56,10 +56,10 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
         // log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200",requestAddress);
         log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200，回复内容\n{}",requestAddress,response);
 
-        deviceBO.setName(XmlUtils.getText(rootElement, "DeviceName"));
-        deviceBO.setManufacturer(XmlUtils.getText(rootElement, "Manufacturer"));
-        deviceBO.setModel(XmlUtils.getText(rootElement, "Model"));
-        deviceBO.setFirmware(XmlUtils.getText(rootElement, "Firmware"));
+        deviceBO.setName(XmlUtil.getText(rootElement, "DeviceName"));
+        deviceBO.setManufacturer(XmlUtil.getText(rootElement, "Manufacturer"));
+        deviceBO.setModel(XmlUtil.getText(rootElement, "Model"));
+        deviceBO.setFirmware(XmlUtil.getText(rootElement, "Firmware"));
         sipService.saveOrUpdateDevice(deviceBO);
     }
 }

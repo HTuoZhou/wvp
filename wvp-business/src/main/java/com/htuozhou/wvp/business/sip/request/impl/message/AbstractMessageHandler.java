@@ -2,7 +2,7 @@ package com.htuozhou.wvp.business.sip.request.impl.message;
 
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
-import com.htuozhou.wvp.business.util.XmlUtils;
+import com.htuozhou.wvp.common.utils.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Element;
 
@@ -26,7 +26,7 @@ public abstract class AbstractMessageHandler extends AbstractSIPRequestProcessor
 
     @Override
     public void handForDevice(RequestEvent requestEvent, DeviceBO deviceBO, Element rootElement) {
-        String cmdType = XmlUtils.getText(rootElement, "CmdType");
+        String cmdType = XmlUtil.getText(rootElement, "CmdType");
         IMessageHandler messageHandler = messageHandlerMap.get(cmdType);
         if (Objects.isNull(messageHandler)) {
             log.warn("[SIP MESSAGE {} :{}] 暂不支持", rootElement.getName().toUpperCase(),cmdType.toUpperCase());

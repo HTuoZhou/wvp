@@ -1,7 +1,6 @@
 package com.htuozhou.wvp.business.sip.request.impl;
 
 import com.htuozhou.wvp.business.bo.DeviceBO;
-import com.htuozhou.wvp.business.constant.SIPConstant;
 import com.htuozhou.wvp.business.properties.SIPProperties;
 import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.DigestServerAuthenticationHelper;
@@ -10,6 +9,7 @@ import com.htuozhou.wvp.business.sip.SIPProcessorObserver;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.ISIPRequestProcessor;
+import com.htuozhou.wvp.common.constant.SIPConstant;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.address.AddressImpl;
 import gov.nist.javax.sip.address.SipUri;

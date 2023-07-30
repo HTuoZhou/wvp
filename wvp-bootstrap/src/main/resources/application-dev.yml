@@ -11,14 +11,14 @@ spring:
   # mysql数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.31.8:3306/wvpDb?serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8
+    url: jdbc:mysql://192.168.31.193:3306/wvp_db
     username: root
     password: 123456
   # redis配置
   cache:
     type: redis
   redis:
-    host: 192.168.31.8
+    host: 192.168.31.193
     port: 6379
     password: 123456
     database: 0
@@ -33,7 +33,7 @@ mybatis-plus:
 # sip服务配置
 sip:
   # 本机的ip
-  ip: 192.168.31.6
+  ip: 192.168.31.193
   # sip服务监听的端口
   port: 5060
   # 根据国标6.1.2中规定，domain宜采用ID统一编码的前十位编码。国标附录D中定义前8位为中心编码（由省级、市级、区级、基层编号组成，参照GB/T 2260-2007）
@@ -49,20 +49,20 @@ sip:
   # 是否存储alarm信息
   alarm: false
 
-# zlm服务器配置
+# zlm服务配置
 zlm:
   # zlm服务器唯一id，用于触发hook时区别是哪台服务器,general.mediaServerId
   media_server_id: FQ3TF8yT83wh5Wvz
   # zlm服务器的hook.admin_params=secret
-  secret: 035c73f7-bb6b-4889-a715-d9eb2d1925cc
+  secret: 50c343b8-463e-4981-94c5-b1fed371e877
   # zlm服务器ip
-  ip: 192.168.31.8
+  ip: 192.168.31.193
   # 返回流地址ip
-  stream-ip: 192.168.31.8
+  stream-ip: 192.168.31.193
   # 国标信令中使用的ip，此ip为摄像机可以访问到的ip
-  sdp-ip: 192.168.31.6
+  sdp-ip: 192.168.31.193
   # zlm服务器的hook所使用的ip
-  hook-ip: 192.168.31.6
+  hook-ip: 192.168.31.193
   # zlm服务器的http.port
   http-port: 8080
   # zlm服务器的http.sslport

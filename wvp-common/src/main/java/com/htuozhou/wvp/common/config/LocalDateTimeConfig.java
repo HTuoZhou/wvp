@@ -1,7 +1,7 @@
 package com.htuozhou.wvp.common.config;
 
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.htuozhou.wvp.common.constant.LocalDateTimeConstant;
+import com.htuozhou.wvp.common.utils.DateUtil;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  * @date 2023/2/2
  */
 @Configuration
-public class LocalDateTimeSerializerConfig {
+public class LocalDateTimeConfig {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
@@ -22,7 +22,7 @@ public class LocalDateTimeSerializerConfig {
     }
 
     private LocalDateTimeSerializer localDateTimeSerializer(){
-        return new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(LocalDateTimeConstant.NORMAL_PATTERN));
+        return new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DateUtil.PATTERN));
     }
 
 }

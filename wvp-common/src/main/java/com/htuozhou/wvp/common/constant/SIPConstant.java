@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.constant;
+package com.htuozhou.wvp.common.constant;
 
 /**
  * @author hanzai

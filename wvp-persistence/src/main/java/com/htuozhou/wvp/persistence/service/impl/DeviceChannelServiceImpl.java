@@ -1,9 +1,9 @@
 package com.htuozhou.wvp.persistence.service.impl;
 
-import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
-import com.htuozhou.wvp.persistence.mapper.DeviceChannelMapper;
-import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.htuozhou.wvp.persistence.mapper.DeviceChannelMapper;
+import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
+import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.util;
+package com.htuozhou.wvp.common.utils;
 
 import org.dom4j.Element;
 
@@ -6,7 +6,7 @@ import org.dom4j.Element;
  * @author hanzai
  * @date 2023/4/15
  */
-public class XmlUtils {
+public class XmlUtil {
 
     public static String getText(Element em, String tag) {
         if (null == em) {

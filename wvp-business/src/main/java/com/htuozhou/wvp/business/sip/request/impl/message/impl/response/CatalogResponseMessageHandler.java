@@ -9,7 +9,7 @@ import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
-import com.htuozhou.wvp.business.util.XmlUtils;
+import com.htuozhou.wvp.common.utils.XmlUtil;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
@@ -71,11 +71,11 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
             Element element = deviceListIterator.next();
 
             DeviceChannelBO deviceChannelBO = new DeviceChannelBO();
-            String channelId = XmlUtils.getText(element, "DeviceID");
+            String channelId = XmlUtil.getText(element, "DeviceID");
             deviceChannelBO.setDeviceId(deviceBO.getDeviceId());
             deviceChannelBO.setChannelId(channelId);
-            deviceChannelBO.setName(XmlUtils.getText(element, "Name"));
-            String civilCode = XmlUtils.getText(element, "CivilCode");
+            deviceChannelBO.setName(XmlUtil.getText(element, "Name"));
+            String civilCode = XmlUtil.getText(element, "CivilCode");
             deviceChannelBO.setCivilCode(civilCode);
             ChannelTypeEnum channelType = ChannelTypeEnum.Other;
             if (channelId.length() <= 8) {
@@ -116,8 +116,8 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
                 deviceChannelBO.setParental(1);
             }
 
-            String parentId = XmlUtils.getText(element, "ParentID");
-            String businessGroupId = XmlUtils.getText(element, "BusinessGroupID");
+            String parentId = XmlUtil.getText(element, "ParentID");
+            String businessGroupId = XmlUtil.getText(element, "BusinessGroupID");
             if (StrUtil.isNotBlank(parentId)) {
                 if (parentId.contains("/")) {
                     String lastParentId = parentId.substring(parentId.lastIndexOf("/") + 1);
@@ -140,7 +140,7 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
                 deviceChannelBO.setParental(1);
             }
 
-            String status = XmlUtils.getText(element, "Status");
+            String status = XmlUtil.getText(element, "Status");
             // ONLINE OFFLINE HIKVISION DS-7716N-E4 NVR的兼容性处理
             if (status.equals("ON") || status.equals("On") || status.equals("ONLINE") || status.equals("OK")) {
                 deviceChannelBO.setStatus(1);
@@ -149,7 +149,7 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
                 deviceChannelBO.setStatus(0);
             }
             // 识别自带的目录标识
-            String parental = XmlUtils.getText(element, "Parental");
+            String parental = XmlUtil.getText(element, "Parental");
             // 由于海康会错误的发送65535作为这里的取值,所以这里除非是0否则认为是1
             if (StrUtil.isNotBlank(parental) && parental.length() == 1 && Integer.parseInt(parental) == 0) {
                 deviceChannelBO.setParental(0);
@@ -157,56 +157,56 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
                 deviceChannelBO.setParental(1);
             }
 
-            deviceChannelBO.setManufacturer(XmlUtils.getText(element, "Manufacturer"));
-            deviceChannelBO.setModel(XmlUtils.getText(element, "Model"));
-            deviceChannelBO.setOwner(XmlUtils.getText(element, "Owner"));
-            deviceChannelBO.setCertNum(XmlUtils.getText(element, "CertNum"));
-            deviceChannelBO.setBlock(XmlUtils.getText(element, "Block"));
-            deviceChannelBO.setAddress(XmlUtils.getText(element, "Address"));
-            deviceChannelBO.setPassword(XmlUtils.getText(element, "Password"));
+            deviceChannelBO.setManufacturer(XmlUtil.getText(element, "Manufacturer"));
+            deviceChannelBO.setModel(XmlUtil.getText(element, "Model"));
+            deviceChannelBO.setOwner(XmlUtil.getText(element, "Owner"));
+            deviceChannelBO.setCertNum(XmlUtil.getText(element, "CertNum"));
+            deviceChannelBO.setBlock(XmlUtil.getText(element, "Block"));
+            deviceChannelBO.setAddress(XmlUtil.getText(element, "Address"));
+            deviceChannelBO.setPassword(XmlUtil.getText(element, "Password"));
 
-            String safetyWay = XmlUtils.getText(element, "SafetyWay");
+            String safetyWay = XmlUtil.getText(element, "SafetyWay");
             if (StrUtil.isBlank(safetyWay)) {
                 deviceChannelBO.setSafetyWay(0);
             } else {
                 deviceChannelBO.setSafetyWay(Integer.parseInt(safetyWay));
             }
 
-            String registerWay = XmlUtils.getText(element, "RegisterWay");
+            String registerWay = XmlUtil.getText(element, "RegisterWay");
             if (StrUtil.isBlank(registerWay)) {
                 deviceChannelBO.setRegisterWay(1);
             } else {
                 deviceChannelBO.setRegisterWay(Integer.parseInt(registerWay));
             }
 
-            if (StrUtil.isBlank(XmlUtils.getText(element, "Certifiable"))) {
+            if (StrUtil.isBlank(XmlUtil.getText(element, "Certifiable"))) {
                 deviceChannelBO.setCertifiable(0);
             } else {
-                deviceChannelBO.setCertifiable(Integer.parseInt(XmlUtils.getText(element, "Certifiable")));
+                deviceChannelBO.setCertifiable(Integer.parseInt(XmlUtil.getText(element, "Certifiable")));
             }
 
-            if (StrUtil.isBlank(XmlUtils.getText(element, "ErrCode"))) {
+            if (StrUtil.isBlank(XmlUtil.getText(element, "ErrCode"))) {
                 deviceChannelBO.setErrCode(0);
             } else {
-                deviceChannelBO.setErrCode(Integer.parseInt(XmlUtils.getText(element, "ErrCode")));
+                deviceChannelBO.setErrCode(Integer.parseInt(XmlUtil.getText(element, "ErrCode")));
             }
 
-            deviceChannelBO.setEndTime(XmlUtils.getText(element, "EndTime"));
-            deviceChannelBO.setSecrecy(Integer.valueOf(XmlUtils.getText(element, "Secrecy")));
-            deviceChannelBO.setIpAddress(XmlUtils.getText(element, "IPAddress"));
-            if (StrUtil.isBlank(XmlUtils.getText(element, "Port"))) {
+            deviceChannelBO.setEndTime(XmlUtil.getText(element, "EndTime"));
+            deviceChannelBO.setSecrecy(Integer.valueOf(XmlUtil.getText(element, "Secrecy")));
+            deviceChannelBO.setIpAddress(XmlUtil.getText(element, "IPAddress"));
+            if (StrUtil.isBlank(XmlUtil.getText(element, "Port"))) {
                 deviceChannelBO.setPort(0);
             } else {
-                deviceChannelBO.setPort(Integer.parseInt(XmlUtils.getText(element, "Port")));
+                deviceChannelBO.setPort(Integer.parseInt(XmlUtil.getText(element, "Port")));
             }
 
-            String longitude = XmlUtils.getText(element, "Longitude");
+            String longitude = XmlUtil.getText(element, "Longitude");
             if (StrUtil.isNotBlank(longitude) && NumberUtil.isDouble(longitude)) {
                 deviceChannelBO.setLongitude(Double.parseDouble(longitude));
             } else {
                 deviceChannelBO.setLongitude(0.00);
             }
-            String latitude = XmlUtils.getText(element, "Latitude");
+            String latitude = XmlUtil.getText(element, "Latitude");
             if (StrUtil.isNotBlank(latitude) && NumberUtil.isDouble(latitude)) {
                 deviceChannelBO.setLatitude(Double.parseDouble(latitude));
             } else {
@@ -214,16 +214,16 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
             }
             deviceChannelBO.setGpsTime(LocalDateTime.now());
 
-            if (StrUtil.isBlank(XmlUtils.getText(element, "PTZType"))) {
+            if (StrUtil.isBlank(XmlUtil.getText(element, "PTZType"))) {
                 //兼容INFO中的信息
                 Element info = element.element("Info");
-                if (StrUtil.isBlank((XmlUtils.getText(info, "PTZType")))) {
+                if (StrUtil.isBlank((XmlUtil.getText(info, "PTZType")))) {
                     deviceChannelBO.setPtzType(0);
                 } else {
-                    deviceChannelBO.setPtzType(Integer.parseInt(XmlUtils.getText(info, "PTZType")));
+                    deviceChannelBO.setPtzType(Integer.parseInt(XmlUtil.getText(info, "PTZType")));
                 }
             } else {
-                deviceChannelBO.setPtzType(Integer.parseInt(XmlUtils.getText(element, "PTZType")));
+                deviceChannelBO.setPtzType(Integer.parseInt(XmlUtil.getText(element, "PTZType")));
             }
 
             deviceChannelBOS.add(deviceChannelBO);
