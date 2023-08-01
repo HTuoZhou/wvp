@@ -2,8 +2,8 @@ package com.htuozhou.wvp.business.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.htuozhou.wvp.business.bean.MediaServerItem;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
-import com.htuozhou.wvp.business.properties.ZLMProperties;
 import com.htuozhou.wvp.business.service.IZLMService;
 import com.htuozhou.wvp.business.task.DynamicTask;
 import com.htuozhou.wvp.business.zlm.ZLMManager;
@@ -33,55 +33,60 @@ public class ZLMServiceImpl implements IZLMService {
     private IMediaServerService mediaServerService;
 
     @Autowired
-    private ZLMProperties zlmProperties;
+    private DynamicTask dynamicTask;
 
     @Autowired
     private ZLMManager zlmManager;
 
-    @Autowired
-    private DynamicTask dynamicTask;
+    @Override
+    public MediaServerBO getDefaultMediaServer() {
+        MediaServerPO po = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(MediaServerPO::getDefaultServer, 1));
+        if (Objects.nonNull(po)) {
+            return MediaServerBO.po2bo(po);
+        }
+        return null;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveZlmServer() {
-        MediaServerPO po = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
-                .eq(MediaServerPO::getDefaultServer, 1));
-        MediaServerBO bo = Objects.isNull(po) ? new MediaServerBO() : MediaServerBO.po2bo(po);
-        zlmProperties.properties2bo(bo);
-
+    public void saveOrUpdateMediaServer(MediaServerBO bo) {
         mediaServerService.saveOrUpdate(bo.bo2po());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void online(String mediaServerId) {
-        mediaServerService.update(Wrappers.<MediaServerPO>lambdaUpdate()
-                .eq(MediaServerPO::getMediaServerId,mediaServerId)
-                .set(MediaServerPO::getStatus, 1));
+        MediaServerPO po = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(MediaServerPO::getMediaServerId, mediaServerId));
+        po.setStatus(1);
+        mediaServerService.updateById(po);
+        refreshKeepAlive(mediaServerId,po.getHookAliveInterval());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void setKeepAliveTime(String mediaServerId) {
-        mediaServerService.update(Wrappers.<MediaServerPO>lambdaUpdate()
-                .eq(MediaServerPO::getMediaServerId,mediaServerId)
-                .set(MediaServerPO::getStatus, 1)
-                .set(MediaServerPO::getHookAliveTime, LocalDateTime.now()));
+        MediaServerPO po = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(MediaServerPO::getMediaServerId, mediaServerId));
+        po.setStatus(1);
+        po.setHookAliveTime(LocalDateTime.now());
+        mediaServerService.updateById(po);
+        refreshKeepAlive(mediaServerId,po.getHookAliveInterval());
+    }
+
+    @Override
+    public void refreshKeepAlive(String mediaServerId,Integer hookAliveInterval) {
+        String key = String.format(DynamicTaskConstant.ZLM_STATUS, mediaServerId);
+        dynamicTask.startDelay(key, new ZLMStatusCheckRunner(mediaServerId), hookAliveInterval + 5);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void offline(String mediaServerId) {
-        if (!zlmManager.getServerConfig()){
-            log.info("[ZLM MEDIA SERVER ID:{}] 心跳检测离线", zlmProperties.getMediaServerId());
-
-            mediaServerService.update(Wrappers.<MediaServerPO>lambdaUpdate()
-                    .eq(MediaServerPO::getMediaServerId,mediaServerId)
-                    .set(MediaServerPO::getStatus, 0));
-        } else {
-            String key = String.format(DynamicTaskConstant.ZLM_STATUS, mediaServerId);
-            dynamicTask.startDelay(key, () -> offline(mediaServerId), zlmProperties.getHookAliveInterval() + 5);
-        }
+        mediaServerService.update(Wrappers.<MediaServerPO>lambdaUpdate()
+                .eq(MediaServerPO::getMediaServerId,mediaServerId)
+                .set(MediaServerPO::getStatus, 0));
     }
 
     /**
@@ -96,5 +101,25 @@ public class ZLMServiceImpl implements IZLMService {
         }
 
         return pos.stream().map(MediaServerBO::po2bo).collect(Collectors.toList());
+    }
+
+    class ZLMStatusCheckRunner implements Runnable{
+
+        private String mediaServerId;
+
+        public ZLMStatusCheckRunner(String mediaServerId){
+            this.mediaServerId = mediaServerId;
+        }
+
+        @Override
+        public void run() {
+            MediaServerItem mediaServerItem = zlmManager.getServerConfig(mediaServerId);
+            if(Objects.nonNull(mediaServerItem)){
+                refreshKeepAlive(mediaServerItem.getMediaServerId(), Integer.valueOf(mediaServerItem.getHookAliveInterval()));
+            } else {
+                log.info("[ZLM MEDIA SERVER ID:{}] 心跳检测离线", mediaServerId);
+                offline(mediaServerId);
+            }
+        }
     }
 }

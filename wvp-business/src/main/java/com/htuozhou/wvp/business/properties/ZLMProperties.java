@@ -1,13 +1,8 @@
 package com.htuozhou.wvp.business.properties;
 
-import com.htuozhou.wvp.business.bo.MediaServerBO;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.BeanUtils;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 /**
  * @author hanzai
@@ -15,8 +10,7 @@ import java.util.Objects;
  */
 @Component
 @ConfigurationProperties(prefix = "zlm")
-@Getter
-@Setter
+@Data
 public class ZLMProperties {
 
     private String mediaServerId;
@@ -35,17 +29,5 @@ public class ZLMProperties {
     private String rtpPortRange;
     private Integer rtpProxyPort;
     private Integer hookAliveInterval;
-
-    public MediaServerBO properties2bo(MediaServerBO bo) {
-        if (Objects.isNull(bo)) {
-            bo = new MediaServerBO();
-        }
-
-        BeanUtils.copyProperties(this,bo);
-        bo.setRtpEnable(this.getRtpEnable() ? 1 : 0);
-        bo.setDefaultServer(1);
-
-        return bo;
-    }
 
 }

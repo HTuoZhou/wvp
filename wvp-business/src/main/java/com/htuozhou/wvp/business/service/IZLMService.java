@@ -10,11 +10,15 @@ import java.util.List;
  */
 public interface IZLMService {
 
-    void saveZlmServer();
+    MediaServerBO getDefaultMediaServer();
+
+    void saveOrUpdateMediaServer(MediaServerBO bo);
 
     void online(String mediaServerId);
 
     void setKeepAliveTime(String mediaServerId);
+
+    void refreshKeepAlive(String mediaServerId,Integer hookAliveInterval);
 
     void offline(String mediaServerId);
 

@@ -51,7 +51,7 @@ public class MediaServerVO {
 
     private Integer rtmpSslPort;
 
-    private Integer rtpEnable;
+    private Boolean rtpEnable;
 
     private String rtpPortRange;
 
@@ -70,12 +70,17 @@ public class MediaServerVO {
     /**
      * 是否在线（0、离线 1、在线）
      */
-    private Integer status;
+    private Boolean status;
 
     /**
      * 是否默认服务器（0、否 1、是）
      */
-    private Integer defaultServer;
+    private Boolean defaultServer;
+
+    /**
+     * 是否自动配置流媒体服务
+     */
+    private Boolean autoConfig = Boolean.TRUE;
 
     /**
      * 创建时间
@@ -100,6 +105,9 @@ public class MediaServerVO {
     public static MediaServerVO bo2vo(MediaServerBO bo){
         MediaServerVO vo = new MediaServerVO();
         BeanUtils.copyProperties(bo,vo);
+        vo.setRtpEnable(bo.getRtpEnable() == 1 ? Boolean.TRUE : Boolean.FALSE);
+        vo.setStatus(bo.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE);
+        vo.setDefaultServer(bo.getDefaultServer() == 1 ? Boolean.TRUE : Boolean.FALSE);
 
         return vo;
     }
