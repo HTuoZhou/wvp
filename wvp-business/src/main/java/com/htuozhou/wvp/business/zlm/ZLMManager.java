@@ -1,16 +1,14 @@
 package com.htuozhou.wvp.business.zlm;
 
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.htuozhou.wvp.business.bean.MediaServerItem;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.common.constant.CommonConstant;
 import com.htuozhou.wvp.common.constant.ZLMConstant;
 import com.htuozhou.wvp.common.utils.CommonUtil;
-import com.htuozhou.wvp.persistence.po.MediaServerPO;
 import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,24 +36,19 @@ public class ZLMManager {
     /**
      * 获取服务器配置
      */
-    public MediaServerItem getServerConfig(String mediaServerId) {
+    public MediaServerItem getServerConfig(MediaServerBO bo) {
         try {
-            MediaServerBO bo = MediaServerBO.po2bo(mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
-                    .eq(MediaServerPO::getMediaServerId, mediaServerId)));
             Map<String, Object> param = new HashMap<>();
             param.put("secret",bo.getSecret());
             ZLMResult result = postForm(getZLMUrl(bo,ZLMConstant.GET_SERVER_CONFIG),param);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM MEDIA SERVER ID:{}] 获取服务器配置成功", mediaServerId);
+                log.info("[ZLM MEDIA SERVER ADDRESS {}] 获取服务器配置成功", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
             }
-            JSONArray jsonArray = JSONUtil.parseArray(result.getData());
-            JSONObject jsonObject = JSONUtil.parseObj(JSONUtil.toJsonStr(jsonArray.get(0)));
-            MediaServerItem mediaServerItem = new MediaServerItem();
-            mediaServerItem.setMediaServerId(String.valueOf(jsonObject.get("general.mediaServerId")));
-            mediaServerItem.setHookAliveInterval((String) jsonObject.get("hook.alive_interval"));
-            return mediaServerItem;
+            JSONArray jsonArray = JSON.parseArray(JSON.toJSONString(result.getData()));
+            return JSON.parseObject(JSON.toJSONString(jsonArray.get(0)), MediaServerItem.class);
         } catch (Exception e) {
-            log.error("[ZLM MEDIA SERVER ID:{}] 获取服务器配置失败,请确认ZLM是否启动", mediaServerId);
+            e.printStackTrace();
+            log.error("[ZLM MEDIA SERVER ADDRESS {}] 获取服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
         }
         return null;
     }
@@ -77,8 +70,8 @@ public class ZLMManager {
         param.put("secret",bo.getSecret());
         param.put("api.secret", bo.getSecret());
         param.put("general.mediaServerId", bo.getMediaServerId());
-        param.put("hook.alive_interval", bo.getHookAliveInterval());
         param.put("hook.enable", "1");
+        param.put("hook.alive_interval", bo.getHookAliveInterval());
         param.put("hook.on_flow_report", String.format("%s/on_flow_report", hookPrefix));
         param.put("hook.on_http_access", String.format("%s/on_http_access", hookPrefix));
         param.put("hook.on_play", String.format("%s/on_play", hookPrefix));
@@ -95,33 +88,38 @@ public class ZLMManager {
         param.put("hook.on_stream_changed", String.format("%s/on_stream_changed", hookPrefix));
         param.put("hook.on_stream_none_reader", String.format("%s/on_stream_none_reader", hookPrefix));
         param.put("hook.on_stream_not_found", String.format("%s/on_stream_not_found", hookPrefix));
+        param.put("rtp_proxy.port_range", bo.getRtpPortRange());
 
         try {
             ZLMResult result = postForm(getZLMUrl(bo,ZLMConstant.SET_SERVER_CONFIG), param);
             if (Objects.nonNull(result) && result.getCode() == 0) {
                 if (result.getChanged() > 0) {
-                    log.info("[ZLM MEDIA SERVER ID:{}] 设置服务器配置成功,存在配置变更,重启以保证配置生效", bo.getMediaServerId());
-                    restartServer(bo.getMediaServerId());
+                    log.info("[ZLM MEDIA SERVER ADDRESS {}] 设置服务器配置成功,存在配置变更,重启以保证配置生效", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
+                    restartServer(bo);
                 } else {
-                    log.info("[ZLM MEDIA SERVER ID:{}] 设置服务器配置成功,不存在配置变更", bo.getMediaServerId());
+                    log.info("[ZLM MEDIA SERVER ADDRESS {}] 设置服务器配置成功,不存在配置变更", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
                 }
             }
         } catch (Exception e) {
-            log.error("[ZLM MEDIA SERVER ID:{}] 设置服务器配置失败,请确认ZLM是否启动", bo.getMediaServerId());
+            e.printStackTrace();
+            log.error("[ZLM MEDIA SERVER ADDRESS {}] 设置服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
         }
     }
 
     /**
      * 重启服务器,只有Daemon方式才能重启,否则是直接关闭
      */
-    public void restartServer(String mediaServerId) {
+    public void restartServer(MediaServerBO bo) {
         try {
-            ZLMResult result = postForm(ZLMConstant.RESTART_SERVER, null);
+            Map<String, Object> param = new HashMap<>();
+            param.put("secret",bo.getSecret());
+            ZLMResult result = postForm(getZLMUrl(bo,ZLMConstant.RESTART_SERVER),param);
             if (Objects.nonNull(result) && result.getCode() == 0) {
-                log.info("[ZLM MEDIA SERVER ID:{}] 重启服务器成功,{}", mediaServerId, result.getMsg());
+                log.info("[ZLM MEDIA SERVER ADDRESS {}] 重启服务器成功,{}", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()), result.getMsg());
             }
         } catch (Exception e) {
-            log.error("[ZLM MEDIA SERVER ID:{}] 重启服务器失败,请确认ZLM是否启动", mediaServerId);
+            e.printStackTrace();
+            log.error("[ZLM MEDIA SERVER ADDRESS {}] 重启服务器失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
         }
     }
 

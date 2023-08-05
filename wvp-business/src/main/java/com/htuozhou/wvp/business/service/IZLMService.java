@@ -12,13 +12,15 @@ public interface IZLMService {
 
     MediaServerBO getDefaultMediaServer();
 
+    MediaServerBO getMediaServer(String mediaServerId);
+
     void saveOrUpdateMediaServer(MediaServerBO bo);
 
     void online(String mediaServerId);
 
     void setKeepAliveTime(String mediaServerId);
 
-    void refreshKeepAlive(String mediaServerId,Integer hookAliveInterval);
+    void refreshKeepAlive(MediaServerBO bo);
 
     void offline(String mediaServerId);
 
@@ -27,4 +29,27 @@ public interface IZLMService {
      * @return
      */
     List<MediaServerBO> getMediaServerList();
+
+    /**
+     * 测试流媒体服务
+     * @param ip
+     * @param port
+     * @param secret
+     * @return
+     */
+    MediaServerBO check(String ip, Integer port, String secret);
+
+    /**
+     * 编辑流媒体服务
+     * @param bo
+     * @return
+     */
+    Boolean edit(MediaServerBO bo);
+
+    /**
+     * 删除流媒体服务
+     * @param id
+     * @return
+     */
+    Boolean delete(Integer id);
 }

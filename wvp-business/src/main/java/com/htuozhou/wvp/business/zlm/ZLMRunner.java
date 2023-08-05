@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,10 +35,18 @@ public class ZLMRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         MediaServerBO bo = Optional.ofNullable(zlmService.getDefaultMediaServer()).orElse(new MediaServerBO());
         BeanUtils.copyProperties(zlmProperties,bo);
-        bo.setRtpEnable(zlmProperties.getRtpEnable() ? 1 : 0);
-        bo.setDefaultServer(1);
-        zlmService.saveOrUpdateMediaServer(bo);
+        bo.setDefaultServer(Boolean.TRUE);
+        bo.setStatus(Boolean.TRUE);
         zlmManager.setServerConfig(bo);
-        zlmService.online(bo.getMediaServerId());
+        zlmService.saveOrUpdateMediaServer(bo);
+
+        List<MediaServerBO> bos = zlmService.getMediaServerList();
+        for (MediaServerBO mediaServerBO : bos) {
+            if (mediaServerBO.getDefaultServer()){
+                continue;
+            }
+
+            zlmService.online(bo.getMediaServerId());
+        }
     }
 }

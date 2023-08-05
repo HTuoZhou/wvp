@@ -19,17 +19,17 @@ public class MediaServerBO {
     private Integer id;
 
     /**
-     * zlm流媒体服务器id
+     * 流媒体服务器id
      */
     private String mediaServerId;
 
     /**
-     * zlm流媒体服务器secret
+     * 流媒体服务器secret
      */
     private String secret;
 
     /**
-     * zlm流媒体服务器ip
+     * 流媒体服务器ip
      */
     private String ip;
 
@@ -51,7 +51,7 @@ public class MediaServerBO {
 
     private Integer rtmpSslPort;
 
-    private Integer rtpEnable;
+    private Boolean rtpEnable;
 
     private String rtpPortRange;
 
@@ -63,19 +63,19 @@ public class MediaServerBO {
     private LocalDateTime hookAliveTime;
 
     /**
-     * zlm hook 心跳间隔时间（秒）
+     * 心跳间隔时间（秒）
      */
     private Integer hookAliveInterval;
 
     /**
-     * 是否在线（0、离线 1、在线）
+     * 是否在线
      */
-    private Integer status;
+    private Boolean status;
 
     /**
-     * 是否默认服务器（0、否 1、是）
+     * 是否默认服务器
      */
-    private Integer defaultServer;
+    private Boolean defaultServer;
 
     /**
      * 创建时间

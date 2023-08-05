@@ -77,7 +77,7 @@ zlm:
   rtmp-ssl-port: 0
   # 启用多端口模式, 多端口模式使用端口区分每路流,兼容性更好。 单端口使用流的ssrc区分, 点播超时建议使用多端口测试
   rtp-enable: true # 是否启用多端口模式, 开启后会在port-range范围内选择端口用于媒体流传输
-  rtp-port-range: 30000,30500 # 端口范围 在此范围内选择端口用于媒体流传输, 必须提前在zlm上配置该属性,不然自动配置此属性可能不成功
+  rtp-port-range: 30000-30500 # 端口范围 在此范围内选择端口用于媒体流传输, 必须提前在zlm上配置该属性,不然自动配置此属性可能不成功
   # zlm服务器的rtp_proxy.port
   rtp-proxy-port: 10000
   hook_alive_interval: 60

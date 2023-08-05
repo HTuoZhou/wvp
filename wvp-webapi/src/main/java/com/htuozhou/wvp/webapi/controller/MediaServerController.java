@@ -6,9 +6,7 @@ import com.htuozhou.wvp.business.service.IZLMService;
 import com.htuozhou.wvp.common.result.ApiFinalResult;
 import com.htuozhou.wvp.webapi.vo.MediaServerVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +37,36 @@ public class MediaServerController {
         return ApiFinalResult.success(bos.stream().map(MediaServerVO::bo2vo).collect(Collectors.toList()));
     }
 
+    /**
+     * 测试流媒体服务
+     * @param ip
+     * @param port
+     * @param secret
+     * @return
+     */
+    @GetMapping("/check")
+    public ApiFinalResult<MediaServerVO> check(String ip,Integer port,String secret){
+        return ApiFinalResult.success(MediaServerVO.bo2vo(zlmService.check(ip,port,secret)));
+    }
 
+    /**
+     * 编辑流媒体服务
+     * @param vo
+     * @return
+     */
+    @PostMapping("/edit")
+    public ApiFinalResult<Boolean> edit(@RequestBody MediaServerVO vo){
+        return ApiFinalResult.success(zlmService.edit(vo.vo2bo()));
+    }
+
+    /**
+     * 删除流媒体服务
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/delete/{id}")
+    public ApiFinalResult<Boolean> delete(@PathVariable("id") Integer id){
+        return ApiFinalResult.success(zlmService.delete(id));
+    }
 
 }

@@ -31,7 +31,11 @@ public enum ResultCodeEnum {
      */
     IMPORT_DATA_ERROR(200004,"导入数据不正确"),
 
-    QUARTZ_JOB_EXIST(200005,"当前定时任务已存在");
+    ZLM_CONNECT_EXIST(200005,"当前连接已存在"),
+
+    ZLM_CONNECT_ERROR(200006,"当前连接失败"),
+
+    ZLM_ID_EXIST(200007,"流媒体服务ID已存在");
 
     /**
      * 状态码

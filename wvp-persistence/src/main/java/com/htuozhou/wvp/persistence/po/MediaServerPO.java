@@ -31,19 +31,19 @@ public class MediaServerPO implements Serializable {
     private Integer id;
 
     /**
-     * zlm流媒体服务器id
+     * 流媒体服务器id
      */
     @TableField("media_server_id")
     private String mediaServerId;
 
     /**
-     * zlm流媒体服务器secret
+     * 流媒体服务器secret
      */
     @TableField("secret")
     private String secret;
 
     /**
-     * zlm流媒体服务器ip
+     * 流媒体服务器ip
      */
     @TableField("ip")
     private String ip;
@@ -76,7 +76,7 @@ public class MediaServerPO implements Serializable {
     private Integer rtmpSslPort;
 
     @TableField("rtp_enable")
-    private Integer rtpEnable;
+    private Boolean rtpEnable;
 
     @TableField("rtp_port_range")
     private String rtpPortRange;
@@ -91,22 +91,22 @@ public class MediaServerPO implements Serializable {
     private LocalDateTime hookAliveTime;
 
     /**
-     * zlm hook 心跳间隔时间（秒）
+     * 心跳间隔时间（秒）
      */
     @TableField("hook_alive_interval")
     private Integer hookAliveInterval;
 
     /**
-     * 是否在线（0、离线 1、在线）
+     * 是否在线
      */
     @TableField("status")
-    private Integer status;
+    private Boolean status;
 
     /**
-     * 是否默认服务器（0、否 1、是）
+     * 是否默认服务器
      */
     @TableField("default_server")
-    private Integer defaultServer;
+    private Boolean defaultServer;
 
     /**
      * 创建时间
