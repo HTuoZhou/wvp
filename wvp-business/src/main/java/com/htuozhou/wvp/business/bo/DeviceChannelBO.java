@@ -13,10 +13,16 @@ import java.time.LocalDateTime;
 @Data
 public class DeviceChannelBO {
 
+
     /**
      * 主键,自增
      */
     private Integer id;
+
+    /**
+     * 设备id
+     */
+    private String deviceId;
 
     /**
      * 通道id
@@ -29,12 +35,12 @@ public class DeviceChannelBO {
     private String name;
 
     /**
-     * 生产厂商
+     * 设备厂商
      */
     private String manufacturer;
 
     /**
-     * 型号
+     * 设备型号
      */
     private String model;
 
@@ -49,9 +55,24 @@ public class DeviceChannelBO {
     private String civilCode;
 
     /**
-     * 警区
+     * 虚拟组织所属的业务分组ID,业务分组根据特定的业务需求制定,一个业务分组包含一组特定的虚拟组织
      */
-    private String block;
+    private String businessGroupId;
+
+    /**
+     * 父设备/区域/系统ID
+     */
+    private String parentId;
+
+    /**
+     * 注册方式（1、符合IETFRFC3261标准的认证注册模式 2、基于口令的双向认证注册模式 3、基于数字证书的双向认证注册模式）
+     */
+    private Integer registerWay;
+
+    /**
+     * 保密属性（0、不涉密 1、涉密）
+     */
+    private Integer secrecy;
 
     /**
      * 安装地址
@@ -59,19 +80,19 @@ public class DeviceChannelBO {
     private String address;
 
     /**
-     * 父级id
+     * 是否有子设备（1、有 0、没有）
      */
-    private String parentId;
+    private Integer parental;
+
+    /**
+     * 警区
+     */
+    private String block;
 
     /**
      * 信令安全模式（0、不采用2、S/MIME签名方式 3、S/MIME加密签名同时采用方式 4、数字摘要方式）
      */
     private Integer safetyWay;
-
-    /**
-     * 注册方式（1、符合IETFRFC3261标准的认证注册模式 2、基于口令的双向认证注册模式 3、基于数字证书的双向认证注册模式）
-     */
-    private Integer registerWay;
 
     /**
      * 证书序列号
@@ -94,11 +115,6 @@ public class DeviceChannelBO {
     private String endTime;
 
     /**
-     * 保密属性（0、不涉密 1、涉密）
-     */
-    private Integer secrecy;
-
-    /**
      * IP地址
      */
     private String ipAddress;
@@ -119,9 +135,9 @@ public class DeviceChannelBO {
     private Integer ptzType;
 
     /**
-     * 0、离线 1、在线
+     * 是否在线
      */
-    private Integer status;
+    private Boolean status;
 
     /**
      * 经度
@@ -139,19 +155,9 @@ public class DeviceChannelBO {
     private String streamId;
 
     /**
-     * 设备id
+     * 是否含有音频
      */
-    private String deviceId;
-
-    /**
-     * 是否有子设备（1、有 0、没有）
-     */
-    private Integer parental;
-
-    /**
-     * 是否含有音频（1、有 0、没有）
-     */
-    private Integer hasAudio;
+    private Boolean hasAudio;
 
     /**
      * 子设备数
@@ -208,11 +214,18 @@ public class DeviceChannelBO {
      */
     private Integer version;
 
-    public static DeviceChannelPO bo2po(DeviceChannelBO bo) {
+    public DeviceChannelPO bo2po(){
         DeviceChannelPO po = new DeviceChannelPO();
-        BeanUtils.copyProperties(bo,po);
+        BeanUtils.copyProperties(this, po);
 
         return po;
+    }
+
+    public static DeviceChannelBO po2vo(DeviceChannelPO po) {
+        DeviceChannelBO bo = new DeviceChannelBO();
+        BeanUtils.copyProperties(po,bo);
+
+        return bo;
     }
 
 }

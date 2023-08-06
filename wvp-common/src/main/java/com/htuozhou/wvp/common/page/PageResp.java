@@ -39,6 +39,19 @@ public class PageResp<T> {
      */
     private List<T> records;
 
+    public static <T, R> PageResp<R> pageBo2Vo(IPage<T> page, Function<? super T, ? extends R> mapper) {
+        PageResp<R> pageResult = new PageResp();
+        pageResult.setTotal((int) page.getTotal());
+        pageResult.setPageSize((int) page.getSize());
+        pageResult.setPageNum((int) page.getCurrent());
+        pageResult.setPages((int) page.getPages());
+        if (Objects.nonNull(page.getRecords()) && CollUtil.isNotEmpty(page.getRecords())) {
+            List<R> collects = page.getRecords().stream().map(mapper).collect(Collectors.toList());
+            pageResult.setRecords(collects);
+        }
+        return pageResult;
+    }
+
     public Integer getTotal() {
         return total;
     }
@@ -77,19 +90,6 @@ public class PageResp<T> {
 
     public void setRecords(List<T> records) {
         this.records = records;
-    }
-
-    public static <T, R> PageResp<R> pageBo2Vo(IPage<T> page, Function<? super T, ? extends R> mapper) {
-        PageResp<R> pageResult = new PageResp();
-        pageResult.setTotal((int) page.getTotal());
-        pageResult.setPageSize((int) page.getSize());
-        pageResult.setPageNum((int) page.getCurrent());
-        pageResult.setPages((int) page.getPages());
-        if (Objects.nonNull(page.getRecords()) && CollUtil.isNotEmpty(page.getRecords())) {
-            List<R> collects = page.getRecords().stream().map(mapper).collect(Collectors.toList());
-            pageResult.setRecords(collects);
-        }
-        return pageResult;
     }
 
 

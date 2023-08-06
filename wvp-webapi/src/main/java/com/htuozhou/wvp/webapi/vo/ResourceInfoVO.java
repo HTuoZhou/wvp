@@ -17,9 +17,9 @@ public class ResourceInfoVO {
     private ResourceBaseInfo push;
     private ResourceBaseInfo proxy;
 
-    public static ResourceInfoVO bo2vo(ResourceInfoBO bo){
+    public static ResourceInfoVO bo2vo(ResourceInfoBO bo) {
         ResourceInfoVO vo = new ResourceInfoVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
     }

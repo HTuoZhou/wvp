@@ -1,11 +1,11 @@
 package com.htuozhou.wvp.business.sip.request.impl.message.impl.response;
 
 import com.htuozhou.wvp.business.bo.DeviceBO;
-import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
 import com.htuozhou.wvp.common.utils.XmlUtil;
+import com.htuozhou.wvp.persistence.service.IDeviceService;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
@@ -35,7 +35,7 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
     private SIPSender sipSender;
 
     @Autowired
-    private ISIPService sipService;
+    private IDeviceService deviceService;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -54,12 +54,13 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
         // log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200",requestAddress);
-        log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200,回复内容\n{}",requestAddress,response);
+        log.info("[SIP MESSAGE RESPONSE] [SIP ADDRESS:{} DEVICE INFO] 回复200,回复内容\n{}", requestAddress, response);
 
         deviceBO.setName(XmlUtil.getText(rootElement, "DeviceName"));
         deviceBO.setManufacturer(XmlUtil.getText(rootElement, "Manufacturer"));
         deviceBO.setModel(XmlUtil.getText(rootElement, "Model"));
         deviceBO.setFirmware(XmlUtil.getText(rootElement, "Firmware"));
-        sipService.saveOrUpdateDevice(deviceBO);
+        deviceBO.setChannels(Integer.valueOf(XmlUtil.getText(rootElement, "Channel")));
+        deviceService.updateById(deviceBO.bo2po());
     }
 }

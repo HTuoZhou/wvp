@@ -40,7 +40,7 @@ public class SystemInfoCacheServiceImpl implements ISystemInfoCacheService {
         Map<String, Double> networkInterfaces = SystemInfoUtil.getNetworkInterfaces();
         addNetInfo(networkInterfaces);
 
-        List<Map<String, Object>> diskInfo =SystemInfoUtil.getDiskInfo();
+        List<Map<String, Object>> diskInfo = SystemInfoUtil.getDiskInfo();
         addDiskInfo(diskInfo);
     }
 

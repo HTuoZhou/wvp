@@ -102,18 +102,18 @@ public class MediaServerVO {
      */
     private Integer version;
 
-    public MediaServerBO vo2bo(){
-        MediaServerBO bo = new MediaServerBO();
-        BeanUtils.copyProperties(this,bo);
-
-        return bo;
-    }
-
-    public static MediaServerVO bo2vo(MediaServerBO bo){
+    public static MediaServerVO bo2vo(MediaServerBO bo) {
         MediaServerVO vo = new MediaServerVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
+    }
+
+    public MediaServerBO vo2bo() {
+        MediaServerBO bo = new MediaServerBO();
+        BeanUtils.copyProperties(this, bo);
+
+        return bo;
     }
 
 }

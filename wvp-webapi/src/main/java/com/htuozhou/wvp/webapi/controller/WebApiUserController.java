@@ -31,6 +31,7 @@ public class WebApiUserController {
 
     /**
      * 添加用户信息
+     *
      * @param vo
      * @return
      */
@@ -42,6 +43,7 @@ public class WebApiUserController {
 
     /**
      * 批量添加用户信息
+     *
      * @param vos
      * @return
      */
@@ -54,17 +56,19 @@ public class WebApiUserController {
 
     /**
      * 修改用户信息
+     *
      * @param vo
      * @return
      */
     @PutMapping("/update")
     @WebLog
-    public ApiFinalResult<String> update(@RequestBody UserVO vo){
+    public ApiFinalResult<String> update(@RequestBody UserVO vo) {
         return ApiFinalResult.success(webApiUserService.update(vo.vo2bo()));
     }
 
     /**
      * 删除用户信息
+     *
      * @param id
      * @return
      */
@@ -76,6 +80,7 @@ public class WebApiUserController {
 
     /**
      * 获取所有用户信息
+     *
      * @return
      */
     @GetMapping("/list")
@@ -91,18 +96,20 @@ public class WebApiUserController {
 
     /**
      * 分页查询所有用户信息
+     *
      * @param pageReq
      * @return
      */
     @PostMapping("/page")
     @WebLog
-    public ApiFinalResult<PageResp<UserVO>> page(@RequestBody PageReq<UserVO> pageReq){
+    public ApiFinalResult<PageResp<UserVO>> page(@RequestBody PageReq<UserVO> pageReq) {
         IPage<UserBO> pageResp = webApiUserService.page(pageReq.pageVo2Bo(UserVO::vo2bo));
-        return ApiFinalResult.success(PageResp.pageBo2Vo(pageResp,UserVO::bo2vo));
+        return ApiFinalResult.success(PageResp.pageBo2Vo(pageResp, UserVO::bo2vo));
     }
 
     /**
      * 下载用户信息导入模板
+     *
      * @param response
      */
     @GetMapping("/download")

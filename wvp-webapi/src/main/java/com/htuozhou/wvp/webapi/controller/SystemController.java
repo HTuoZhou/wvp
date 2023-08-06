@@ -32,7 +32,7 @@ public class SystemController {
      * @return
      */
     @GetMapping("/getSystemInfo")
-    public ApiFinalResult<SystemInfoVO> getSystemInfo(){
+    public ApiFinalResult<SystemInfoVO> getSystemInfo() {
         return ApiFinalResult.success(SystemInfoVO.bo2vo(systemService.getSystemInfo()));
     }
 
@@ -41,9 +41,9 @@ public class SystemController {
      * @return
      */
     @GetMapping("/getMediaServerLoad")
-    public ApiFinalResult<List<MediaServerLoadVO>> getMediaServerLoad(){
+    public ApiFinalResult<List<MediaServerLoadVO>> getMediaServerLoad() {
         List<MediaServerLoadBO> bos = systemService.getMediaServerLoad();
-        if (CollectionUtil.isEmpty(bos)){
+        if (CollectionUtil.isEmpty(bos)) {
             return ApiFinalResult.success(Collections.emptyList());
         }
         return ApiFinalResult.success(bos.stream().map(MediaServerLoadVO::bo2vo).collect(Collectors.toList()));
@@ -54,7 +54,7 @@ public class SystemController {
      * @return
      */
     @GetMapping("/getResourceInfo")
-    public ApiFinalResult<ResourceInfoVO> getResourceInfo(){
+    public ApiFinalResult<ResourceInfoVO> getResourceInfo() {
         return ApiFinalResult.success(ResourceInfoVO.bo2vo(systemService.getResourceInfo()));
     }
 

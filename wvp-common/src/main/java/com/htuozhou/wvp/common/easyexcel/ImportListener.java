@@ -17,12 +17,9 @@ import java.util.Objects;
 public class ImportListener<T> extends AnalysisEventListener<T> {
 
     private final ImportDataAssistService<T> assistService;
-
-    private  Boolean head;
-
     private final StringBuilder errorMsg;
-
     private final List<T> bos;
+    private Boolean head;
 
     public ImportListener(ImportDataAssistService<T> assistService) {
         this.assistService = assistService;
@@ -36,7 +33,7 @@ public class ImportListener<T> extends AnalysisEventListener<T> {
         if (context.readRowHolder().getRowIndex() == 1) {
             List<String> templateHeads = assistService.getTemplateHeadName();
             for (int i = 0; i < templateHeads.size(); i++) {
-                if (!Objects.equals(templateHeads.get(i),headMap.get(i))) {
+                if (!Objects.equals(templateHeads.get(i), headMap.get(i))) {
                     head = Boolean.FALSE;
                 }
             }

@@ -32,13 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MessageRequestProcessor extends AbstractSIPRequestProcessor implements InitializingBean, ISIPRequestProcessor {
 
+    private static Map<String, IMessageHandler> messageHandlerMap = new ConcurrentHashMap<>();
     @Autowired
     private SIPProcessorObserver sipProcessorObserver;
-
     @Autowired
     private ISIPService sipService;
-
-    private static Map<String, IMessageHandler> messageHandlerMap = new ConcurrentHashMap<>();
 
     public void addMessageHandler(String name, IMessageHandler handler) {
         messageHandlerMap.put(name, handler);
@@ -46,7 +44,7 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        sipProcessorObserver.addRequestProcessor(Request.MESSAGE,this);
+        sipProcessorObserver.addRequestProcessor(Request.MESSAGE, this);
     }
 
     @Override
@@ -69,11 +67,11 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
         SipUri uri = (SipUri) address.getURI();
         String deviceId = uri.getUser();
         DeviceBO deviceBO = sipService.getDevice(deviceId);
-        if (Objects.isNull(deviceBO) || Objects.equals(deviceBO.getStatus(),0)) {
-            log.warn("[设备 {}]不存在或离线]",deviceId);
+        if (Objects.isNull(deviceBO)) {
+            log.warn("[GB DEVICE ID {}]不存在]", deviceId);
             return;
         }
 
-        messageHandlerMap.get(name).handForDevice(requestEvent,sipService.getDevice(deviceId),rootElement);
+        messageHandlerMap.get(name).handForDevice(requestEvent, sipService.getDevice(deviceId), rootElement);
     }
 }

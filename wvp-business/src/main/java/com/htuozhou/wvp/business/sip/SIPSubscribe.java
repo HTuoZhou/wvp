@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SIPSubscribe {
 
-    public  interface Event {
+    public interface Event {
 
     }
 

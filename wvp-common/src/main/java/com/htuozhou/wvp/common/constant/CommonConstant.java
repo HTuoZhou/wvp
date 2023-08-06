@@ -31,4 +31,6 @@ public class CommonConstant {
      */
     public static final boolean LINUX_OS = System.getProperty("os.name").toLowerCase().contains("linux");
 
+    public static final String NULL_STR = "null";
+
 }

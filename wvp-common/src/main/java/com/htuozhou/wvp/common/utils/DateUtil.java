@@ -28,7 +28,7 @@ public class DateUtil {
         return formatter.format(nowDateTime);
     }
 
-    public static Instant localDateTime2Instant(LocalDateTime localDateTime,Integer seconds){
+    public static Instant localDateTime2Instant(LocalDateTime localDateTime, Integer seconds) {
         return localDateTime.plusSeconds(seconds).atZone(ZONE_ID).toInstant();
     }
 

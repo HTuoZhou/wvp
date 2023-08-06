@@ -28,9 +28,9 @@ public class MediaServerController {
      * @return
      */
     @GetMapping("/list")
-    public ApiFinalResult<List<MediaServerVO>> getMediaServerList(){
+    public ApiFinalResult<List<MediaServerVO>> getMediaServerList() {
         List<MediaServerBO> bos = zlmService.getMediaServerList();
-        if (CollectionUtil.isEmpty(bos)){
+        if (CollectionUtil.isEmpty(bos)) {
             return ApiFinalResult.success(Collections.emptyList());
         }
 
@@ -45,8 +45,8 @@ public class MediaServerController {
      * @return
      */
     @GetMapping("/check")
-    public ApiFinalResult<MediaServerVO> check(String ip,Integer port,String secret){
-        return ApiFinalResult.success(MediaServerVO.bo2vo(zlmService.check(ip,port,secret)));
+    public ApiFinalResult<MediaServerVO> check(String ip, Integer port, String secret) {
+        return ApiFinalResult.success(MediaServerVO.bo2vo(zlmService.check(ip, port, secret)));
     }
 
     /**
@@ -55,7 +55,7 @@ public class MediaServerController {
      * @return
      */
     @PostMapping("/edit")
-    public ApiFinalResult<Boolean> edit(@RequestBody MediaServerVO vo){
+    public ApiFinalResult<Boolean> edit(@RequestBody MediaServerVO vo) {
         return ApiFinalResult.success(zlmService.edit(vo.vo2bo()));
     }
 
@@ -65,7 +65,7 @@ public class MediaServerController {
      * @return
      */
     @DeleteMapping("/delete/{id}")
-    public ApiFinalResult<Boolean> delete(@PathVariable("id") Integer id){
+    public ApiFinalResult<Boolean> delete(@PathVariable("id") Integer id) {
         return ApiFinalResult.success(zlmService.delete(id));
     }
 

@@ -24,18 +24,18 @@ public enum ResultCodeEnum {
     /**
      * 导入模板不正确
      */
-    IMPORT_TEMPLATE_ERROR(200003,"导入模板不正确"),
+    IMPORT_TEMPLATE_ERROR(200003, "导入模板不正确"),
 
     /**
      * 导入数据不正确
      */
-    IMPORT_DATA_ERROR(200004,"导入数据不正确"),
+    IMPORT_DATA_ERROR(200004, "导入数据不正确"),
 
-    ZLM_CONNECT_EXIST(200005,"当前连接已存在"),
+    ZLM_CONNECT_EXIST(200005, "当前连接已存在"),
 
-    ZLM_CONNECT_ERROR(200006,"当前连接失败"),
+    ZLM_CONNECT_ERROR(200006, "当前连接失败"),
 
-    ZLM_ID_EXIST(200007,"流媒体服务ID已存在");
+    ZLM_ID_EXIST(200007, "流媒体服务ID已存在");
 
     /**
      * 状态码

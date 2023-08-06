@@ -9,7 +9,7 @@ import com.htuozhou.wvp.common.dict.BaseDict;
  */
 public enum TemplateDict implements BaseDict {
 
-    TEMPLATE_DECRIPTION("template.description","说明：*为必填项"),
+    TEMPLATE_DECRIPTION("template.description", "说明：*为必填项"),
 
     // 用户信息导入导出模板
     USER_IMPORT_TEMPLATE_NAME("user.import.template", "用户信息导入模板"),

@@ -23,6 +23,7 @@ public class SystemInfoUtil {
 
     /**
      * 获取cpu信息
+     *
      * @return
      * @throws InterruptedException
      */
@@ -42,32 +43,34 @@ public class SystemInfoUtil {
         long iowait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
         long idle = ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
         long totalCpu = user + nice + cSys + idle + iowait + irq + softirq + steal;
-        return 1.0-(idle * 1.0 / totalCpu);
+        return 1.0 - (idle * 1.0 / totalCpu);
     }
 
     /**
      * 获取内存使用率
+     *
      * @return
      */
-    public static double getMemInfo(){
+    public static double getMemInfo() {
         SystemInfo systemInfo = new SystemInfo();
         GlobalMemory memory = systemInfo.getHardware().getMemory();
-        //总内存
+        // 总内存
         long totalByte = memory.getTotal();
-        //剩余
+        // 剩余
         long acaliableByte = memory.getAvailable();
-        return (totalByte-acaliableByte)*1.0/totalByte;
+        return (totalByte - acaliableByte) * 1.0 / totalByte;
     }
 
     /**
      * 获取网络上传和下载
+     *
      * @return
      */
-    public static Map<String,Double> getNetworkInterfaces() {
+    public static Map<String, Double> getNetworkInterfaces() {
         SystemInfo si = new SystemInfo();
         HardwareAbstractionLayer hal = si.getHardware();
         List<NetworkIF> beforeRecvNetworkIFs = hal.getNetworkIFs();
-        NetworkIF beforeBet= beforeRecvNetworkIFs.get(beforeRecvNetworkIFs.size() - 1);
+        NetworkIF beforeBet = beforeRecvNetworkIFs.get(beforeRecvNetworkIFs.size() - 1);
         long beforeRecv = beforeBet.getBytesRecv();
         long beforeSend = beforeBet.getBytesSent();
         try {
@@ -80,26 +83,27 @@ public class SystemInfoUtil {
 
         HashMap<String, Double> map = new HashMap<>();
         // 速度单位: Mbps
-        map.put("in",formatUnits(afterNet.getBytesRecv()-beforeRecv, 1048576L));
-        map.put("out",formatUnits(afterNet.getBytesSent()-beforeSend, 1048576L));
+        map.put("in", formatUnits(afterNet.getBytesRecv() - beforeRecv, 1048576L));
+        map.put("out", formatUnits(afterNet.getBytesSent() - beforeSend, 1048576L));
         return map;
     }
 
     /**
      * 获取带宽总值
+     *
      * @return
      */
     public static long getNetworkTotal() {
         SystemInfo si = new SystemInfo();
         HardwareAbstractionLayer hal = si.getHardware();
         List<NetworkIF> recvNetworkIFs = hal.getNetworkIFs();
-        NetworkIF networkIF= recvNetworkIFs.get(recvNetworkIFs.size() - 1);
+        NetworkIF networkIF = recvNetworkIFs.get(recvNetworkIFs.size() - 1);
 
-        return networkIF.getSpeed()/1048576L/8L;
+        return networkIF.getSpeed() / 1048576L / 8L;
     }
 
     public static double formatUnits(long value, long prefix) {
-        return (double)value / (double)prefix;
+        return (double) value / (double) prefix;
     }
 
     public static List<Map<String, Object>> getDiskInfo() {
@@ -122,8 +126,8 @@ public class SystemInfoUtil {
             infoMap.put("path", path);
             File partitionFile = new File(path);
             // 单位： GB
-            infoMap.put("use", (partitionFile.getTotalSpace() - partitionFile.getFreeSpace())/1024/1024/1024D);
-            infoMap.put("free", partitionFile.getFreeSpace()/1024/1024/1024D);
+            infoMap.put("use", (partitionFile.getTotalSpace() - partitionFile.getFreeSpace()) / 1024 / 1024 / 1024D);
+            infoMap.put("free", partitionFile.getFreeSpace() / 1024 / 1024 / 1024D);
             result.add(infoMap);
         }
         return result;

@@ -12,10 +12,10 @@ import java.util.List;
 public interface ISIPService {
     DeviceBO getDevice(String deviceId);
 
-    void saveOrUpdateDevice(DeviceBO deviceBO);
-
     void offline(String deviceId);
 
-    void saveBatchDeviceChannel(List<DeviceChannelBO> bos,String deviceId);
+    void refreshKeepAlive(DeviceBO bo);
+
+    void saveDeviceChannel(List<DeviceChannelBO> bos, String deviceId);
 
 }

@@ -23,9 +23,6 @@ import java.util.Objects;
 @Slf4j
 public class ZLMHttpHookController {
 
-    @Autowired
-    private IZLMService zlmService;
-
     private static final JSONObject ZLM_RES_SUCCESS = new JSONObject();
 
     static {
@@ -33,15 +30,18 @@ public class ZLMHttpHookController {
         ZLM_RES_SUCCESS.put("msg", "success");
     }
 
+    @Autowired
+    private IZLMService zlmService;
+
     @PostMapping("/on_server_keepalive")
     public JSONObject onServerKeepAlive(@RequestBody ZLMHttpHookParam param) {
         MediaServerBO bo = zlmService.getMediaServer(param.getMediaServerId());
-        if (Objects.nonNull(bo)){
-            log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ADDRESS {}] 心跳上报", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
+        if (Objects.nonNull(bo)) {
+            log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ADDRESS {}] 心跳上报", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
 
             zlmService.setKeepAliveTime(param.getMediaServerId());
         } else {
-            log.error("[ZLM HTTP HOOK] [ZLM MEDIA SERVER ID {}]不存在",param.getMediaServerId());
+            log.warn("[ZLM HTTP HOOK] [ZLM MEDIA SERVER ID {}]不存在", param.getMediaServerId());
         }
         return ZLM_RES_SUCCESS;
     }
@@ -49,12 +49,12 @@ public class ZLMHttpHookController {
     @PostMapping("/on_server_started")
     public JSONObject onServerStarted(@RequestBody ZLMHttpHookParam param) {
         MediaServerBO bo = zlmService.getMediaServer(param.getMediaServerId());
-        if (Objects.nonNull(bo)){
-            log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ID：{}] 启动上报", String.format(ZLMConstant.ADDRESS,bo.getIp(),bo.getHttpPort()));
+        if (Objects.nonNull(bo)) {
+            log.info("[ZLM HTTP HOOK] 收到 [ZLM MEDIA SERVER ID：{}] 启动上报", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
 
             zlmService.online(param.getMediaServerId());
-        }else {
-            log.error("[ZLM HTTP HOOK] [ZLM MEDIA SERVER ID {}]不存在",param.getMediaServerId());
+        } else {
+            log.warn("[ZLM HTTP HOOK] [ZLM MEDIA SERVER ID {}]不存在", param.getMediaServerId());
         }
         return ZLM_RES_SUCCESS;
     }

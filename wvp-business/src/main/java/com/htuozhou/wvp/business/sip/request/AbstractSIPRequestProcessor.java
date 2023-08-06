@@ -19,13 +19,13 @@ import java.util.List;
  * @author hanzai
  * @date 2023/4/5
  */
-public  abstract class AbstractSIPRequestProcessor {
+public abstract class AbstractSIPRequestProcessor {
 
-    public HeaderFactory getHeaderFactory() throws Exception{
+    public HeaderFactory getHeaderFactory() throws Exception {
         return SipFactory.getInstance().createHeaderFactory();
     }
 
-    public MessageFactory getMessageFactory() throws Exception{
+    public MessageFactory getMessageFactory() throws Exception {
         return SipFactory.getInstance().createMessageFactory();
     }
 
@@ -41,7 +41,7 @@ public  abstract class AbstractSIPRequestProcessor {
         SAXReader reader = new SAXReader();
         reader.setEncoding(charset);
         // 对海康出现的未转义字符做处理。
-        String[] destStrArray = new String[]{"&lt;","&gt;","&amp;","&apos;","&quot;"};
+        String[] destStrArray = new String[]{"&lt;", "&gt;", "&amp;", "&apos;", "&quot;"};
         char despChar = '&'; // 或许可扩展兼容其他字符
         byte destBye = (byte) despChar;
         List<Byte> result = new ArrayList<>();
@@ -55,13 +55,13 @@ public  abstract class AbstractSIPRequestProcessor {
                 for (String destStr : destStrArray) {
                     if (i + destStr.length() <= rawContent.length) {
                         byte[] bytes = Arrays.copyOfRange(rawContent, i, i + destStr.length());
-                        resul = resul || (Arrays.equals(bytes,destStr.getBytes()));
+                        resul = resul || (Arrays.equals(bytes, destStr.getBytes()));
                     }
                 }
                 if (resul) {
                     result.add(rawContent[i]);
                 }
-            }else {
+            } else {
                 result.add(rawContent[i]);
             }
         }
@@ -71,7 +71,6 @@ public  abstract class AbstractSIPRequestProcessor {
         Document xml = reader.read(new ByteArrayInputStream(bytesResult));
         return xml.getRootElement();
     }
-
 
 
 }

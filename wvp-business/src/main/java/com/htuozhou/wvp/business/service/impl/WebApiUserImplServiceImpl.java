@@ -59,6 +59,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 添加用户信息
+     *
      * @param bo
      * @return
      */
@@ -74,6 +75,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 批量添加用户信息
+     *
      * @param bos
      * @return
      */
@@ -90,6 +92,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 修改用户信息
+     *
      * @param bo
      * @return
      */
@@ -105,6 +108,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 删除用户信息
+     *
      * @param id
      * @return
      */
@@ -120,6 +124,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 获取所有用户信息
+     *
      * @param bo
      * @return
      */
@@ -149,6 +154,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 分页查询所有用户信息
+     *
      * @param pageReq
      * @return
      */
@@ -160,10 +166,10 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
         LambdaQueryWrapper<UserPO> wrapper = Wrappers.<UserPO>lambdaQuery();
 
         if (Objects.nonNull(pageReq.getQueryParam()) && StringUtils.isNotBlank(pageReq.getQueryParam().getName())) {
-            wrapper.like(UserPO::getName,pageReq.getQueryParam().getName());
+            wrapper.like(UserPO::getName, pageReq.getQueryParam().getName());
         }
         if (Objects.nonNull(pageReq.getQueryParam()) && StringUtils.isNotBlank(pageReq.getQueryParam().getNickname())) {
-            wrapper.like(UserPO::getNickname,pageReq.getQueryParam().getNickname());
+            wrapper.like(UserPO::getNickname, pageReq.getQueryParam().getNickname());
         }
 
         IPage<UserPO> page = userService.page(new Page<>(pageNum, pageSize), wrapper);
@@ -172,6 +178,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 下载用户信息导入模板
+     *
      * @param response
      */
     @Override
@@ -185,11 +192,11 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
         Map<Integer, String[]> mapDropDown = new HashMap<>();
         String male = CommonUtil.getI18nMsg(UserSexDict.USER_SEX_MALE, i18nService);
         String female = CommonUtil.getI18nMsg(UserSexDict.USER_SEX_FEMALE, i18nService);
-        mapDropDown.put(2, new String[]{male,female});
+        mapDropDown.put(2, new String[]{male, female});
 
         EasyExcel.write(os, UserImportBO.class)
                 .head(head())
-                .registerWriteHandler(new ImportWriteHandler(CommonUtil.getI18nMsg(TemplateDict.TEMPLATE_DECRIPTION, i18nService),mapDropDown, head().size() - 1))
+                .registerWriteHandler(new ImportWriteHandler(CommonUtil.getI18nMsg(TemplateDict.TEMPLATE_DECRIPTION, i18nService), mapDropDown, head().size() - 1))
                 .sheet(CommonUtil.getI18nMsg(TemplateDict.USER_DETAIL, i18nService))
                 .relativeHeadRowIndex(1)
                 .doWrite(Collections.emptyList());
@@ -197,6 +204,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
 
     /**
      * 导入用户信息
+     *
      * @param file
      * @return
      */
@@ -211,13 +219,13 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
         EasyExcel.read(inputStream, UserImportBO.class, listener).headRowNumber(2).sheet().doRead();
 
         Boolean head = listener.getHead();
-        if (Objects.equals(head,Boolean.FALSE)) {
+        if (Objects.equals(head, Boolean.FALSE)) {
             throw new BusinessException(ResultCodeEnum.IMPORT_TEMPLATE_ERROR);
         }
 
         StringBuilder errorMsg = listener.getErrorMsg();
         if (StringUtils.isNotBlank(errorMsg)) {
-            throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR,errorMsg);
+            throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR, errorMsg);
         }
 
         List<UserImportBO> bos = listener.getBos();
@@ -229,7 +237,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
             UserImportBO bo = bos.get(i);
             String name = bo.getName();
             if (Objects.nonNull(userService.getOne(Wrappers.<UserPO>lambdaQuery().eq(UserPO::getName, name)))) {
-                throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR,formatImportMsg(i18nService, ImportHeadDict.USER_NAME_EXIST, (i+3)));
+                throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR, formatImportMsg(i18nService, ImportHeadDict.USER_NAME_EXIST, (i + 3)));
             } else {
                 UserPO po = bo.importBo2po(i18nService);
                 pos.add(po);
@@ -251,7 +259,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
             bos = Collections.emptyList();
         }
 
-        bos = pos.stream().map(po -> UserImportBO.po2ImportBo(po,i18nService)).collect(Collectors.toList());
+        bos = pos.stream().map(po -> UserImportBO.po2ImportBo(po, i18nService)).collect(Collectors.toList());
 
         OutputStream os = response.getOutputStream();
         String fileName = new String((CommonUtil.getI18nMsg(TemplateDict.USER_EXPORT_TEMPLATE_NAME, i18nService)).getBytes(EasyExcelConstant.CHARSET_UTF), EasyExcelConstant.CHARSET_ISO);
@@ -301,7 +309,7 @@ public class WebApiUserImplServiceImpl implements IWebApiUserService, ImportData
         Map<String, Long> countName = bos.stream().collect(Collectors.groupingBy(UserImportBO::getName, Collectors.counting()));
         countName.forEach((k, v) -> {
             if (v > 1) {
-                throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR,formatImportMsg(i18nService, ImportHeadDict.USER_NAME_REPEAT, k));
+                throw new BusinessException(ResultCodeEnum.IMPORT_DATA_ERROR, formatImportMsg(i18nService, ImportHeadDict.USER_NAME_REPEAT, k));
             }
         });
     }

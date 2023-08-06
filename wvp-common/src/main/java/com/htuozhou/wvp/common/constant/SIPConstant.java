@@ -18,4 +18,6 @@ public class SIPConstant {
 
     public static final Integer KEEP_ALIVE_INTERVAL = 60;
 
+    public static final String CIVIL_CODE_PATH = "civilCode.csv";
+
 }

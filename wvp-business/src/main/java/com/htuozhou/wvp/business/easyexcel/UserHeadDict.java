@@ -14,13 +14,13 @@ public enum UserHeadDict implements BaseDict {
     USER_SEX("user.sex", "性别*"),
     USER_AGE("user.age", "年龄*");
 
+    private String code;
+    private String value;
+
     UserHeadDict(String code, String value) {
         this.code = code;
         this.value = value;
     }
-
-    private String code;
-    private String value;
 
     @Override
     public String getCode() {

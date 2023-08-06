@@ -33,16 +33,16 @@ public class SIPSender {
     @Autowired
     private SIPRunner sipRunner;
 
-    public void transmitRequest(String ip, Message message) throws Exception{
+    public void transmitRequest(String ip, Message message) throws Exception {
         transmitRequest(ip, message, null, null);
     }
 
-    public void transmitRequest(String ip, Message message, SIPSubscribe.Event errorEvent) throws Exception{
+    public void transmitRequest(String ip, Message message, SIPSubscribe.Event errorEvent) throws Exception {
         transmitRequest(ip, message, errorEvent, null);
     }
 
     public void transmitRequest(String ip, Message message, SIPSubscribe.Event errorEvent, SIPSubscribe.Event okEvent) throws Exception {
-        ViaHeader viaHeader = (ViaHeader)message.getHeader(ViaHeader.NAME);
+        ViaHeader viaHeader = (ViaHeader) message.getHeader(ViaHeader.NAME);
         String transport = "UDP";
         if (Objects.nonNull(viaHeader)) {
             transport = viaHeader.getTransport();
@@ -60,17 +60,17 @@ public class SIPSender {
         if ("TCP".equals(transport)) {
             SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider(ip);
             if (message instanceof Request) {
-                tcpSipProvider.sendRequest((Request)message);
-            }else if (message instanceof Response) {
-                tcpSipProvider.sendResponse((Response)message);
+                tcpSipProvider.sendRequest((Request) message);
+            } else if (message instanceof Response) {
+                tcpSipProvider.sendResponse((Response) message);
             }
 
         } else if ("UDP".equals(transport)) {
             SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider(ip);
             if (message instanceof Request) {
-                udpSipProvider.sendRequest((Request)message);
-            }else if (message instanceof Response) {
-                udpSipProvider.sendResponse((Response)message);
+                udpSipProvider.sendRequest((Request) message);
+            } else if (message instanceof Response) {
+                udpSipProvider.sendResponse((Response) message);
             }
         }
     }

@@ -9,17 +9,17 @@ import com.htuozhou.wvp.common.dict.BaseDict;
  */
 public enum UserSexDict implements BaseDict {
 
-    USER_SEX_MALE("user.sex.male","男"),
+    USER_SEX_MALE("user.sex.male", "男"),
 
-    USER_SEX_FEMALE("user.sex.female","女");
+    USER_SEX_FEMALE("user.sex.female", "女");
+
+    private String code;
+    private String value;
 
     UserSexDict(String code, String value) {
         this.code = code;
         this.value = value;
     }
-
-    private String code;
-    private String value;
 
     @Override
     public String getCode() {

@@ -21,9 +21,9 @@ public class SystemInfoVO {
 
     private Object disk;
 
-    public static SystemInfoVO bo2vo(SystemInfoBO bo){
+    public static SystemInfoVO bo2vo(SystemInfoBO bo) {
         SystemInfoVO vo = new SystemInfoVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
     }

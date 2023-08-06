@@ -9,22 +9,25 @@ public interface BaseDict {
 
     /**
      * 字典编码
+     *
      * @return
      */
     String getCode();
 
     /**
      * 字典值
+     *
      * @return
      */
     String getDefaultValue();
 
     /**
      * 国际化的KEY
+     *
      * @return
      */
-    default String getI18nKey(){
-        return String.format(DICT_I18N_KEY_FMT,getCode());
+    default String getI18nKey() {
+        return String.format(DICT_I18N_KEY_FMT, getCode());
     }
 
 }

@@ -29,16 +29,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SIPRunner implements CommandLineRunner {
 
-    @Autowired
-    private SIPProperties sipProperties;
-
-    @Autowired
-    private ISIPProcessorObserver sipProcessorObserver;
-
-    private SipFactory sipFactory;
-
     private final Map<String, SipProviderImpl> tcpSipProviderMap = new ConcurrentHashMap<>();
     private final Map<String, SipProviderImpl> udpSipProviderMap = new ConcurrentHashMap<>();
+    @Autowired
+    private SIPProperties sipProperties;
+    @Autowired
+    private ISIPProcessorObserver sipProcessorObserver;
+    private SipFactory sipFactory;
 
     @Override
     public void run(String... args) throws Exception {

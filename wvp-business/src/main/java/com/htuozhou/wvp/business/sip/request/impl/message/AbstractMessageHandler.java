@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author hanzai
  * @date 2023/4/15
- */@Slf4j
+ */
+@Slf4j
 
 public abstract class AbstractMessageHandler extends AbstractSIPRequestProcessor implements IMessageHandler {
 
@@ -29,11 +30,11 @@ public abstract class AbstractMessageHandler extends AbstractSIPRequestProcessor
         String cmdType = XmlUtil.getText(rootElement, "CmdType");
         IMessageHandler messageHandler = messageHandlerMap.get(cmdType);
         if (Objects.isNull(messageHandler)) {
-            log.warn("[SIP MESSAGE {} :{}] 暂不支持", rootElement.getName().toUpperCase(),cmdType.toUpperCase());
+            log.warn("[SIP MESSAGE {} :{}] 暂不支持", rootElement.getName().toUpperCase(), cmdType.toUpperCase());
             return;
         }
 
-        messageHandlerMap.get(cmdType).handForDevice(requestEvent,deviceBO,rootElement);
+        messageHandlerMap.get(cmdType).handForDevice(requestEvent, deviceBO, rootElement);
     }
 
 

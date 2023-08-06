@@ -16,6 +16,7 @@ public interface IWebApiUserService {
 
     /**
      * 添加用户信息
+     *
      * @param bo
      * @return
      */
@@ -23,6 +24,7 @@ public interface IWebApiUserService {
 
     /**
      * 批量添加用户信息
+     *
      * @param bos
      * @return
      */
@@ -30,6 +32,7 @@ public interface IWebApiUserService {
 
     /**
      * 修改用户信息
+     *
      * @param bo
      * @return
      */
@@ -37,6 +40,7 @@ public interface IWebApiUserService {
 
     /**
      * 删除用户信息
+     *
      * @param id
      * @return
      */
@@ -44,6 +48,7 @@ public interface IWebApiUserService {
 
     /**
      * 获取所有用户信息
+     *
      * @param bo
      * @return
      */
@@ -51,6 +56,7 @@ public interface IWebApiUserService {
 
     /**
      * 分页查询所有用户信息
+     *
      * @param pageReq
      * @return
      */
@@ -58,12 +64,14 @@ public interface IWebApiUserService {
 
     /**
      * 下载用户信息导入模板
+     *
      * @param response
      */
     void download(HttpServletResponse response);
 
     /**
      * 导入用户信息
+     *
      * @param file
      * @return
      */
@@ -71,6 +79,7 @@ public interface IWebApiUserService {
 
     /**
      * 导出用户信息
+     *
      * @param response
      */
     void exportExcel(HttpServletResponse response);

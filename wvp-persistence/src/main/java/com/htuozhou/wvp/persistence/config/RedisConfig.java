@@ -31,14 +31,14 @@ public class RedisConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration defaultCacheConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
-                // key序列化
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-                // value序列化
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
-                // value为null时不进行缓存
-                .disableCachingNullValues()
-                // 全局配置缓存过期时间
-                .entryTtl(Duration.ofMinutes(30L));
+                        // key序列化
+                        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                        // value序列化
+                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
+                        // value为null时不进行缓存
+                        .disableCachingNullValues()
+                        // 全局配置缓存过期时间
+                        .entryTtl(Duration.ofMinutes(30L));
 
         return RedisCacheManager
                 .builder(redisConnectionFactory)
@@ -47,8 +47,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
         // key序列化

@@ -6,10 +6,11 @@
     <!--debug:当此属性设置为true时,将打印出logback内部日志信息,实时查看logback运行状态。默认值为false。-->
     <contextName>wvp</contextName>
 
-    <property name="LOG_PATH" value="${user.dir}/logs}" />
-    <property name="LOG_ENCODING" value="UTF-8" />
-    <property name="CONSOLE_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) [%thread] %cyan(%logger:%line) %msg%n" />
-    <property name="FILE_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger:%line %msg%n" />
+    <property name="LOG_PATH" value="${user.dir}/logs}"/>
+    <property name="LOG_ENCODING" value="UTF-8"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%date{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) [%thread] %cyan(%logger:%line) %msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger:%line %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">

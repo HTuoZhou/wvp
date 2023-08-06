@@ -45,18 +45,18 @@ public class UserBO {
      */
     private LocalDateTime updateTime;
 
-    public UserPO bo2po() {
-        UserPO po = new UserPO();
-        BeanUtils.copyProperties(this,po);
-
-        return po;
-    }
-
     public static UserBO po2bo(UserPO po) {
         UserBO bo = new UserBO();
-        BeanUtils.copyProperties(po,bo);
+        BeanUtils.copyProperties(po, bo);
 
         return bo;
+    }
+
+    public UserPO bo2po() {
+        UserPO po = new UserPO();
+        BeanUtils.copyProperties(this, po);
+
+        return po;
     }
 
 }

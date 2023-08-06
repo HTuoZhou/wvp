@@ -28,11 +28,11 @@ public class PageReq<T> {
 
     private T queryParam;
 
-    public <R> PageReq<R> pageVo2Bo(Function<? super T, ? extends R> mapper){
-        if (Objects.isNull(queryParam)){
+    public <R> PageReq<R> pageVo2Bo(Function<? super T, ? extends R> mapper) {
+        if (Objects.isNull(queryParam)) {
             return (PageReq<R>) this;
         }
-        return ((PageReq<R>)this).setQueryParam(mapper.apply(queryParam));
+        return ((PageReq<R>) this).setQueryParam(mapper.apply(queryParam));
     }
 
 

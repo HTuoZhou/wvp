@@ -22,16 +22,16 @@ import java.util.concurrent.ScheduledFuture;
 @Slf4j
 public class DynamicTask {
 
+    private final Map<String, ScheduledFuture<?>> scheduledFutureMap = new ConcurrentHashMap<>();
+    private final Map<String, Runnable> runnableMap = new ConcurrentHashMap<>();
     @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    private final Map<String, ScheduledFuture<?>> scheduledFutureMap = new ConcurrentHashMap<>();
-    private final Map<String, Runnable> runnableMap = new ConcurrentHashMap<>();
-
     /**
      * 循环执行的任务
-     * @param key 任务ID
-     * @param task 任务
+     *
+     * @param key      任务ID
+     * @param task     任务
      * @param interval 间隔 毫秒
      * @return
      */
@@ -45,7 +45,7 @@ public class DynamicTask {
                 return;
             }
         }
-        
+
         future = threadPoolTaskScheduler.scheduleAtFixedRate(task, interval);
         log.debug("任务【{}】不存在,准备启动", key);
         scheduledFutureMap.put(key, future);
@@ -55,8 +55,9 @@ public class DynamicTask {
 
     /**
      * 延时任务
-     * @param key 任务ID
-     * @param task 任务
+     *
+     * @param key   任务ID
+     * @param task  任务
      * @param delay 延时s
      * @return
      */
@@ -73,7 +74,7 @@ public class DynamicTask {
             }
         }
 
-        future = threadPoolTaskScheduler.schedule(task, DateUtil.localDateTime2Instant(LocalDateTime.now(),delay));
+        future = threadPoolTaskScheduler.schedule(task, DateUtil.localDateTime2Instant(LocalDateTime.now(), delay));
         log.debug("任务【{}】不存在,准备启动", key);
         scheduledFutureMap.put(key, future);
         runnableMap.put(key, task);
@@ -105,8 +106,8 @@ public class DynamicTask {
     /**
      * 每五分钟检查失效的任务,并移除
      */
-    @Scheduled(cron="0 0/5 * * * ?")
-    public void execute(){
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void execute() {
         if (scheduledFutureMap.size() > 0) {
             for (String key : scheduledFutureMap.keySet()) {
                 if (scheduledFutureMap.get(key).isDone() || scheduledFutureMap.get(key).isCancelled()) {
@@ -118,9 +119,9 @@ public class DynamicTask {
     }
 
     public boolean isAlive(String key) {
-        return Objects.nonNull(scheduledFutureMap.get(key)) && 
-                !scheduledFutureMap.get(key).isDone() && 
+        return Objects.nonNull(scheduledFutureMap.get(key)) &&
+                !scheduledFutureMap.get(key).isDone() &&
                 !scheduledFutureMap.get(key).isCancelled();
     }
-    
+
 }

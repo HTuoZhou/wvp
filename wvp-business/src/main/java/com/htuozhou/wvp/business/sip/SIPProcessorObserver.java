@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Slf4j
-public class SIPProcessorObserver implements ISIPProcessorObserver{
+public class SIPProcessorObserver implements ISIPProcessorObserver {
 
     private static Map<String, ISIPRequestProcessor> requestProcessorMap = new ConcurrentHashMap<>();
 

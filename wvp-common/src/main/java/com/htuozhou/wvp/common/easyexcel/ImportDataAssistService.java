@@ -13,7 +13,8 @@ public interface ImportDataAssistService<T> {
 
     /**
      * 校验数据
-     * @param bo 数据
+     *
+     * @param bo       数据
      * @param rowIndex 行号
      * @param errorMsg 行数据校验错误信息
      */
@@ -21,6 +22,7 @@ public interface ImportDataAssistService<T> {
 
     /**
      * 格式化导入提示信息
+     *
      * @param dict
      * @param params
      * @return
@@ -31,6 +33,7 @@ public interface ImportDataAssistService<T> {
 
     /**
      * 获取导入模板的表头信息
+     *
      * @return
      */
     List<String> getTemplateHeadName();

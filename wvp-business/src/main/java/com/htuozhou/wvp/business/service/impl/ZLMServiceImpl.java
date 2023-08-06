@@ -108,7 +108,6 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 获取流媒体服务列表
-     *
      * @return
      */
     @Override
@@ -123,7 +122,6 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 测试流媒体服务
-     *
      * @param ip
      * @param port
      * @param secret
@@ -177,10 +175,10 @@ public class ZLMServiceImpl implements IZLMService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean edit(MediaServerBO bo) {
-        if (Objects.isNull(bo.getId())){
+        if (Objects.isNull(bo.getId())) {
             if (Objects.nonNull(mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
                     .eq(MediaServerPO::getIp, bo.getIp())
-                    .eq(MediaServerPO::getHttpPort, bo.getHttpPort())))){
+                    .eq(MediaServerPO::getHttpPort, bo.getHttpPort())))) {
                 throw new BusinessException(ResultCodeEnum.ZLM_CONNECT_EXIST);
             }
 
@@ -195,9 +193,9 @@ public class ZLMServiceImpl implements IZLMService {
             }
         } else {
             if (Objects.nonNull(mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
-                    .ne(MediaServerPO::getId,bo.getId())
+                    .ne(MediaServerPO::getId, bo.getId())
                     .eq(MediaServerPO::getIp, bo.getIp())
-                    .eq(MediaServerPO::getHttpPort, bo.getHttpPort())))){
+                    .eq(MediaServerPO::getHttpPort, bo.getHttpPort())))) {
                 throw new BusinessException(ResultCodeEnum.ZLM_CONNECT_EXIST);
             }
 
@@ -207,7 +205,7 @@ public class ZLMServiceImpl implements IZLMService {
             }
 
             if (Objects.nonNull(mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
-                    .ne(MediaServerPO::getId,bo.getId())
+                    .ne(MediaServerPO::getId, bo.getId())
                     .eq(MediaServerPO::getMediaServerId, mediaServerItem.getMediaServerId())))) {
                 throw new BusinessException(ResultCodeEnum.ZLM_ID_EXIST);
             }
@@ -245,7 +243,7 @@ public class ZLMServiceImpl implements IZLMService {
             if (Objects.nonNull(mediaServerItem)) {
                 refreshKeepAlive(bo);
             } else {
-                log.info("[ZLM MEDIA SERVER ID:{}] 心跳检测离线", bo.getMediaServerId());
+                log.warn("[ZLM MEDIA SERVER ID:{}] 心跳检测离线", bo.getMediaServerId());
                 offline(bo.getMediaServerId());
             }
         }

@@ -17,9 +17,9 @@ public class MediaServerLoadVO {
     private Integer gbReceive;
     private Integer gbSend;
 
-    public static MediaServerLoadVO bo2vo(MediaServerLoadBO bo){
+    public static MediaServerLoadVO bo2vo(MediaServerLoadBO bo) {
         MediaServerLoadVO vo = new MediaServerLoadVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
     }

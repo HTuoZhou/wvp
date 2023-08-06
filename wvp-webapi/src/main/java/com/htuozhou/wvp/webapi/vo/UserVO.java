@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * @date 2023/2/2
  */
 @Data
-public class UserVO{
+public class UserVO {
 
     private Integer id;
 
@@ -45,18 +45,18 @@ public class UserVO{
      */
     private LocalDateTime updateTime;
 
-    public UserBO vo2bo() {
-        UserBO bo = new UserBO();
-        BeanUtils.copyProperties(this,bo);
-
-        return bo;
-    }
-
     public static UserVO bo2vo(UserBO bo) {
         UserVO vo = new UserVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
+    }
+
+    public UserBO vo2bo() {
+        UserBO bo = new UserBO();
+        BeanUtils.copyProperties(this, bo);
+
+        return bo;
     }
 
 }

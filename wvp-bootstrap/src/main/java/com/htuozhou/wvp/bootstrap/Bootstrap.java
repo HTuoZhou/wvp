@@ -11,7 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
 public class Bootstrap {
 
     public static void main(String[] args) {
-        SpringApplication.run(Bootstrap.class,args);
+        SpringApplication.run(Bootstrap.class, args);
     }
 
 }

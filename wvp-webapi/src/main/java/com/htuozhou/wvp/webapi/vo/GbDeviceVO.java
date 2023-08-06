@@ -1,6 +1,6 @@
-package com.htuozhou.wvp.business.bo;
+package com.htuozhou.wvp.webapi.vo;
 
-import com.htuozhou.wvp.persistence.po.DevicePO;
+import com.htuozhou.wvp.business.bo.DeviceBO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * @author hanzai
- * @date 2023/4/14
+ * @date 2023/8/5
  */
 @Data
-public class DeviceBO {
+public class GbDeviceVO {
 
     /**
      * 主键,自增
@@ -133,17 +133,18 @@ public class DeviceBO {
      */
     private Integer version;
 
-    public static DeviceBO po2bo(DevicePO po) {
+    public static GbDeviceVO bo2vo(DeviceBO bo) {
+        GbDeviceVO vo = new GbDeviceVO();
+        BeanUtils.copyProperties(bo, vo);
+
+        return vo;
+    }
+
+    public DeviceBO vo2bo() {
         DeviceBO bo = new DeviceBO();
-        BeanUtils.copyProperties(po, bo);
+        BeanUtils.copyProperties(this, bo);
 
         return bo;
     }
 
-    public DevicePO bo2po() {
-        DevicePO po = new DevicePO();
-        BeanUtils.copyProperties(this, po);
-
-        return po;
-    }
 }

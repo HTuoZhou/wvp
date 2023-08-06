@@ -97,18 +97,18 @@ public class MediaServerBO {
      */
     private Integer version;
 
-    public MediaServerPO bo2po() {
-        MediaServerPO po = new MediaServerPO();
-        BeanUtils.copyProperties(this,po);
-
-        return po;
-    }
-
     public static MediaServerBO po2bo(MediaServerPO po) {
         MediaServerBO bo = new MediaServerBO();
-        BeanUtils.copyProperties(po,bo);
+        BeanUtils.copyProperties(po, bo);
 
         return bo;
+    }
+
+    public MediaServerPO bo2po() {
+        MediaServerPO po = new MediaServerPO();
+        BeanUtils.copyProperties(this, po);
+
+        return po;
     }
 
 }

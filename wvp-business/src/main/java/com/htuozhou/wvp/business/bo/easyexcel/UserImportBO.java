@@ -48,20 +48,20 @@ public class UserImportBO {
     @ExcelProperty(index = 3)
     private Integer age;
 
-    public UserPO importBo2po(I18nService i18nService){
-        UserPO po = new UserPO();
-        BeanUtils.copyProperties(this,po);
-        po.setSex(Objects.equals(this.getSex(),CommonUtil.getI18nMsg(UserSexDict.USER_SEX_MALE, i18nService)) ? 0 : 1);
-
-        return po;
-    }
-
-    public static UserImportBO po2ImportBo(UserPO po,I18nService i18nService){
+    public static UserImportBO po2ImportBo(UserPO po, I18nService i18nService) {
         UserImportBO bo = new UserImportBO();
-        BeanUtils.copyProperties(po,bo);
-        bo.setSex(po.getSex() == 0 ? CommonUtil.getI18nMsg(UserSexDict.USER_SEX_MALE, i18nService) :CommonUtil.getI18nMsg(UserSexDict.USER_SEX_FEMALE, i18nService));
+        BeanUtils.copyProperties(po, bo);
+        bo.setSex(po.getSex() == 0 ? CommonUtil.getI18nMsg(UserSexDict.USER_SEX_MALE, i18nService) : CommonUtil.getI18nMsg(UserSexDict.USER_SEX_FEMALE, i18nService));
 
         return bo;
+    }
+
+    public UserPO importBo2po(I18nService i18nService) {
+        UserPO po = new UserPO();
+        BeanUtils.copyProperties(this, po);
+        po.setSex(Objects.equals(this.getSex(), CommonUtil.getI18nMsg(UserSexDict.USER_SEX_MALE, i18nService)) ? 0 : 1);
+
+        return po;
     }
 
 }

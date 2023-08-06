@@ -34,15 +34,13 @@ public class ZLMRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         MediaServerBO bo = Optional.ofNullable(zlmService.getDefaultMediaServer()).orElse(new MediaServerBO());
-        BeanUtils.copyProperties(zlmProperties,bo);
-        bo.setDefaultServer(Boolean.TRUE);
-        bo.setStatus(Boolean.TRUE);
+        BeanUtils.copyProperties(zlmProperties, bo);
         zlmManager.setServerConfig(bo);
         zlmService.saveOrUpdateMediaServer(bo);
 
         List<MediaServerBO> bos = zlmService.getMediaServerList();
         for (MediaServerBO mediaServerBO : bos) {
-            if (mediaServerBO.getDefaultServer()){
+            if (mediaServerBO.getDefaultServer()) {
                 continue;
             }
 

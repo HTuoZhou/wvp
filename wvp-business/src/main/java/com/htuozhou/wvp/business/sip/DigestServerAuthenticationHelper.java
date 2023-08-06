@@ -19,10 +19,10 @@ import java.util.Random;
  */
 public class DigestServerAuthenticationHelper {
 
-    private MessageDigest messageDigest = MessageDigest.getInstance("MD5");
     public static final String DEFAULT_ALGORITHM = "MD5";
     public static final String DEFAULT_SCHEME = "Digest";
     private static final char[] toHex = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
     public DigestServerAuthenticationHelper() throws NoSuchAlgorithmException {
     }
@@ -31,7 +31,7 @@ public class DigestServerAuthenticationHelper {
         int pos = 0;
         char[] c = new char[b.length * 2];
 
-        for(int i = 0; i < b.length; ++i) {
+        for (int i = 0; i < b.length; ++i) {
             c[pos++] = toHex[b[i] >> 4 & 15];
             c[pos++] = toHex[b[i] & 15];
         }
@@ -65,7 +65,7 @@ public class DigestServerAuthenticationHelper {
     }
 
     public boolean doAuthenticateHashedPassword(Request request, String hashedPassword) {
-        AuthorizationHeader authHeader = (AuthorizationHeader)request.getHeader("Authorization");
+        AuthorizationHeader authHeader = (AuthorizationHeader) request.getHeader("Authorization");
         if (authHeader == null) {
             return false;
         } else {
@@ -99,7 +99,7 @@ public class DigestServerAuthenticationHelper {
     }
 
     public boolean doAuthenticatePlainTextPassword(Request request, String pass) {
-        AuthorizationHeader authHeader = (AuthorizationHeader)request.getHeader("Authorization");
+        AuthorizationHeader authHeader = (AuthorizationHeader) request.getHeader("Authorization");
         if (authHeader == null) {
             return false;
         } else {

@@ -20,7 +20,7 @@ public class SystemInfoTask {
     @Bean
     public JobDetail jobDetail() {
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("systemInfoCacheService",systemInfoCacheService);
+        jobDataMap.put("systemInfoCacheService", systemInfoCacheService);
         return JobBuilder.newJob(SystemInfoJob.class)
                 .withIdentity(String.format(QuartzConstant.JOB_NAME_FMT, QuartzConstant.SYSTEM_INFO_JOB),
                         String.format(QuartzConstant.GROUP_NAME_FMT, QuartzConstant.SYSTEM_INFO_GROUP))

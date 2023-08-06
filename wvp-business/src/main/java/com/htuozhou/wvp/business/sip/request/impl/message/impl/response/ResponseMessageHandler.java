@@ -16,10 +16,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ResponseMessageHandler extends AbstractMessageHandler implements InitializingBean, IMessageHandler {
 
+    private static final String rootElement = "Response";
     @Autowired
     private MessageRequestProcessor messageRequestProcessor;
-
-    private static final String rootElement = "Response";
 
     @Override
     public void afterPropertiesSet() throws Exception {

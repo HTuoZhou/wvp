@@ -67,7 +67,7 @@ public class SystemServiceImpl implements ISystemService {
 
         List<MediaServerPO> pos = zlmServerService.list(Wrappers.<MediaServerPO>lambdaQuery()
                 .eq(MediaServerPO::getStatus, 1));
-        if (CollectionUtil.isEmpty(pos)){
+        if (CollectionUtil.isEmpty(pos)) {
             return Collections.emptyList();
         }
 
@@ -88,10 +88,10 @@ public class SystemServiceImpl implements ISystemService {
     public ResourceInfoBO getResourceInfo() {
         ResourceInfoBO bo = new ResourceInfoBO();
 
-        ResourceBaseInfo device = new ResourceBaseInfo(0,0);
-        ResourceBaseInfo channel = new ResourceBaseInfo(0,0);
-        ResourceBaseInfo push = new ResourceBaseInfo(0,0);
-        ResourceBaseInfo proxy = new ResourceBaseInfo(0,0);
+        ResourceBaseInfo device = new ResourceBaseInfo(0, 0);
+        ResourceBaseInfo channel = new ResourceBaseInfo(0, 0);
+        ResourceBaseInfo push = new ResourceBaseInfo(0, 0);
+        ResourceBaseInfo proxy = new ResourceBaseInfo(0, 0);
 
         bo.setDevice(device);
         bo.setChannel(channel);

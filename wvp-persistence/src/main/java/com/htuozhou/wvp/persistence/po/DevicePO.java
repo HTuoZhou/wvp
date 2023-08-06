@@ -91,16 +91,16 @@ public class DevicePO implements Serializable {
     private String streamMode;
 
     /**
-     * 0、离线 1、在线
+     * 是否在线
      */
     @TableField("status")
-    private Integer status;
+    private Boolean status;
 
     /**
-     * zlm id
+     * 流媒体服务器id
      */
-    @TableField("zlm_id")
-    private String zlmId;
+    @TableField("media_server_id")
+    private String mediaServerId;
 
     /**
      * 注册时间
@@ -137,6 +137,12 @@ public class DevicePO implements Serializable {
      */
     @TableField("password")
     private String password;
+
+    /**
+     * 通道数
+     */
+    @TableField("channels")
+    private Integer channels;
 
     /**
      * 创建时间

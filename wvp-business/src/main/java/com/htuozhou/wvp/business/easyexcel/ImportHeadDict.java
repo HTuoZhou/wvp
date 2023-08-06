@@ -17,13 +17,13 @@ public enum ImportHeadDict implements BaseDict {
 
     USER_NAME_EXIST("user.name.exist", "第 {0} 行姓名存在");
 
+    private String code;
+    private String value;
+
     ImportHeadDict(String code, String value) {
         this.code = code;
         this.value = value;
     }
-
-    private String code;
-    private String value;
 
     @Override
     public String getCode() {

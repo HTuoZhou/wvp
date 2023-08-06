@@ -16,10 +16,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class NotifyMessageHandler extends AbstractMessageHandler implements InitializingBean, IMessageHandler {
 
+    private static final String rootElement = "Notify";
     @Autowired
     private MessageRequestProcessor messageRequestProcessor;
-
-    private static final String rootElement = "Notify";
 
     @Override
     public void afterPropertiesSet() throws Exception {

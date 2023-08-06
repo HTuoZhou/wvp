@@ -5,6 +5,7 @@ import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
+import com.htuozhou.wvp.persistence.service.IDeviceService;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.message.SIPRequest;
 import lombok.SneakyThrows;
@@ -12,12 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.sip.RequestEvent;
 import javax.sip.message.Response;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -37,14 +36,14 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
     private SIPSender sipSender;
 
     @Autowired
-    private ISIPService sipService;
+    private IDeviceService deviceService;
 
     @Autowired
-    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+    private ISIPService sipService;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        notifyMessageHandler.addMessageHandler(cmdType,this);
+        notifyMessageHandler.addMessageHandler(cmdType, this);
     }
 
     @Override
@@ -54,21 +53,20 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
         // log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求",requestAddress);
-        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求,请求内容\n{}",requestAddress,request);
+        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{} KEEPALIVE] 请求,请求内容\n{}", requestAddress, request);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
         // log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200",requestAddress);
-        log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200,回复内容\n{}",requestAddress,response);
+        log.info("[SIP MESSAGE NOTIFY] [SIP ADDRESS:{} KEEPALIVE] 回复200,回复内容\n{}", requestAddress, response);
 
-        deviceBO.setStatus(1);
+        deviceBO.setStatus(Boolean.TRUE);
         deviceBO.setIp(request.getRemoteAddress().getHostAddress());
         deviceBO.setPort(request.getRemotePort());
-        deviceBO.setAddress(String.join(":",request.getRemoteAddress().getHostAddress(), String.valueOf(request.getRemotePort())));
+        deviceBO.setAddress(String.join(":", request.getRemoteAddress().getHostAddress(), String.valueOf(request.getRemotePort())));
         deviceBO.setKeepAliveTime(LocalDateTime.now());
-        sipService.saveOrUpdateDevice(deviceBO);
+        deviceService.updateById(deviceBO.bo2po());
 
-        threadPoolTaskScheduler.schedule(() -> sipService.offline(deviceBO.getDeviceId()),
-                Instant.now().plusMillis((long) deviceBO.getKeepAliveInterval() * 3 * 1000));
+        sipService.refreshKeepAlive(deviceBO);
     }
 }

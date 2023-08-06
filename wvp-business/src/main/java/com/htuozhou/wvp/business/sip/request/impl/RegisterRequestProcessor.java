@@ -10,6 +10,7 @@ import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.ISIPRequestProcessor;
 import com.htuozhou.wvp.common.constant.SIPConstant;
+import com.htuozhou.wvp.persistence.service.IDeviceService;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.address.AddressImpl;
 import gov.nist.javax.sip.address.SipUri;
@@ -53,9 +54,12 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
     @Autowired
     private ISIPService sipService;
 
+    @Autowired
+    private IDeviceService deviceService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        sipProcessorObserver.addRequestProcessor(Request.REGISTER,this);
+        sipProcessorObserver.addRequestProcessor(Request.REGISTER, this);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         String type = (expires == 0) ? "注销" : "注册";
 
         // log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求",requestAddress,type);
-        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求,请求内容\n{}",requestAddress,type,request);
+        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求,请求内容\n{}", requestAddress, type, request);
 
         // 请求未认证
         AuthorizationHeader authorizationHeader = (AuthorizationHeader) request.getHeader(AuthorizationHeader.NAME);
@@ -78,17 +82,17 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             new DigestServerAuthenticationHelper().generateChallenge(getHeaderFactory(), response, sipProperties.getDomain());
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
             // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求未认证,回复401",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求未认证,回复401,回复内容\n{}",requestAddress,type,response);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求未认证,回复401,回复内容\n{}", requestAddress, type, response);
 
             return;
         }
 
         // 请求密码不正确
-        if (!new DigestServerAuthenticationHelper().doAuthenticatePlainTextPassword(request,sipProperties.getPassword())) {
+        if (!new DigestServerAuthenticationHelper().doAuthenticatePlainTextPassword(request, sipProperties.getPassword())) {
             Response response = getMessageFactory().createResponse(Response.FORBIDDEN, request);
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
             // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求密码不正确,回复403",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求密码不正确,回复403,回复内容\n{}",requestAddress,type,response);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求密码不正确,回复403,回复内容\n{}", requestAddress, type, response);
 
             return;
         }
@@ -97,7 +101,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
         // log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200",requestAddress,type);
-        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200,回复内容\n{}",requestAddress,type,response);
+        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200,回复内容\n{}", requestAddress, type, response);
 
         FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
         AddressImpl address = (AddressImpl) fromHeader.getAddress();
@@ -105,22 +109,26 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         String deviceId = uri.getUser();
         DeviceBO deviceBO = Optional.ofNullable(sipService.getDevice(deviceId)).orElse(new DeviceBO());
         if (expires == 0) {
-            deviceBO.setStatus(0);
+            deviceBO.setStatus(Boolean.FALSE);
+            deviceService.updateById(deviceBO.bo2po());
         } else {
             ViaHeader reqViaHeader = (ViaHeader) request.getHeader(ViaHeader.NAME);
             String transport = reqViaHeader.getTransport();
-            deviceBO.setStatus(1);
+            deviceBO.setStatus(Boolean.TRUE);
             deviceBO.setDeviceId(deviceId);
             deviceBO.setIp(request.getRemoteAddress().getHostAddress());
             deviceBO.setPort(request.getRemotePort());
-            deviceBO.setAddress(String.join(":",request.getRemoteAddress().getHostAddress(), String.valueOf(request.getRemotePort())));
+            deviceBO.setAddress(String.join(":", request.getRemoteAddress().getHostAddress(), String.valueOf(request.getRemotePort())));
             deviceBO.setTransport(transport.equalsIgnoreCase(SIPConstant.TRANSPORT_UDP) ? SIPConstant.TRANSPORT_UDP : SIPConstant.TRANSPORT_TCP);
-            deviceBO.setStreamMode(SIPConstant.STREAM_MODE_TCP_PASSIVE);
+            deviceBO.setStreamMode(SIPConstant.STREAM_MODE_UDP);
             deviceBO.setPassword(sipProperties.getPassword());
             deviceBO.setCharset(SIPConstant.CHARSET_GB2312);
             deviceBO.setRegisterTime(LocalDateTime.now());
             deviceBO.setExpires(expires);
             deviceBO.setKeepAliveInterval(SIPConstant.KEEP_ALIVE_INTERVAL);
+            deviceService.saveOrUpdate(deviceBO.bo2po());
+
+            sipService.refreshKeepAlive(deviceBO);
 
             // 查询设备信息
             sipCommander.deviceInfoQuery(deviceBO);
@@ -128,7 +136,5 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             // 查询设备通道信息
             sipCommander.catalogQuery(deviceBO);
         }
-
-        sipService.saveOrUpdateDevice(deviceBO);
     }
 }
