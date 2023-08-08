@@ -29,6 +29,7 @@ public class SystemController {
 
     /**
      * 获取系统信息
+     *
      * @return
      */
     @GetMapping("/getSystemInfo")
@@ -38,6 +39,7 @@ public class SystemController {
 
     /**
      * 获取流媒体服务负载
+     *
      * @return
      */
     @GetMapping("/getMediaServerLoad")
@@ -51,6 +53,7 @@ public class SystemController {
 
     /**
      * 获取资源信息
+     *
      * @return
      */
     @GetMapping("/getResourceInfo")

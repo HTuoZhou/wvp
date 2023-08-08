@@ -38,6 +38,7 @@ public class SystemServiceImpl implements ISystemService {
 
     /**
      * 获取系统信息
+     *
      * @return
      */
     @Override
@@ -59,6 +60,7 @@ public class SystemServiceImpl implements ISystemService {
 
     /**
      * 获取流媒体服务负载
+     *
      * @return
      */
     @Override

@@ -3,6 +3,7 @@ package com.htuozhou.wvp.persistence.po;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@ToString
 @Accessors(chain = true)
 @TableName("wvp_device_channel")
 public class DeviceChannelPO implements Serializable {

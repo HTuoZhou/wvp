@@ -14,18 +14,21 @@ public interface ISystemService {
 
     /**
      * 获取系统信息
+     *
      * @return
      */
     SystemInfoBO getSystemInfo();
 
     /**
      * 获取流媒体服务负载
+     *
      * @return
      */
     List<MediaServerLoadBO> getMediaServerLoad();
 
     /**
      * 获取资源信息
+     *
      * @return
      */
     ResourceInfoBO getResourceInfo();

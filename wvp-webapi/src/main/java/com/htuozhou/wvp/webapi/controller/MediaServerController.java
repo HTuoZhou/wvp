@@ -25,6 +25,7 @@ public class MediaServerController {
 
     /**
      * 获取流媒体服务列表
+     *
      * @return
      */
     @GetMapping("/list")
@@ -39,6 +40,7 @@ public class MediaServerController {
 
     /**
      * 测试流媒体服务
+     *
      * @param ip
      * @param port
      * @param secret
@@ -51,6 +53,7 @@ public class MediaServerController {
 
     /**
      * 编辑流媒体服务
+     *
      * @param vo
      * @return
      */
@@ -61,6 +64,7 @@ public class MediaServerController {
 
     /**
      * 删除流媒体服务
+     *
      * @param id
      * @return
      */

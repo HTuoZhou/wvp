@@ -17,8 +17,8 @@ public enum ImportHeadDict implements BaseDict {
 
     USER_NAME_EXIST("user.name.exist", "第 {0} 行姓名存在");
 
-    private String code;
-    private String value;
+    private final String code;
+    private final String value;
 
     ImportHeadDict(String code, String value) {
         this.code = code;

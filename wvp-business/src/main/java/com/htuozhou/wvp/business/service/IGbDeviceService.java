@@ -13,6 +13,7 @@ public interface IGbDeviceService {
 
     /**
      * 分页查询国标设备
+     *
      * @param pageReq
      * @return
      */
@@ -20,6 +21,7 @@ public interface IGbDeviceService {
 
     /**
      * 查询国标设备
+     *
      * @param deviceId
      * @return
      */
@@ -27,6 +29,7 @@ public interface IGbDeviceService {
 
     /**
      * 分页查询国标设备通道
+     *
      * @param pageReq
      * @return
      */

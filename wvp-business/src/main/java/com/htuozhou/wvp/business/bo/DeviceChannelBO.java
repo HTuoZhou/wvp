@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.bo;
 
+import com.htuozhou.wvp.business.dict.PtzTypeDict;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -214,18 +215,32 @@ public class DeviceChannelBO {
      */
     private Integer version;
 
-    public DeviceChannelPO bo2po(){
+    private String parentChannelId;
+
+    /**
+     * 云台类型描述
+     */
+    private String ptzTypeValue;
+
+    /**
+     * 通道类型（是否拥有子设备）
+     */
+    private Boolean channelType;
+
+
+    public static DeviceChannelBO po2vo(DeviceChannelPO po) {
+        DeviceChannelBO bo = new DeviceChannelBO();
+        BeanUtils.copyProperties(po, bo);
+        bo.setPtzTypeValue(PtzTypeDict.getDefaultValue(po.getPtzType()));
+
+        return bo;
+    }
+
+    public DeviceChannelPO bo2po() {
         DeviceChannelPO po = new DeviceChannelPO();
         BeanUtils.copyProperties(this, po);
 
         return po;
-    }
-
-    public static DeviceChannelBO po2vo(DeviceChannelPO po) {
-        DeviceChannelBO bo = new DeviceChannelBO();
-        BeanUtils.copyProperties(po,bo);
-
-        return bo;
     }
 
 }

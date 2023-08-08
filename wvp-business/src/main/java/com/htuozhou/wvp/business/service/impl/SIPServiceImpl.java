@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -65,28 +66,37 @@ public class SIPServiceImpl implements ISIPService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveDeviceChannel(List<DeviceChannelBO> bos, String deviceId) {
-        if (CollectionUtil.isEmpty(bos)){
+        if (CollectionUtil.isEmpty(bos)) {
             deviceChannelService.remove(Wrappers.<DeviceChannelPO>lambdaQuery()
-                    .eq(DeviceChannelPO::getDeviceId,deviceId));
+                    .eq(DeviceChannelPO::getDeviceId, deviceId));
         } else {
             List<DeviceChannelPO> pos = deviceChannelService.list(Wrappers.<DeviceChannelPO>lambdaQuery()
                     .eq(DeviceChannelPO::getDeviceId, deviceId));
-            if (CollectionUtil.isEmpty(pos)){
+            if (CollectionUtil.isEmpty(pos)) {
                 deviceChannelService.saveBatch(bos.stream().map(DeviceChannelBO::bo2po).collect(Collectors.toList()));
             } else {
                 List<String> channelIds = bos.stream().map(DeviceChannelBO::getChannelId).collect(Collectors.toList());
                 List<String> removeChannelIds = pos.stream()
                         .map(DeviceChannelPO::getChannelId)
                         .filter(channelId -> !channelIds.contains(channelId)).collect(Collectors.toList());
-                deviceChannelService.remove(Wrappers.<DeviceChannelPO>lambdaQuery()
-                        .in(DeviceChannelPO::getChannelId,removeChannelIds));
+                if (CollectionUtil.isNotEmpty(removeChannelIds)) {
+                    deviceChannelService.remove(Wrappers.<DeviceChannelPO>lambdaQuery()
+                            .in(DeviceChannelPO::getChannelId, removeChannelIds));
+                }
 
                 List<DeviceChannelPO> deviceChannelPOS = new ArrayList<>();
                 for (DeviceChannelBO bo : bos) {
-                    DeviceChannelPO deviceChannelPO = pos.stream()
-                            .filter(po -> Objects.equals(bo.getChannelId(), po.getChannelId()))
-                            .findFirst().orElseGet(DeviceChannelPO::new);
-                    BeanUtils.copyProperties(bo,deviceChannelPO);
+                    DeviceChannelPO deviceChannelPO;
+                    Optional<DeviceChannelPO> optional = pos.stream().filter(po -> Objects.equals(bo.getChannelId(), po.getChannelId())).findFirst();
+                    if ((optional.isPresent())) {
+                        deviceChannelPO = optional.get();
+                        Integer id = deviceChannelPO.getId();
+                        BeanUtils.copyProperties(bo, deviceChannelPO);
+                        deviceChannelPO.setId(id);
+                    } else {
+                        deviceChannelPO = new DeviceChannelPO();
+                        BeanUtils.copyProperties(bo, deviceChannelPO);
+                    }
                     deviceChannelPOS.add(deviceChannelPO);
                 }
                 deviceChannelService.saveOrUpdateBatch(deviceChannelPOS);

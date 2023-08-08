@@ -25,6 +25,7 @@ public class GbDeviceController {
 
     /**
      * 分页查询国标设备
+     *
      * @param pageReq
      * @return
      */
@@ -36,21 +37,23 @@ public class GbDeviceController {
 
     /**
      * 查询国标设备
+     *
      * @param deviceId
      * @return
      */
     @GetMapping("/getDevice/{deviceId}")
-    public ApiFinalResult<GbDeviceVO> getDevice(@PathVariable("deviceId") String deviceId){
+    public ApiFinalResult<GbDeviceVO> getDevice(@PathVariable("deviceId") String deviceId) {
         return ApiFinalResult.success(GbDeviceVO.bo2vo(gbDeviceService.getDevice(deviceId)));
     }
 
     /**
      * 分页查询国标设备通道
+     *
      * @param pageReq
      * @return
      */
     @PostMapping("/channel/page")
-    public ApiFinalResult<PageResp<DeviceChannelVO>> pageChannel(@RequestBody PageReq<DeviceChannelVO> pageReq){
+    public ApiFinalResult<PageResp<DeviceChannelVO>> pageChannel(@RequestBody PageReq<DeviceChannelVO> pageReq) {
         IPage<DeviceChannelBO> pageResp = gbDeviceService.pageChannel(pageReq.pageVo2Bo(DeviceChannelVO::vo2bo));
         return ApiFinalResult.success(PageResp.pageBo2Vo(pageResp, DeviceChannelVO::bo2vo));
     }

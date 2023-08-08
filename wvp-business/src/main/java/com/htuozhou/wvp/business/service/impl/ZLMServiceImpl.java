@@ -108,6 +108,7 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 获取流媒体服务列表
+     *
      * @return
      */
     @Override
@@ -122,6 +123,7 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 测试流媒体服务
+     *
      * @param ip
      * @param port
      * @param secret
@@ -169,6 +171,7 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 编辑流媒体服务
+     *
      * @param bo
      * @return
      */
@@ -219,6 +222,7 @@ public class ZLMServiceImpl implements IZLMService {
 
     /**
      * 删除流媒体服务
+     *
      * @param id
      * @return
      */
@@ -243,7 +247,7 @@ public class ZLMServiceImpl implements IZLMService {
             if (Objects.nonNull(mediaServerItem)) {
                 refreshKeepAlive(bo);
             } else {
-                log.warn("[ZLM MEDIA SERVER ID:{}] 心跳检测离线", bo.getMediaServerId());
+                log.warn("[ZLM MEDIA SERVER ADDRESS {}] 心跳检测离线", bo.getMediaServerId());
                 offline(bo.getMediaServerId());
             }
         }

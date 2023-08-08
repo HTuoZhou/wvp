@@ -47,7 +47,6 @@ public class ZLMManager {
             JSONArray jsonArray = JSON.parseArray(JSON.toJSONString(result.getData()));
             return JSON.parseObject(JSON.toJSONString(jsonArray.get(0)), MediaServerItem.class);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("[ZLM MEDIA SERVER ADDRESS {}] 获取服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
         }
         return null;
@@ -56,7 +55,7 @@ public class ZLMManager {
     /**
      * 设置服务器配置
      */
-    public void setServerConfig(MediaServerBO bo) {
+    public Boolean setServerConfig(MediaServerBO bo) {
         String hookPrefix;
         String hookIp = bo.getHookIp();
         if (CommonConstant.LINUX_OS && Objects.equals(bo.getHookIp(), CommonConstant.DEFAULT_LOCAL_IP)) {
@@ -100,9 +99,10 @@ public class ZLMManager {
                     log.info("[ZLM MEDIA SERVER ADDRESS {}] 设置服务器配置成功,不存在配置变更", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 }
             }
+            return Boolean.TRUE;
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("[ZLM MEDIA SERVER ADDRESS {}] 设置服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            return Boolean.FALSE;
         }
     }
 
@@ -118,7 +118,6 @@ public class ZLMManager {
                 log.info("[ZLM MEDIA SERVER ADDRESS {}] 重启服务器成功,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), result.getMsg());
             }
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("[ZLM MEDIA SERVER ADDRESS {}] 重启服务器失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
         }
     }

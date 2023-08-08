@@ -22,7 +22,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import javax.sip.RequestEvent;
 import javax.sip.message.Response;
@@ -152,7 +151,7 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
                     case 215:
                         // 业务分组
                         if (StrUtil.isNotBlank(parentID)) {
-                            if (!StrUtil.endWithIgnoreCase(parentID.trim(), deviceBO.getDeviceId())) {
+                            if (!StrUtil.equalsIgnoreCase(parentID.trim(), deviceBO.getDeviceId())) {
                                 deviceChannelBO.setParentId(parentID);
                             }
                         } else {
@@ -327,7 +326,7 @@ public class CatalogResponseMessageHandler extends AbstractSIPRequestProcessor i
 
                         // -摄像机类型扩展,标识摄像机类型:1-球机;2-半球;3-固定枪机;4-遥控枪机。当目录项为摄像机时可选
                         String ptzType = XmlUtil.getText(element, "PTZType");
-                        if (ObjectUtils.isEmpty(ptzType)) {
+                        if (StrUtil.isBlank(ptzType)) {
                             // 兼容INFO中的信息
                             Element info = element.element("Info");
                             String ptzTypeInfo = XmlUtil.getText(info, "PTZType");

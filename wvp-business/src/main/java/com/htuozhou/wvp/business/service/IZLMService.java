@@ -33,6 +33,7 @@ public interface IZLMService {
 
     /**
      * 测试流媒体服务
+     *
      * @param ip
      * @param port
      * @param secret
@@ -42,6 +43,7 @@ public interface IZLMService {
 
     /**
      * 编辑流媒体服务
+     *
      * @param bo
      * @return
      */
@@ -49,6 +51,7 @@ public interface IZLMService {
 
     /**
      * 删除流媒体服务
+     *
      * @param id
      * @return
      */

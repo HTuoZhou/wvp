@@ -213,18 +213,30 @@ public class DeviceChannelVO {
      */
     private Integer version;
 
-    public DeviceChannelBO vo2bo(){
-        DeviceChannelBO bo = new DeviceChannelBO();
-        BeanUtils.copyProperties(this,bo);
+    private String parentChannelId;
 
-        return bo;
-    }
+    /**
+     * 云台类型描述
+     */
+    private String ptzTypeValue;
 
-    public static DeviceChannelVO bo2vo(DeviceChannelBO bo){
+    /**
+     * 通道类型（是否拥有子设备）
+     */
+    private Boolean channelType;
+
+    public static DeviceChannelVO bo2vo(DeviceChannelBO bo) {
         DeviceChannelVO vo = new DeviceChannelVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
+    }
+
+    public DeviceChannelBO vo2bo() {
+        DeviceChannelBO bo = new DeviceChannelBO();
+        BeanUtils.copyProperties(this, bo);
+
+        return bo;
     }
 
 }

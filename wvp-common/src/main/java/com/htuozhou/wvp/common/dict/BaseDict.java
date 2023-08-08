@@ -5,7 +5,7 @@ package com.htuozhou.wvp.common.dict;
  * @date 2023/2/3
  */
 public interface BaseDict {
-    String DICT_I18N_KEY_FMT = "random.dict.%s";
+    String DICT_I18N_KEY_FMT = "wvp.dict.%s";
 
     /**
      * 字典编码

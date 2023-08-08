@@ -13,8 +13,8 @@ public enum UserSexDict implements BaseDict {
 
     USER_SEX_FEMALE("user.sex.female", "女");
 
-    private String code;
-    private String value;
+    private final String code;
+    private final String value;
 
     UserSexDict(String code, String value) {
         this.code = code;

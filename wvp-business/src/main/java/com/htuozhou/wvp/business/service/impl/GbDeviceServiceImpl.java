@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +15,8 @@ import com.htuozhou.wvp.persistence.service.IDeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * @author hanzai
@@ -31,6 +34,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
     /**
      * 分页查询国标设备
+     *
      * @param pageReq
      * @return
      */
@@ -45,6 +49,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
     /**
      * 查询国标设备
+     *
      * @param deviceId
      * @return
      */
@@ -57,7 +62,8 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     }
 
     /**
-     * pageReq
+     * 分页查询国标设备通道
+     *
      * @param pageReq
      * @return
      */
@@ -68,7 +74,15 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
         DeviceChannelBO queryParam = pageReq.getQueryParam();
 
         Page<DeviceChannelPO> page = deviceChannelService.page(new Page<>(pageNum, pageSize), Wrappers.<DeviceChannelPO>lambdaQuery()
-                .eq(DeviceChannelPO::getDeviceId, queryParam.getDeviceId()));
+                .eq(DeviceChannelPO::getDeviceId, queryParam.getDeviceId())
+                .and(StrUtil.isNotBlank(queryParam.getParentChannelId()),
+                        wrapper -> wrapper.eq(DeviceChannelPO::getParentId, queryParam.getParentChannelId())
+                                .or()
+                                .eq(DeviceChannelPO::getCivilCode, queryParam.getParentChannelId()))
+                .like(StrUtil.isNotBlank(queryParam.getChannelId()), DeviceChannelPO::getChannelId, queryParam.getChannelId())
+                .gt((Objects.nonNull(queryParam.getChannelType()) && queryParam.getChannelType()), DeviceChannelPO::getSubCount, 0)
+                .eq((Objects.nonNull(queryParam.getChannelType()) && !queryParam.getChannelType()), DeviceChannelPO::getSubCount, 0)
+                .eq(Objects.nonNull(queryParam.getStatus()), DeviceChannelPO::getStatus, queryParam.getStatus()));
         return page.convert(DeviceChannelBO::po2vo);
     }
 }
