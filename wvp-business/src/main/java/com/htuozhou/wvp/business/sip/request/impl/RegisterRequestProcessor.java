@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.sip.request.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.properties.SIPProperties;
 import com.htuozhou.wvp.business.service.ISIPService;
@@ -10,6 +11,9 @@ import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.ISIPRequestProcessor;
 import com.htuozhou.wvp.common.constant.SIPConstant;
+import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
+import com.htuozhou.wvp.persistence.po.DevicePO;
+import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
 import com.htuozhou.wvp.persistence.service.IDeviceService;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.address.AddressImpl;
@@ -57,6 +61,9 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
     @Autowired
     private IDeviceService deviceService;
 
+    @Autowired
+    private IDeviceChannelService deviceChannelService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         sipProcessorObserver.addRequestProcessor(Request.REGISTER, this);
@@ -72,8 +79,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         int expires = request.getExpires().getExpires();
         String type = (expires == 0) ? "注销" : "注册";
 
-        // log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求",requestAddress,type);
-        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {} 请求,请求内容\n{}", requestAddress, type, request);
+        log.info("[SIP REGISTER] 收到 [SIP ADDRESS:{}] {}\n{}", requestAddress, type, request);
 
         // 请求未认证
         AuthorizationHeader authorizationHeader = (AuthorizationHeader) request.getHeader(AuthorizationHeader.NAME);
@@ -81,8 +87,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             Response response = getMessageFactory().createResponse(Response.UNAUTHORIZED, request);
             new DigestServerAuthenticationHelper().generateChallenge(getHeaderFactory(), response, sipProperties.getDomain());
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求未认证,回复401",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求未认证,回复401,回复内容\n{}", requestAddress, type, response);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {}未认证,回复401\n{}", requestAddress, type, response);
 
             return;
         }
@@ -91,8 +96,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         if (!new DigestServerAuthenticationHelper().doAuthenticatePlainTextPassword(request, sipProperties.getPassword())) {
             Response response = getMessageFactory().createResponse(Response.FORBIDDEN, request);
             sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-            // log.info("[SIP REGISTER] [SIP ADDRESS:{}] {} 请求密码不正确,回复403",requestAddress,type);
-            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求密码不正确,回复403,回复内容\n{}", requestAddress, type, response);
+            log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {}密码不正确,回复403\n{}", requestAddress, type, response);
 
             return;
         }
@@ -100,8 +104,7 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         // 请求已认证且密码正确
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-        // log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200",requestAddress,type);
-        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {} 请求已认证且密码正确,回复200,回复内容\n{}", requestAddress, type, response);
+        log.info("[SIP REGISTER] [SIP ADDRESS:{}}] {}已认证且密码正确,回复200\n{}", requestAddress, type, response);
 
         FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
         AddressImpl address = (AddressImpl) fromHeader.getAddress();
@@ -109,8 +112,13 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
         String deviceId = uri.getUser();
         DeviceBO deviceBO = Optional.ofNullable(sipService.getDevice(deviceId)).orElse(new DeviceBO());
         if (expires == 0) {
-            deviceBO.setStatus(Boolean.FALSE);
-            deviceService.updateById(deviceBO.bo2po());
+            deviceService.update(Wrappers.<DevicePO>lambdaUpdate()
+                    .set(DevicePO::getStatus, Boolean.FALSE)
+                    .eq(DevicePO::getDeviceId, deviceBO.getDeviceId()));
+
+            deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
+                    .set(DeviceChannelPO::getStatus, Boolean.FALSE)
+                    .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId()));
         } else {
             ViaHeader reqViaHeader = (ViaHeader) request.getHeader(ViaHeader.NAME);
             String transport = reqViaHeader.getTransport();
@@ -127,6 +135,10 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             deviceBO.setExpires(expires);
             deviceBO.setKeepAliveInterval(SIPConstant.KEEP_ALIVE_INTERVAL);
             deviceService.saveOrUpdate(deviceBO.bo2po());
+
+            deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
+                    .set(DeviceChannelPO::getStatus, Boolean.TRUE)
+                    .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId()));
 
             sipService.refreshKeepAlive(deviceBO);
 

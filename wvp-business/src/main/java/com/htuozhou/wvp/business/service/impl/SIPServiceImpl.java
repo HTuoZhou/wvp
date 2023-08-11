@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.htuozhou.wvp.business.bo.DeviceBO;
@@ -17,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +39,15 @@ public class SIPServiceImpl implements ISIPService {
     private DynamicTask dynamicTask;
 
     @Override
+    public List<DeviceBO> list() {
+        List<DevicePO> pos = deviceService.list(Wrappers.<DevicePO>emptyWrapper());
+        if (CollUtil.isEmpty(pos)) {
+            return Collections.emptyList();
+        }
+        return pos.stream().map(DeviceBO::po2bo).collect(Collectors.toList());
+    }
+
+    @Override
     public DeviceBO getDevice(String deviceId) {
         DevicePO po = deviceService.getOne(Wrappers.<DevicePO>lambdaQuery()
                 .eq(DevicePO::getDeviceId, deviceId));
@@ -52,6 +59,9 @@ public class SIPServiceImpl implements ISIPService {
     public void offline(String deviceId) {
         deviceService.update(Wrappers.<DevicePO>lambdaUpdate()
                 .set(DevicePO::getStatus, Boolean.FALSE));
+
+        deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
+                .set(DeviceChannelPO::getStatus, Boolean.FALSE));
 
         String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceId);
         dynamicTask.stop(key);

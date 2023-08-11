@@ -3,8 +3,8 @@ package com.htuozhou.wvp.common.page;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,10 +45,10 @@ public class PageResp<T> {
         pageResult.setPageSize((int) page.getSize());
         pageResult.setPageNum((int) page.getCurrent());
         pageResult.setPages((int) page.getPages());
-        if (Objects.nonNull(page.getRecords()) && CollUtil.isNotEmpty(page.getRecords())) {
-            List<R> collects = page.getRecords().stream().map(mapper).collect(Collectors.toList());
-            pageResult.setRecords(collects);
+        if (CollUtil.isEmpty(page.getRecords())) {
+            pageResult.setRecords(Collections.emptyList());
         }
+        pageResult.setRecords(page.getRecords().stream().map(mapper).collect(Collectors.toList()));
         return pageResult;
     }
 

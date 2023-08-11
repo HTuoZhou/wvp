@@ -10,6 +10,9 @@ import java.util.List;
  * @date 2023/4/14
  */
 public interface ISIPService {
+
+    List<DeviceBO> list();
+
     DeviceBO getDevice(String deviceId);
 
     void offline(String deviceId);

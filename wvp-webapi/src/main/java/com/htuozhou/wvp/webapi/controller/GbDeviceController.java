@@ -47,6 +47,17 @@ public class GbDeviceController {
     }
 
     /**
+     * 删除国标设备
+     *
+     * @param deviceId
+     * @return
+     */
+    @DeleteMapping("/delete/{deviceId}")
+    public ApiFinalResult<Boolean> delete(@PathVariable("deviceId") String deviceId) {
+        return ApiFinalResult.success(gbDeviceService.delete(deviceId));
+    }
+
+    /**
      * 分页查询国标设备通道
      *
      * @param pageReq

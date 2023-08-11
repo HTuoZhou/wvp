@@ -68,7 +68,7 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
         String deviceId = uri.getUser();
         DeviceBO deviceBO = sipService.getDevice(deviceId);
         if (Objects.isNull(deviceBO)) {
-            log.warn("[GB DEVICE ID {}]不存在]", deviceId);
+            log.warn("[SIP MESSAGE 设备{}]不存在]", deviceId);
             return;
         }
 

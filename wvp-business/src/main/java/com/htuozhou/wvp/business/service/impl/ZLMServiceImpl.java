@@ -9,6 +9,7 @@ import com.htuozhou.wvp.business.service.IZLMService;
 import com.htuozhou.wvp.business.task.DynamicTask;
 import com.htuozhou.wvp.business.zlm.ZLMManager;
 import com.htuozhou.wvp.common.constant.DynamicTaskConstant;
+import com.htuozhou.wvp.common.constant.ZLMConstant;
 import com.htuozhou.wvp.common.exception.BusinessException;
 import com.htuozhou.wvp.common.result.ResultCodeEnum;
 import com.htuozhou.wvp.persistence.po.MediaServerPO;
@@ -247,7 +248,7 @@ public class ZLMServiceImpl implements IZLMService {
             if (Objects.nonNull(mediaServerItem)) {
                 refreshKeepAlive(bo);
             } else {
-                log.warn("[ZLM MEDIA SERVER ADDRESS {}] 心跳检测离线", bo.getMediaServerId());
+                log.warn("[ZLM ADDRESS {}] 心跳检测离线", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 offline(bo.getMediaServerId());
             }
         }

@@ -1,7 +1,9 @@
 package com.htuozhou.wvp.business.sip;
 
+import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.properties.DefaultProperties;
 import com.htuozhou.wvp.business.properties.SIPProperties;
+import com.htuozhou.wvp.business.service.ISIPService;
 import gov.nist.javax.sip.SipProviderImpl;
 import gov.nist.javax.sip.SipStackImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +33,16 @@ public class SIPRunner implements CommandLineRunner {
 
     private final Map<String, SipProviderImpl> tcpSipProviderMap = new ConcurrentHashMap<>();
     private final Map<String, SipProviderImpl> udpSipProviderMap = new ConcurrentHashMap<>();
+
     @Autowired
     private SIPProperties sipProperties;
+
     @Autowired
     private ISIPProcessorObserver sipProcessorObserver;
+
+    @Autowired
+    private ISIPService sipService;
+
     private SipFactory sipFactory;
 
     @Override
@@ -56,6 +64,14 @@ public class SIPRunner implements CommandLineRunner {
                 addListeningPoint(monitorIp, sipProperties.getPort());
             }
         }
+
+        List<DeviceBO> bos = sipService.list();
+        for (DeviceBO bo : bos) {
+            if (!bo.getStatus()) {
+                continue;
+            }
+            sipService.refreshKeepAlive(bo);
+        }
     }
 
     private void addListeningPoint(String monitorIp, int port) {
@@ -75,9 +91,9 @@ public class SIPRunner implements CommandLineRunner {
             tcpSipProvider.addSipListener(sipProcessorObserver);
             tcpSipProviderMap.put(monitorIp, tcpSipProvider);
 
-            log.info("[SIP TCP ADDRESS:{}] 启动成功", monitorIp + "://" + port);
+            log.info("[SIP TCP ADDRESS:{}] 启动成功", monitorIp + ":" + port);
         } catch (Exception e) {
-            log.error("[SIP TCP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
+            log.error("[SIP TCP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + ":" + port);
         }
 
         try {
@@ -88,9 +104,9 @@ public class SIPRunner implements CommandLineRunner {
 
             udpSipProviderMap.put(monitorIp, udpSipProvider);
 
-            log.info("[SIP UDP ADDRESS:{}] 启动成功", monitorIp + "://" + port);
+            log.info("[SIP UDP ADDRESS:{}] 启动成功", monitorIp + ":" + port);
         } catch (Exception e) {
-            log.error("[SIP UDP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + "://" + port);
+            log.error("[SIP UDP ADDRESS:{}] 启动失败,请检查端口是否被占用", monitorIp + ":" + port);
         }
     }
 

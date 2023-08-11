@@ -34,4 +34,12 @@ public interface IGbDeviceService {
      * @return
      */
     IPage<DeviceChannelBO> pageChannel(PageReq<DeviceChannelBO> pageReq);
+
+    /**
+     * 删除国标设备
+     *
+     * @param deviceId
+     * @return
+     */
+    Boolean delete(String deviceId);
 }

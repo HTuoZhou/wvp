@@ -15,6 +15,7 @@ import com.htuozhou.wvp.persistence.service.IDeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -59,6 +60,20 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
                 .eq(DevicePO::getDeviceId, deviceId));
 
         return DeviceBO.po2bo(po);
+    }
+
+    /**
+     * 删除国标设备
+     *
+     * @param deviceId
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean delete(String deviceId) {
+        deviceService.remove(Wrappers.<DevicePO>lambdaQuery().eq(DevicePO::getDeviceId, deviceId));
+        deviceChannelService.remove(Wrappers.<DeviceChannelPO>lambdaQuery().eq(DeviceChannelPO::getDeviceId, deviceId));
+        return Boolean.TRUE;
     }
 
     /**
