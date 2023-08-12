@@ -46,6 +46,10 @@ public class ZLMRunner implements CommandLineRunner {
                 continue;
             }
 
+            if (!mediaServerBO.getStatus()){
+                continue;
+            }
+
             zlmService.online(mediaServerBO.getMediaServerId());
         }
     }

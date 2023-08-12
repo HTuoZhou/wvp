@@ -1,6 +1,8 @@
 package com.htuozhou.wvp.webapi.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.htuozhou.wvp.business.bean.BaseTree;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
@@ -11,6 +13,10 @@ import com.htuozhou.wvp.webapi.vo.DeviceChannelVO;
 import com.htuozhou.wvp.webapi.vo.GbDeviceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author hanzai
@@ -67,6 +73,35 @@ public class GbDeviceController {
     public ApiFinalResult<PageResp<DeviceChannelVO>> pageChannel(@RequestBody PageReq<DeviceChannelVO> pageReq) {
         IPage<DeviceChannelBO> pageResp = gbDeviceService.pageChannel(pageReq.pageVo2Bo(DeviceChannelVO::vo2bo));
         return ApiFinalResult.success(PageResp.pageBo2Vo(pageResp, DeviceChannelVO::bo2vo));
+    }
+
+    /**
+     * 查询国标设备树
+     *
+     * @param pageReq
+     * @return
+     */
+    @GetMapping("/channel/tree/{deviceId}/{parentId}")
+    public ApiFinalResult<List<BaseTree<DeviceChannelVO>>> tree(@PathVariable("deviceId") String deviceId,
+                                                                @PathVariable("parentId") String parentId){
+        List<BaseTree<DeviceChannelBO>> bos = gbDeviceService.tree(deviceId,parentId);
+        if (CollUtil.isEmpty(bos)){
+            return ApiFinalResult.success(Collections.emptyList());
+        }
+
+        List<BaseTree<DeviceChannelVO>> vos = new ArrayList<>();
+        for (BaseTree<DeviceChannelBO> bo : bos) {
+            BaseTree<DeviceChannelVO> vo = new BaseTree<>();
+            vo.setId(bo.getId());
+            vo.setDeviceId(bo.getDeviceId());
+            vo.setName(bo.getName());
+            vo.setPid(bo.getPid());
+            vo.setChild(DeviceChannelVO.bo2vo(bo.getChild()));
+            vo.setParent(bo.getParent());
+
+            vos.add(vo);
+        }
+        return ApiFinalResult.success(vos);
     }
 
 }

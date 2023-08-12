@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.htuozhou.wvp.business.bean.ResourceBaseInfo;
@@ -11,7 +12,11 @@ import com.htuozhou.wvp.business.service.ISystemService;
 import com.htuozhou.wvp.common.constant.RedisConstant;
 import com.htuozhou.wvp.common.utils.RedisUtil;
 import com.htuozhou.wvp.common.utils.SystemInfoUtil;
+import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
+import com.htuozhou.wvp.persistence.po.DevicePO;
 import com.htuozhou.wvp.persistence.po.MediaServerPO;
+import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
+import com.htuozhou.wvp.persistence.service.IDeviceService;
 import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,12 @@ public class SystemServiceImpl implements ISystemService {
 
     @Autowired
     private IMediaServerService zlmServerService;
+
+    @Autowired
+    private IDeviceService deviceService;
+
+    @Autowired
+    private IDeviceChannelService deviceChannelService;
 
     /**
      * 获取系统信息
@@ -90,8 +101,22 @@ public class SystemServiceImpl implements ISystemService {
     public ResourceInfoBO getResourceInfo() {
         ResourceInfoBO bo = new ResourceInfoBO();
 
-        ResourceBaseInfo device = new ResourceBaseInfo(0, 0);
-        ResourceBaseInfo channel = new ResourceBaseInfo(0, 0);
+        ResourceBaseInfo device;
+        List<DevicePO> devicePOS = deviceService.list(Wrappers.<DevicePO>emptyWrapper());
+        if (CollUtil.isEmpty(devicePOS)){
+            device = new ResourceBaseInfo(0, 0);
+        } else {
+            device = new ResourceBaseInfo(devicePOS.size(), (int) devicePOS.stream().filter(DevicePO::getStatus).count());
+        }
+
+        ResourceBaseInfo channel;
+        List<DeviceChannelPO> deviceChannelPOS = deviceChannelService.list(Wrappers.<DeviceChannelPO>emptyWrapper());
+        if (CollUtil.isEmpty(deviceChannelPOS)){
+            channel = new ResourceBaseInfo(0, 0);
+        } else {
+            channel = new ResourceBaseInfo(deviceChannelPOS.size(), (int) deviceChannelPOS.stream().filter(DeviceChannelPO::getStatus).count());
+        }
+
         ResourceBaseInfo push = new ResourceBaseInfo(0, 0);
         ResourceBaseInfo proxy = new ResourceBaseInfo(0, 0);
 

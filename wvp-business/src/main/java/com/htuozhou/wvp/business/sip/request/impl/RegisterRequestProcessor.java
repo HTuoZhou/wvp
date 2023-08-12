@@ -136,10 +136,6 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             deviceBO.setKeepAliveInterval(SIPConstant.KEEP_ALIVE_INTERVAL);
             deviceService.saveOrUpdate(deviceBO.bo2po());
 
-            deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
-                    .set(DeviceChannelPO::getStatus, Boolean.TRUE)
-                    .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId()));
-
             sipService.refreshKeepAlive(deviceBO);
 
             // 查询设备信息

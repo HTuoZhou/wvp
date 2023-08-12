@@ -1,9 +1,12 @@
 package com.htuozhou.wvp.business.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.htuozhou.wvp.business.bean.BaseTree;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.common.page.PageReq;
+
+import java.util.List;
 
 /**
  * @author hanzai
@@ -42,4 +45,12 @@ public interface IGbDeviceService {
      * @return
      */
     Boolean delete(String deviceId);
+
+    /**
+     * 查询国标设备树
+     *
+     * @param pageReq
+     * @return
+     */
+    List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId);
 }

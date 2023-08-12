@@ -60,9 +60,6 @@ public class SIPServiceImpl implements ISIPService {
         deviceService.update(Wrappers.<DevicePO>lambdaUpdate()
                 .set(DevicePO::getStatus, Boolean.FALSE));
 
-        deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
-                .set(DeviceChannelPO::getStatus, Boolean.FALSE));
-
         String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceId);
         dynamicTask.stop(key);
     }
