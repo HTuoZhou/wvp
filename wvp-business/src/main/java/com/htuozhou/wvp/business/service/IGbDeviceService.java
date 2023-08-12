@@ -49,7 +49,8 @@ public interface IGbDeviceService {
     /**
      * 查询国标设备树
      *
-     * @param pageReq
+     * @param deviceId
+     * @param parentId
      * @return
      */
     List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId);

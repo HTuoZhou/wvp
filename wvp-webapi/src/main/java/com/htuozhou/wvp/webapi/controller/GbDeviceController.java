@@ -78,7 +78,8 @@ public class GbDeviceController {
     /**
      * 查询国标设备树
      *
-     * @param pageReq
+     * @param deviceId
+     * @param parentId
      * @return
      */
     @GetMapping("/channel/tree/{deviceId}/{parentId}")

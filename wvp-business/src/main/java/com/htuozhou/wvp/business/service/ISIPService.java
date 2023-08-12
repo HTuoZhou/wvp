@@ -15,9 +15,7 @@ public interface ISIPService {
 
     DeviceBO getDevice(String deviceId);
 
-    void offline(String deviceId);
-
-    void refreshKeepAlive(DeviceBO bo);
+    void offline(DeviceBO deviceBO);
 
     void saveDeviceChannel(List<DeviceChannelBO> bos, String deviceId);
 

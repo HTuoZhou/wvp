@@ -27,8 +27,8 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.htuozhou.wvp.persistence.po
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # sip服务配置
 sip:

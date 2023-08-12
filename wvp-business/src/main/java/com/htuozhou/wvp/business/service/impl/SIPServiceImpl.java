@@ -7,7 +7,6 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.task.DynamicTask;
-import com.htuozhou.wvp.common.constant.DynamicTaskConstant;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.htuozhou.wvp.persistence.po.DevicePO;
 import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
@@ -56,18 +55,10 @@ public class SIPServiceImpl implements ISIPService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void offline(String deviceId) {
+    public void offline(DeviceBO deviceBO) {
+        log.info("[设备{}] 心跳检测离线", deviceBO.getDeviceId());
         deviceService.update(Wrappers.<DevicePO>lambdaUpdate()
                 .set(DevicePO::getStatus, Boolean.FALSE));
-
-        String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceId);
-        dynamicTask.stop(key);
-    }
-
-    @Override
-    public void refreshKeepAlive(DeviceBO bo) {
-        String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, bo.getDeviceId());
-        dynamicTask.startDelay(key, () -> offline(bo.getDeviceId()), bo.getKeepAliveInterval() * 3);
     }
 
     @Override

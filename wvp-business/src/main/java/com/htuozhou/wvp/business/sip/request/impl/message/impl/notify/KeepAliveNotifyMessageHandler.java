@@ -5,6 +5,8 @@ import com.htuozhou.wvp.business.service.ISIPService;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.impl.message.IMessageHandler;
+import com.htuozhou.wvp.business.task.DynamicTask;
+import com.htuozhou.wvp.common.constant.DynamicTaskConstant;
 import com.htuozhou.wvp.persistence.service.IDeviceService;
 import gov.nist.javax.sip.RequestEventExt;
 import gov.nist.javax.sip.message.SIPRequest;
@@ -41,6 +43,9 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
     @Autowired
     private ISIPService sipService;
 
+    @Autowired
+    private DynamicTask dynamicTask;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         notifyMessageHandler.addMessageHandler(cmdType, this);
@@ -65,6 +70,8 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         deviceBO.setKeepAliveTime(LocalDateTime.now());
         deviceService.updateById(deviceBO.bo2po());
 
-        sipService.refreshKeepAlive(deviceBO);
+        String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceBO.getDeviceId());
+        dynamicTask.cancel(key);
+        dynamicTask.startDelay(key, () -> sipService.offline(deviceBO), deviceBO.getKeepAliveInterval() * 3);
     }
 }

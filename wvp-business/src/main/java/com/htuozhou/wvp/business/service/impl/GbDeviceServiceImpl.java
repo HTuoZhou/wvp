@@ -95,7 +95,9 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
         Page<DeviceChannelPO> page = deviceChannelService.page(new Page<>(pageNum, pageSize), Wrappers.<DeviceChannelPO>lambdaQuery()
                 .eq(DeviceChannelPO::getDeviceId, queryParam.getDeviceId())
-                .and(StrUtil.isNotBlank(queryParam.getParentChannelId()), wrapper -> wrapper.eq(DeviceChannelPO::getParentId, queryParam.getParentChannelId()).or().eq(DeviceChannelPO::getCivilCode, queryParam.getParentChannelId()))
+                .and(StrUtil.isNotBlank(queryParam.getParentChannelId()), wrapper -> wrapper
+                        .eq(DeviceChannelPO::getParentId, queryParam.getParentChannelId()).or()
+                        .eq(DeviceChannelPO::getCivilCode, queryParam.getParentChannelId()))
                 .like(StrUtil.isNotBlank(queryParam.getChannelId()), DeviceChannelPO::getChannelId, queryParam.getChannelId())
                 .gt((Objects.nonNull(queryParam.getChannelType()) && queryParam.getChannelType()), DeviceChannelPO::getSubCount, 0)
                 .eq((Objects.nonNull(queryParam.getChannelType()) && !queryParam.getChannelType()), DeviceChannelPO::getSubCount, 0)
@@ -106,14 +108,19 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     /**
      * 查询国标设备树
      *
-     * @param pageReq
+     * @param deviceId
+     * @param parentId
      * @return
      */
     @Override
     public List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId) {
-        List<DeviceChannelPO> pos = deviceChannelService.list(Wrappers.<DeviceChannelPO>lambdaQuery().eq(DeviceChannelPO::getDeviceId, deviceId)
-                .and(wrapper -> wrapper.eq(DeviceChannelPO::getParentId, parentId).or().eq(DeviceChannelPO::getCivilCode, parentId)));
-        return  deviceChannel2Tree(pos, parentId);
+        List<DeviceChannelPO> pos = deviceChannelService.list(Wrappers.<DeviceChannelPO>lambdaQuery()
+                .eq(DeviceChannelPO::getDeviceId, deviceId)
+                .and(wrapper -> wrapper
+                        .isNull(DeviceChannelPO::getParentId).or()
+                        .eq(DeviceChannelPO::getParentId, parentId).or()
+                        .eq(DeviceChannelPO::getCivilCode, parentId)));
+        return deviceChannel2Tree(pos, "");
     }
 
     private List<BaseTree<DeviceChannelBO>> deviceChannel2Tree(List<DeviceChannelPO> pos, String parentId) {
@@ -133,10 +140,10 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
             if (po.getChannelId().length() <= 8) {
                 treeNode.setParent(Boolean.TRUE);
-            }else {
+            } else {
                 if (po.getChannelId().length() != 20) {
                     treeNode.setParent(po.getParental() == 1);
-                }else {
+                } else {
                     int type = Integer.parseInt(po.getChannelId().substring(10, 13));
                     if (type == 215 || type == 216 || type == 200) {
                         treeNode.setParent(true);

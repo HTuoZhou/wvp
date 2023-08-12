@@ -10,6 +10,8 @@ import com.htuozhou.wvp.business.sip.SIPProcessorObserver;
 import com.htuozhou.wvp.business.sip.SIPSender;
 import com.htuozhou.wvp.business.sip.request.AbstractSIPRequestProcessor;
 import com.htuozhou.wvp.business.sip.request.ISIPRequestProcessor;
+import com.htuozhou.wvp.business.task.DynamicTask;
+import com.htuozhou.wvp.common.constant.DynamicTaskConstant;
 import com.htuozhou.wvp.common.constant.SIPConstant;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.htuozhou.wvp.persistence.po.DevicePO;
@@ -63,6 +65,9 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
 
     @Autowired
     private IDeviceChannelService deviceChannelService;
+
+    @Autowired
+    private DynamicTask dynamicTask;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -136,13 +141,14 @@ public class RegisterRequestProcessor extends AbstractSIPRequestProcessor implem
             deviceBO.setKeepAliveInterval(SIPConstant.KEEP_ALIVE_INTERVAL);
             deviceService.saveOrUpdate(deviceBO.bo2po());
 
-            sipService.refreshKeepAlive(deviceBO);
-
             // 查询设备信息
             sipCommander.deviceInfoQuery(deviceBO);
 
             // 查询设备通道信息
             sipCommander.catalogQuery(deviceBO);
+
+            String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceBO.getDeviceId());
+            dynamicTask.startDelay(key, () -> sipService.offline(deviceBO), deviceBO.getKeepAliveInterval() * 3);
         }
     }
 }

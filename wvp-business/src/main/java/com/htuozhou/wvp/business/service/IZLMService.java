@@ -20,9 +20,7 @@ public interface IZLMService {
 
     void setKeepAliveTime(String mediaServerId);
 
-    void refreshKeepAlive(MediaServerBO bo);
-
-    void offline(String mediaServerId);
+    void offline(MediaServerBO mediaServerBO);
 
     /**
      * 获取流媒体服务列表

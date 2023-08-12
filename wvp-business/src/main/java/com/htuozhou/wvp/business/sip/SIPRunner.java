@@ -4,6 +4,8 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.properties.DefaultProperties;
 import com.htuozhou.wvp.business.properties.SIPProperties;
 import com.htuozhou.wvp.business.service.ISIPService;
+import com.htuozhou.wvp.business.task.DynamicTask;
+import com.htuozhou.wvp.common.constant.DynamicTaskConstant;
 import gov.nist.javax.sip.SipProviderImpl;
 import gov.nist.javax.sip.SipStackImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,9 @@ public class SIPRunner implements CommandLineRunner {
 
     private SipFactory sipFactory;
 
+    @Autowired
+    private DynamicTask dynamicTask;
+
     @Override
     public void run(String... args) throws Exception {
         List<String> monitorIps = new ArrayList<>();
@@ -70,7 +75,9 @@ public class SIPRunner implements CommandLineRunner {
             if (!bo.getStatus()) {
                 continue;
             }
-            sipService.refreshKeepAlive(bo);
+
+            String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, bo.getDeviceId());
+            dynamicTask.startDelay(key, () -> sipService.offline(bo), bo.getKeepAliveInterval() * 3);
         }
     }
 

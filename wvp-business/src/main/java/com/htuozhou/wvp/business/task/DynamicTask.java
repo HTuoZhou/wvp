@@ -62,8 +62,6 @@ public class DynamicTask {
      * @return
      */
     public void startDelay(String key, Runnable task, int delay) {
-        stop(key);
-
         ScheduledFuture<?> future = scheduledFutureMap.get(key);
         if (Objects.nonNull(future)) {
             if (future.isCancelled()) {
@@ -81,14 +79,12 @@ public class DynamicTask {
         log.debug("任务【{}】不存在,启动成功", key);
     }
 
-    public boolean stop(String key) {
-        boolean result = false;
-        if (Objects.nonNull(scheduledFutureMap.get(key)) && (scheduledFutureMap.get(key).isCancelled() || scheduledFutureMap.get(key).isDone())) {
-            result = scheduledFutureMap.get(key).cancel(false);
+    public void cancel(String key){
+        if (Objects.nonNull(scheduledFutureMap.get(key)) && !scheduledFutureMap.get(key).isCancelled() && !scheduledFutureMap.get(key).isDone()) {
+            scheduledFutureMap.get(key).cancel(true);
             scheduledFutureMap.remove(key);
             runnableMap.remove(key);
         }
-        return result;
     }
 
     public boolean contains(String key) {
