@@ -79,7 +79,7 @@ public class DynamicTask {
         log.debug("任务【{}】不存在,启动成功", key);
     }
 
-    public void cancel(String key){
+    public void cancel(String key) {
         if (Objects.nonNull(scheduledFutureMap.get(key)) && !scheduledFutureMap.get(key).isCancelled() && !scheduledFutureMap.get(key).isDone()) {
             scheduledFutureMap.get(key).cancel(true);
             scheduledFutureMap.remove(key);

@@ -2,6 +2,7 @@ package com.htuozhou.wvp.business.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.htuozhou.wvp.business.bean.BaseTree;
+import com.htuozhou.wvp.business.bean.StreamContent;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.common.page.PageReq;
@@ -54,4 +55,13 @@ public interface IGbDeviceService {
      * @return
      */
     List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId);
+
+    /**
+     * 开始点播国标设备
+     *
+     * @param deviceId
+     * @param channelId
+     * @return
+     */
+    StreamContent startPlay(String deviceId, String channelId);
 }

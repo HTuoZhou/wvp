@@ -113,11 +113,13 @@ public class ZLMServiceImpl implements IZLMService {
     /**
      * 获取流媒体服务列表
      *
+     * @param status
      * @return
      */
     @Override
-    public List<MediaServerBO> getMediaServerList() {
-        List<MediaServerPO> pos = mediaServerService.list(Wrappers.emptyWrapper());
+    public List<MediaServerBO> getMediaServerList(Boolean status) {
+        List<MediaServerPO> pos = mediaServerService.list(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(Objects.nonNull(status), MediaServerPO::getStatus, status));
         if (CollectionUtil.isEmpty(pos)) {
             return Collections.emptyList();
         }

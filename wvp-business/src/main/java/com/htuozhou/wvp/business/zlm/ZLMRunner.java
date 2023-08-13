@@ -40,13 +40,9 @@ public class ZLMRunner implements CommandLineRunner {
             zlmService.saveOrUpdateMediaServer(bo);
         }
 
-        List<MediaServerBO> bos = zlmService.getMediaServerList();
+        List<MediaServerBO> bos = zlmService.getMediaServerList(Boolean.TRUE);
         for (MediaServerBO mediaServerBO : bos) {
             if (mediaServerBO.getDefaultServer()) {
-                continue;
-            }
-
-            if (!mediaServerBO.getStatus()){
                 continue;
             }
 

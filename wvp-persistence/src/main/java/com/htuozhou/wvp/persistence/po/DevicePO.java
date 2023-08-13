@@ -145,6 +145,24 @@ public class DevicePO implements Serializable {
     private Integer channels;
 
     /**
+     * SSRC校验
+     */
+    @TableField("ssrcCheck")
+    private Boolean ssrcCheck;
+
+    /**
+     * 主码流
+     */
+    @TableField("primaryStream")
+    private Boolean primaryStream;
+
+    /**
+     * 作为消息通道
+     */
+    @TableField("asMessageChannel")
+    private Boolean asMessageChannel;
+
+    /**
      * 创建时间
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)

@@ -3,6 +3,7 @@ package com.htuozhou.wvp.webapi.controller;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.htuozhou.wvp.business.bean.BaseTree;
+import com.htuozhou.wvp.business.bean.StreamContent;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
@@ -13,6 +14,7 @@ import com.htuozhou.wvp.webapi.vo.DeviceChannelVO;
 import com.htuozhou.wvp.webapi.vo.GbDeviceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,9 +86,9 @@ public class GbDeviceController {
      */
     @GetMapping("/channel/tree/{deviceId}/{parentId}")
     public ApiFinalResult<List<BaseTree<DeviceChannelVO>>> tree(@PathVariable("deviceId") String deviceId,
-                                                                @PathVariable("parentId") String parentId){
-        List<BaseTree<DeviceChannelBO>> bos = gbDeviceService.tree(deviceId,parentId);
-        if (CollUtil.isEmpty(bos)){
+                                                                @PathVariable("parentId") String parentId) {
+        List<BaseTree<DeviceChannelBO>> bos = gbDeviceService.tree(deviceId, parentId);
+        if (CollUtil.isEmpty(bos)) {
             return ApiFinalResult.success(Collections.emptyList());
         }
 
@@ -103,6 +105,19 @@ public class GbDeviceController {
             vos.add(vo);
         }
         return ApiFinalResult.success(vos);
+    }
+
+    /**
+     * 开始点播国标设备
+     *
+     * @param deviceId
+     * @param channelId
+     * @return
+     */
+    @GetMapping("/channel/play/start/{deviceId}/{channelId}")
+    public DeferredResult<ApiFinalResult<StreamContent>> startPlay(@PathVariable("deviceId") String deviceId,
+                                                                   @PathVariable("channelId") String channelId) {
+        return null;
     }
 
 }

@@ -103,7 +103,7 @@ public class SystemServiceImpl implements ISystemService {
 
         ResourceBaseInfo device;
         List<DevicePO> devicePOS = deviceService.list(Wrappers.<DevicePO>emptyWrapper());
-        if (CollUtil.isEmpty(devicePOS)){
+        if (CollUtil.isEmpty(devicePOS)) {
             device = new ResourceBaseInfo(0, 0);
         } else {
             device = new ResourceBaseInfo(devicePOS.size(), (int) devicePOS.stream().filter(DevicePO::getStatus).count());
@@ -111,7 +111,7 @@ public class SystemServiceImpl implements ISystemService {
 
         ResourceBaseInfo channel;
         List<DeviceChannelPO> deviceChannelPOS = deviceChannelService.list(Wrappers.<DeviceChannelPO>emptyWrapper());
-        if (CollUtil.isEmpty(deviceChannelPOS)){
+        if (CollUtil.isEmpty(deviceChannelPOS)) {
             channel = new ResourceBaseInfo(0, 0);
         } else {
             channel = new ResourceBaseInfo(deviceChannelPOS.size(), (int) deviceChannelPOS.stream().filter(DeviceChannelPO::getStatus).count());

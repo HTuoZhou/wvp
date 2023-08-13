@@ -25,9 +25,10 @@ public interface IZLMService {
     /**
      * 获取流媒体服务列表
      *
+     * @param status
      * @return
      */
-    List<MediaServerBO> getMediaServerList();
+    List<MediaServerBO> getMediaServerList(Boolean status);
 
     /**
      * 测试流媒体服务

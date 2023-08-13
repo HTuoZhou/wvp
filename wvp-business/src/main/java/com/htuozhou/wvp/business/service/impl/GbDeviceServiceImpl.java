@@ -6,14 +6,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.htuozhou.wvp.business.bean.BaseTree;
+import com.htuozhou.wvp.business.bean.StreamContent;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
 import com.htuozhou.wvp.common.page.PageReq;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.htuozhou.wvp.persistence.po.DevicePO;
+import com.htuozhou.wvp.persistence.po.MediaServerPO;
 import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
 import com.htuozhou.wvp.persistence.service.IDeviceService;
+import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
     @Autowired
     private IDeviceChannelService deviceChannelService;
+
+    @Autowired
+    private IMediaServerService mediaServerService;
 
     /**
      * 分页查询国标设备
@@ -153,5 +159,30 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
             treeNodes.add(treeNode);
         }
         return treeNodes;
+    }
+
+    /**
+     * 开始点播国标设备
+     *
+     * @param deviceId
+     * @param channelId
+     * @return
+     */
+    @Override
+    public StreamContent startPlay(String deviceId, String channelId) {
+        log.info("[开始点播国标设备,deviceId:{},channelId:{}, ", deviceId, channelId);
+
+        // 获取可用的ZLM
+        DevicePO devicePO = deviceService.getOne(Wrappers.<DevicePO>lambdaQuery()
+                .eq(DevicePO::getDeviceId, deviceId));
+        MediaServerPO mediaServerPO = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
+                .eq(StrUtil.isBlank(devicePO.getMediaServerId()), MediaServerPO::getDefaultServer, Boolean.TRUE)
+                .eq(StrUtil.isNotBlank(devicePO.getMediaServerId()), MediaServerPO::getMediaServerId, devicePO.getMediaServerId()));
+
+        if (Objects.isNull(mediaServerPO) || !mediaServerPO.getStatus()) {
+            log.warn("暂时没有可用的ZLM");
+        }
+
+        return null;
     }
 }

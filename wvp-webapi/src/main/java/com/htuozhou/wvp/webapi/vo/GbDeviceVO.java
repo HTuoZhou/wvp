@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.webapi.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -112,6 +113,24 @@ public class GbDeviceVO {
      * 通道数
      */
     private Integer channels;
+
+    /**
+     * SSRC校验
+     */
+    @TableField("ssrcCheck")
+    private Boolean ssrcCheck;
+
+    /**
+     * 主码流
+     */
+    @TableField("primaryStream")
+    private Boolean primaryStream;
+
+    /**
+     * 作为消息通道
+     */
+    @TableField("asMessageChannel")
+    private Boolean asMessageChannel;
 
     /**
      * 创建时间

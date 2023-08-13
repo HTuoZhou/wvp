@@ -26,11 +26,12 @@ public class MediaServerController {
     /**
      * 获取流媒体服务列表
      *
+     * @param status
      * @return
      */
     @GetMapping("/list")
-    public ApiFinalResult<List<MediaServerVO>> getMediaServerList() {
-        List<MediaServerBO> bos = zlmService.getMediaServerList();
+    public ApiFinalResult<List<MediaServerVO>> getMediaServerList(Boolean status) {
+        List<MediaServerBO> bos = zlmService.getMediaServerList(status);
         if (CollectionUtil.isEmpty(bos)) {
             return ApiFinalResult.success(Collections.emptyList());
         }
