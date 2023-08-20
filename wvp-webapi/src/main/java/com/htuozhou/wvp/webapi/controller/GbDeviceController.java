@@ -108,16 +108,16 @@ public class GbDeviceController {
     }
 
     /**
-     * 开始点播国标设备
+     * 国标设备点播
      *
      * @param deviceId
      * @param channelId
      * @return
      */
-    @GetMapping("/channel/play/start/{deviceId}/{channelId}")
-    public DeferredResult<ApiFinalResult<StreamContent>> startPlay(@PathVariable("deviceId") String deviceId,
-                                                                   @PathVariable("channelId") String channelId) {
-        return null;
+    @GetMapping("/channel/play/{deviceId}/{channelId}")
+    public DeferredResult<ApiFinalResult<StreamContent>> play(@PathVariable("deviceId") String deviceId,
+                                                              @PathVariable("channelId") String channelId) {
+        return gbDeviceService.play(deviceId, channelId);
     }
 
 }

@@ -6,6 +6,8 @@ import com.htuozhou.wvp.business.bean.StreamContent;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.common.page.PageReq;
+import com.htuozhou.wvp.common.result.ApiFinalResult;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.List;
 
@@ -57,11 +59,11 @@ public interface IGbDeviceService {
     List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId);
 
     /**
-     * 开始点播国标设备
+     * 国标设备点播
      *
      * @param deviceId
      * @param channelId
      * @return
      */
-    StreamContent startPlay(String deviceId, String channelId);
+    DeferredResult<ApiFinalResult<StreamContent>> play(String deviceId, String channelId);
 }

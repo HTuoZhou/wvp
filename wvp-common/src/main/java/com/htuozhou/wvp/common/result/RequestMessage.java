@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.task;
+package com.htuozhou.wvp.common.result;
 
 import lombok.Data;
 

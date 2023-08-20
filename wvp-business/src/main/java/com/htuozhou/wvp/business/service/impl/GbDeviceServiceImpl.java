@@ -1,6 +1,7 @@
 package com.htuozhou.wvp.business.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,8 +10,17 @@ import com.htuozhou.wvp.business.bean.BaseTree;
 import com.htuozhou.wvp.business.bean.StreamContent;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
+import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
+import com.htuozhou.wvp.business.service.IPlayService;
+import com.htuozhou.wvp.common.config.DeferredResultHolder;
+import com.htuozhou.wvp.common.constant.DeferredResultConstant;
+import com.htuozhou.wvp.common.constant.SIPConstant;
+import com.htuozhou.wvp.common.exception.BusinessException;
 import com.htuozhou.wvp.common.page.PageReq;
+import com.htuozhou.wvp.common.result.ApiFinalResult;
+import com.htuozhou.wvp.common.result.RequestMessage;
+import com.htuozhou.wvp.common.result.ResultCodeEnum;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.htuozhou.wvp.persistence.po.DevicePO;
 import com.htuozhou.wvp.persistence.po.MediaServerPO;
@@ -21,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +54,12 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
     @Autowired
     private IMediaServerService mediaServerService;
+
+    @Autowired
+    private DeferredResultHolder resultHolder;
+
+    @Autowired
+    private IPlayService playService;
 
     /**
      * 分页查询国标设备
@@ -162,17 +179,23 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     }
 
     /**
-     * 开始点播国标设备
+     * 国标设备点播
      *
      * @param deviceId
      * @param channelId
      * @return
      */
     @Override
-    public StreamContent startPlay(String deviceId, String channelId) {
-        log.info("[开始点播国标设备,deviceId:{},channelId:{}, ", deviceId, channelId);
+    @Transactional(rollbackFor = Exception.class)
+    public DeferredResult<ApiFinalResult<StreamContent>> play(String deviceId, String channelId) {
+        DeferredResult<ApiFinalResult<StreamContent>> result = new DeferredResult<>(DeferredResultConstant.PLAY_TIME_OUT);
 
-        // 获取可用的ZLM
+        RequestMessage requestMessage = new RequestMessage();
+        requestMessage.setKey(String.format(DeferredResultConstant.PLAY_CALLBACK, deviceId, channelId));
+        requestMessage.setId(IdUtil.randomUUID());
+
+        log.info("[国标设备点播],deviceId:{},channelId:{}, ", deviceId, channelId);
+
         DevicePO devicePO = deviceService.getOne(Wrappers.<DevicePO>lambdaQuery()
                 .eq(DevicePO::getDeviceId, deviceId));
         MediaServerPO mediaServerPO = mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
@@ -180,9 +203,27 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
                 .eq(StrUtil.isNotBlank(devicePO.getMediaServerId()), MediaServerPO::getMediaServerId, devicePO.getMediaServerId()));
 
         if (Objects.isNull(mediaServerPO) || !mediaServerPO.getStatus()) {
-            log.warn("暂时没有可用的ZLM");
+            log.error("[国标设备点播失败,{}],deviceId:{},channelId:{}, ", ResultCodeEnum.ZLM_UN_USABLE.getMsg(), deviceId, channelId);
+            throw new BusinessException(ResultCodeEnum.ZLM_UN_USABLE);
         }
 
-        return null;
+        if (devicePO.getStreamMode().equalsIgnoreCase(SIPConstant.STREAM_MODE_TCP_ACTIVE) && !mediaServerPO.getRtpEnable()) {
+            log.error("[国标设备点播失败,{}],deviceId:{},channelId:{}, ", ResultCodeEnum.TCP_ACTIVE_NOT_SUPPORT.getMsg(), deviceId, channelId);
+            throw new BusinessException(ResultCodeEnum.TCP_ACTIVE_NOT_SUPPORT);
+        }
+
+        result.onTimeout(() -> {
+            log.error("[国标设备点播超时],deviceId:{},channelId:{}", deviceId, channelId);
+            requestMessage.setData(ApiFinalResult.error(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT));
+            resultHolder.invokeAllResult(requestMessage);
+        });
+
+        resultHolder.put(requestMessage.getKey(), requestMessage.getId(), result);
+
+        playService.play(MediaServerBO.po2bo(mediaServerPO), deviceId, channelId, null, (code, msg, data) -> {
+            resultHolder.invokeResult(requestMessage);
+        });
+
+        return result;
     }
 }

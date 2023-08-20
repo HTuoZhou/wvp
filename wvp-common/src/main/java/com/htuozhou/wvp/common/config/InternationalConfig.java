@@ -9,7 +9,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
  * @date 2023/2/3
  */
 @Configuration
-public class I18nConfig {
+public class InternationalConfig {
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
