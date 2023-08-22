@@ -1,16 +1,18 @@
 package com.htuozhou.wvp.business.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author hanzai
  * @date 2023/8/13
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SSRCInfo {
-
-    private int port;
-    private String ssrc;
-    private String Stream;
-
+    private Integer port;
+    private Integer ssrc;
+    private String StreamId;
 }

@@ -57,11 +57,11 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         SIPRequest request = (SIPRequest) requestEvent.getRequest();
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
-        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{}] 心跳\n{}", requestAddress, request);
+        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{}] 心跳", requestAddress);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-        log.info("[SIP MESSAGE NOTIFY] 回复 [SIP ADDRESS:{}] 心跳\n{}", requestAddress, response);
+        log.info("[SIP MESSAGE NOTIFY] 回复 [SIP ADDRESS:{}] 心跳", requestAddress);
 
         deviceBO.setStatus(Boolean.TRUE);
         deviceBO.setIp(request.getRemoteAddress().getHostAddress());
@@ -72,6 +72,6 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
 
         String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, deviceBO.getDeviceId());
         dynamicTask.cancel(key);
-        dynamicTask.startDelay(key, () -> sipService.offline(deviceBO), deviceBO.getKeepAliveInterval() * 3);
+        dynamicTask.startDelay(key, () -> sipService.offline(deviceBO), deviceBO.getKeepAliveInterval() * 3L);
     }
 }

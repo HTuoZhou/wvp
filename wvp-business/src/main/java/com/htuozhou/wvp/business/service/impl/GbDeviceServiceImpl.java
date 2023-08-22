@@ -12,6 +12,7 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
+import com.htuozhou.wvp.business.service.IInviteStreamService;
 import com.htuozhou.wvp.business.service.IPlayService;
 import com.htuozhou.wvp.common.config.DeferredResultHolder;
 import com.htuozhou.wvp.common.constant.DeferredResultConstant;
@@ -60,6 +61,9 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
 
     @Autowired
     private IPlayService playService;
+
+    @Autowired
+    private IInviteStreamService inviteStreamService;
 
     /**
      * 分页查询国标设备
@@ -188,13 +192,15 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DeferredResult<ApiFinalResult<StreamContent>> play(String deviceId, String channelId) {
-        DeferredResult<ApiFinalResult<StreamContent>> result = new DeferredResult<>(DeferredResultConstant.PLAY_TIME_OUT);
+        DeferredResult<ApiFinalResult<StreamContent>> result = new DeferredResult<>(DeferredResultConstant.PLAY_TIME_OUT * 1000);
 
+        String key = String.format(DeferredResultConstant.PLAY_CALLBACK, deviceId, channelId);
+        String uuid = IdUtil.randomUUID();
         RequestMessage requestMessage = new RequestMessage();
-        requestMessage.setKey(String.format(DeferredResultConstant.PLAY_CALLBACK, deviceId, channelId));
-        requestMessage.setId(IdUtil.randomUUID());
+        requestMessage.setKey(key);
+        requestMessage.setId(uuid);
 
-        log.info("[国标设备点播],deviceId:{},channelId:{}, ", deviceId, channelId);
+        log.info("[国标设备点播] deviceId:{},channelId:{}, ", deviceId, channelId);
 
         DevicePO devicePO = deviceService.getOne(Wrappers.<DevicePO>lambdaQuery()
                 .eq(DevicePO::getDeviceId, deviceId));
@@ -213,14 +219,19 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
         }
 
         result.onTimeout(() -> {
-            log.error("[国标设备点播超时],deviceId:{},channelId:{}", deviceId, channelId);
+            log.error("[国标设备点播超时] deviceId:{},channelId:{}", deviceId, channelId);
             requestMessage.setData(ApiFinalResult.error(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT));
             resultHolder.invokeAllResult(requestMessage);
         });
 
         resultHolder.put(requestMessage.getKey(), requestMessage.getId(), result);
 
-        playService.play(MediaServerBO.po2bo(mediaServerPO), deviceId, channelId, null, (code, msg, data) -> {
+        playService.play(MediaServerBO.po2bo(mediaServerPO), deviceId, channelId, null, uuid, (code, msg, data) -> {
+            ApiFinalResult<StreamContent> apiFinalResult = new ApiFinalResult<>(code, msg);
+            if (Objects.equals(code, ResultCodeEnum.SUCCESS.getCode())) {
+                apiFinalResult.setData((StreamContent) data);
+            }
+            requestMessage.setData(apiFinalResult);
             resultHolder.invokeResult(requestMessage);
         });
 

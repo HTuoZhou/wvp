@@ -51,9 +51,9 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息\n{}", deviceBO.getAddress(), request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息", deviceBO.getAddress());
     }
 
     /**
@@ -77,8 +77,20 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createMessageRequest(deviceBO, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息\n{}", deviceBO.getAddress(), request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息", deviceBO.getAddress());
+    }
+
+    public void streamBye(String requestType, DeviceBO deviceBO, String channelId) throws Exception {
+        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
+        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
+        String time = Long.toString(System.currentTimeMillis());
+
+        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
+                : udpSipProvider.getNewCallId();
+        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader);
+        sipSender.transmitRequest(sipProperties.getIp(), request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 发送BYE\n{}", deviceBO.getAddress(), request);
     }
 }

@@ -77,7 +77,7 @@ public class SIPRunner implements CommandLineRunner {
             }
 
             String key = String.format(DynamicTaskConstant.GB_DEVICE_STATUS, bo.getDeviceId());
-            dynamicTask.startDelay(key, () -> sipService.offline(bo), bo.getKeepAliveInterval() * 3);
+            dynamicTask.startDelay(key, () -> sipService.offline(bo), bo.getKeepAliveInterval() * 3L);
         }
     }
 

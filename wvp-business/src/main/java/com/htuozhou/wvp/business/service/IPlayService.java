@@ -1,6 +1,5 @@
 package com.htuozhou.wvp.business.service;
 
-import com.htuozhou.wvp.business.bean.SSRCInfo;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.common.result.ErrorCallback;
 
@@ -10,10 +9,5 @@ import com.htuozhou.wvp.common.result.ErrorCallback;
  */
 public interface IPlayService {
 
-    SSRCInfo play(MediaServerBO mediaServerBO, String deviceId, String channelId, Integer ssrc, ErrorCallback<Object> callback);
-
-    Integer getPlaySsrc(String mediaServerId);
-
-    Integer getPlayBackSsrc(String mediaServerId);
-
+    void play(MediaServerBO mediaServerBO, String deviceId, String channelId, Integer ssrc, String uuid, ErrorCallback<Object> callback);
 }

@@ -1,15 +1,10 @@
 package com.htuozhou.wvp.common.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -622,20 +617,5 @@ public class RedisUtil {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public List<String> scan(String query) {
-        Set<String> resultKeys = (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
-            ScanOptions scanOptions = ScanOptions.scanOptions().match("*" + query + "*").count(1000).build();
-            Cursor<byte[]> scan = connection.scan(scanOptions);
-            Set<String> keys = new HashSet<>();
-            while (scan.hasNext()) {
-                byte[] next = scan.next();
-                keys.add(new String(next));
-            }
-            return keys;
-        });
-
-        return Lists.newArrayList(resultKeys);
     }
 }

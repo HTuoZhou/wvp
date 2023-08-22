@@ -20,12 +20,13 @@ public class ZLMConstant {
 
     public static final String VHOST = "__defaultVhost__";
 
-    public static final String GET_MEDIA_LIST = "GET_MEDIA_LIST";
+    public static final String GET_MEDIA_LIST = "getMediaList";
 
-    public static final String GET_RTP_INFO = "GET_RTP_INFO";
+    public static final String GET_RTP_INFO = "getRtpInfo";
 
-    public static final String CLOSE_RTP_SERVER = "CLOSE_RTP_SERVER";
+    public static final String CLOSE_RTP_SERVER = "closeRtpServer";
 
-    public static final String OPEN_RTP_SERVER = "OPEN_RTP_SERVER";
+    public static final String OPEN_RTP_SERVER = "openRtpServer";
+    public static final Integer STREAM_MAX_COUNT = 10;
 
 }

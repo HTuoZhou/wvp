@@ -30,28 +30,29 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     private RedisUtil redisUtil;
 
     @Override
-    public InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream) {
-        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId, stream);
-        List<String> scanResult = redisUtil.scan(key);
-        if (scanResult.size() != 1) {
-            return null;
-        }
-
-        return (InviteInfo) redisUtil.get(scanResult.get(0));
+    public InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
+        return (InviteInfo) redisUtil.get(key);
     }
 
-    /**
-     * 添加一个invite回调
-     *
-     * @param inviteSessionTypeDict
-     * @param deviceId
-     * @param channelId
-     * @param stream
-     * @param callback
-     */
     @Override
-    public void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream, ErrorCallback<Object> callback) {
-        String key = buildKey(inviteSessionTypeDict, deviceId, channelId, stream);
+    public void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
+        InviteInfo inviteInfo = (InviteInfo) redisUtil.get(key);
+        redisUtil.delete(key);
+        inviteErrorCallbackMap.remove(buildKey(inviteSessionTypeDict, deviceId, channelId, inviteInfo.getStreamId()));
+    }
+
+    @Override
+    public void addDeviceInviteInfo(InviteInfo inviteInfo) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
+        ;
+        redisUtil.set(key, inviteInfo);
+    }
+
+    @Override
+    public void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, ErrorCallback<Object> callback) {
+        String key = buildKey(inviteSessionTypeDict, deviceId, channelId, streamId);
         List<ErrorCallback<Object>> callbacks = inviteErrorCallbackMap.get(key);
         if (callbacks == null) {
             callbacks = new CopyOnWriteArrayList<>();
@@ -60,18 +61,9 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
         callbacks.add(callback);
     }
 
-    /**
-     * 调用一个invite回调
-     *
-     * @param inviteSessionTypeDict
-     * @param deviceId
-     * @param channelId
-     * @param stream
-     * @param resultCodeEnum
-     */
     @Override
-    public void call(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream, Integer code, String msg, Object data) {
-        String key = buildKey(inviteSessionTypeDict, deviceId, channelId, stream);
+    public void call(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, Integer code, String msg, Object data) {
+        String key = buildKey(inviteSessionTypeDict, deviceId, channelId, streamId);
         List<ErrorCallback<Object>> callbacks = inviteErrorCallbackMap.get(key);
         if (callbacks == null) {
             return;
@@ -80,22 +72,6 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
             callback.run(code, msg, data);
         }
         inviteErrorCallbackMap.remove(key);
-    }
-
-    @Override
-    public void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream) {
-        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId, stream);
-        List<String> scanResult = redisUtil.scan(key);
-        if (scanResult.size() > 0) {
-            for (String s : scanResult) {
-                InviteInfo inviteInfo = (InviteInfo) redisUtil.get(s);
-                if (inviteInfo == null) {
-                    continue;
-                }
-                redisUtil.delete(key);
-                inviteErrorCallbackMap.remove(buildKey(inviteSessionTypeDict, deviceId, channelId, inviteInfo.getStream()));
-            }
-        }
     }
 
     private String buildKey(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream) {

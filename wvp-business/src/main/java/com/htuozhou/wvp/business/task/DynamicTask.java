@@ -35,7 +35,7 @@ public class DynamicTask {
      * @param interval 间隔 毫秒
      * @return
      */
-    public void startCron(String key, Runnable task, long interval) {
+    public void startCron(String key, Runnable task, Long interval) {
         ScheduledFuture<?> future = scheduledFutureMap.get(key);
         if (Objects.nonNull(future)) {
             if (future.isCancelled()) {
@@ -61,7 +61,7 @@ public class DynamicTask {
      * @param delay 延时s
      * @return
      */
-    public void startDelay(String key, Runnable task, int delay) {
+    public void startDelay(String key, Runnable task, Long delay) {
         ScheduledFuture<?> future = scheduledFutureMap.get(key);
         if (Objects.nonNull(future)) {
             if (future.isCancelled()) {

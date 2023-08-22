@@ -58,7 +58,12 @@ public class SIPServiceImpl implements ISIPService {
     public void offline(DeviceBO deviceBO) {
         log.info("[设备{}] 心跳检测离线", deviceBO.getDeviceId());
         deviceService.update(Wrappers.<DevicePO>lambdaUpdate()
-                .set(DevicePO::getStatus, Boolean.FALSE));
+                .set(DevicePO::getStatus, Boolean.FALSE)
+                .eq(DevicePO::getDeviceId, deviceBO.getDeviceId()));
+
+        deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
+                .set(DeviceChannelPO::getStatus, Boolean.FALSE)
+                .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId()));
     }
 
     @Override

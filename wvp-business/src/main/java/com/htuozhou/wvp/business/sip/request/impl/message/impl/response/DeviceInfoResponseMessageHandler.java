@@ -48,11 +48,11 @@ public class DeviceInfoResponseMessageHandler extends AbstractSIPRequestProcesso
         SIPRequest request = (SIPRequest) requestEvent.getRequest();
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
-        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{}] 设备信息\n{}", requestAddress, request);
+        log.info("[SIP MESSAGE RESPONSE] 收到 [SIP ADDRESS:{}] 设备信息", requestAddress);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-        log.info("[SIP MESSAGE RESPONSE] 回复 [SIP ADDRESS:{}] 设备信息\n{}", requestAddress, response);
+        log.info("[SIP MESSAGE RESPONSE] 回复 [SIP ADDRESS:{}] 设备信息", requestAddress);
 
         deviceBO.setName(XmlUtil.getText(rootElement, "DeviceName"));
         deviceBO.setManufacturer(XmlUtil.getText(rootElement, "Manufacturer"));

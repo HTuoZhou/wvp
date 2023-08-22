@@ -14,7 +14,7 @@ public class RedisConstant {
 
     public static final String SYSTEM_INFO_DISK = "SYSTEM_INFO_DISK";
 
-    public static final String INVITE_INFO = "INVITE_INFO_%d_%s_%s_%s";
+    public static final String INVITE_INFO = "INVITE_INFO_%d_%s_%s";
 
     public static final String SSRC_INFO = "SSRC_INFO_%s";
 

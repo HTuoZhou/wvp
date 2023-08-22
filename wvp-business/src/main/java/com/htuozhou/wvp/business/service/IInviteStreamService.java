@@ -9,30 +9,14 @@ import com.htuozhou.wvp.common.result.ErrorCallback;
  * @date 2023/8/13
  */
 public interface IInviteStreamService {
-    InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream);
+    InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
 
-    /**
-     * 添加一个invite回调
-     *
-     * @param inviteSessionTypeDict
-     * @param deviceId
-     * @param channelId
-     * @param stream
-     * @param callback
-     */
-    void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream, ErrorCallback<Object> callback);
+    void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
 
-    /**
-     * 调用一个invite回调
-     *
-     * @param inviteSessionTypeDict
-     * @param deviceId
-     * @param channelId
-     * @param stream
-     * @param resultCodeEnum
-     */
-    void call(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream, Integer code, String msg, Object data);
+    void addDeviceInviteInfo(InviteInfo inviteInfo);
 
-    void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String stream);
+    void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, ErrorCallback<Object> callback);
+
+    void call(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, Integer code, String msg, Object data);
 
 }

@@ -70,8 +70,10 @@ public class ZLMServiceImpl implements IZLMService {
     public void saveOrUpdateMediaServer(MediaServerBO bo) {
         mediaServerService.saveOrUpdate(bo.bo2po());
 
+        zlmManager.initSsrc(bo.getMediaServerId());
+
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, bo.getMediaServerId());
-        dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3);
+        dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3L);
     }
 
     @Override
@@ -82,8 +84,10 @@ public class ZLMServiceImpl implements IZLMService {
         po.setStatus(Boolean.TRUE);
         mediaServerService.updateById(po);
 
+        zlmManager.initSsrc(mediaServerId);
+
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, MediaServerBO.po2bo(po).getMediaServerId());
-        dynamicTask.startDelay(key, () -> offline(MediaServerBO.po2bo(po)), MediaServerBO.po2bo(po).getHookAliveInterval() * 3);
+        dynamicTask.startDelay(key, () -> offline(MediaServerBO.po2bo(po)), MediaServerBO.po2bo(po).getHookAliveInterval() * 3L);
     }
 
     @Override
@@ -97,7 +101,7 @@ public class ZLMServiceImpl implements IZLMService {
 
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, MediaServerBO.po2bo(po).getMediaServerId());
         dynamicTask.cancel(key);
-        dynamicTask.startDelay(key, () -> offline(MediaServerBO.po2bo(po)), MediaServerBO.po2bo(po).getHookAliveInterval() * 3);
+        dynamicTask.startDelay(key, () -> offline(MediaServerBO.po2bo(po)), MediaServerBO.po2bo(po).getHookAliveInterval() * 3L);
     }
 
     @Override
@@ -223,8 +227,10 @@ public class ZLMServiceImpl implements IZLMService {
         zlmManager.setServerConfig(bo);
         mediaServerService.saveOrUpdate(bo.bo2po());
 
+        zlmManager.initSsrc(bo.getMediaServerId());
+
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, bo.getMediaServerId());
-        dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3);
+        dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3L);
         return Boolean.TRUE;
     }
 

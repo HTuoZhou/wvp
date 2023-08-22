@@ -38,9 +38,11 @@ public enum ResultCodeEnum {
     ZLM_ID_EXIST(200007, "流媒体服务ID已存在"),
     ZLM_UN_USABLE(200008, "没有可用的ZLM"),
     TCP_ACTIVE_NOT_SUPPORT(200009, "单端口收流时不支持TCP主动方式收流"),
-    GB_DEVICE_PLAY_TIMEOUT(200010, "点播国标设备超时"),
+    GB_DEVICE_PLAY_TIMEOUT(200010, "国标设备点播超时"),
     STREAM_ID_NOT_EXIST(200011, "流ID不存在"),
-    SSRC_UN_USABLE(200012, "没有可用的SSRC"),
+    PORT_ASSIGN_ERROR(200012, "端口分配失败"),
+    RECEIVE_STREAM_TIMEOUT(200013, "收流超时"),
+    SSRC_UN_USABLE(200014, "没有可用的SSRC"),
     ;
 
     /**

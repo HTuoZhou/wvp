@@ -6,7 +6,7 @@ package com.htuozhou.wvp.common.constant;
  */
 public class DeferredResultConstant {
 
-    public static final Long PLAY_TIME_OUT = 15000L;
+    public static final Long PLAY_TIME_OUT = 15L;
 
     public static final String PLAY_CALLBACK = "PLAY_CALLBACK_%s_%s";
 
