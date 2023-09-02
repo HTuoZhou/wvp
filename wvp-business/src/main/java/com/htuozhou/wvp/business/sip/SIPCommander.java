@@ -1,7 +1,12 @@
 package com.htuozhou.wvp.business.sip;
 
+import com.alibaba.fastjson.JSONObject;
+import com.htuozhou.wvp.business.bean.SSRCInfo;
 import com.htuozhou.wvp.business.bo.DeviceBO;
+import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.properties.SIPProperties;
+import com.htuozhou.wvp.business.zlm.OnStreamChangedHookSubscribe;
+import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribe;
 import gov.nist.javax.sip.SipProviderImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,9 @@ public class SIPCommander {
     @Autowired
     private SIPRequestHeaderProvider sipRequestHeaderProvider;
 
+    @Autowired
+    private ZlmHttpHookSubscribe zlmHttpHookSubscribe;
+
     /**
      * 查询设备信息
      *
@@ -51,9 +59,9 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader,"MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备信息", deviceBO.getAddress());
+        log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备信息", deviceBO.getAddress());
     }
 
     /**
@@ -77,11 +85,17 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader,"MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 查询设备通道信息", deviceBO.getAddress());
+        log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备通道信息", deviceBO.getAddress());
     }
 
+    /**
+     * @param requestType
+     * @param deviceBO
+     * @param channelId
+     * @throws Exception
+     */
     public void streamBye(String requestType, DeviceBO deviceBO, String channelId) throws Exception {
         SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
         SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
@@ -89,8 +103,77 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader);
+        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader,null);
         sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 发送BYE\n{}", deviceBO.getAddress(), request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] BYE", deviceBO.getAddress());
     }
+
+    /**
+     * 请求预览视频流
+     *
+     * @param mediaServerBO
+     * @param ssrcInfo
+     * @param deviceBO
+     * @param channelId
+     * @param event
+     */
+    public void playStreamCmd(MediaServerBO mediaServerBO, SSRCInfo ssrcInfo, DeviceBO deviceBO, String channelId, ZlmHttpHookSubscribe.Event event) throws Exception {
+        String streamId = ssrcInfo.getStreamId();
+        String sdpIp = mediaServerBO.getSdpIp();
+
+        OnStreamChangedHookSubscribe hookSubscribe = new OnStreamChangedHookSubscribe();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("app", "rtp");
+        jsonObject.put("stream", streamId);
+        jsonObject.put("regist", Boolean.TRUE);
+        jsonObject.put("schema", "rtsp");
+        jsonObject.put("mediaServerId", mediaServerBO.getMediaServerId());
+        hookSubscribe.setContent(jsonObject);
+        zlmHttpHookSubscribe.addSubscribe(hookSubscribe, (bo, param) -> {
+            if (event != null) {
+                event.response(bo, param);
+                zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
+            }
+        });
+
+        StringBuilder content = new StringBuilder(200);
+        content.append("v=0\r\n");
+        content.append("o=").append(channelId).append(" 0 0 IN IP4 ").append(sdpIp).append("\r\n");
+        content.append("s=Play\r\n");
+        content.append("c=IN IP4 ").append(sdpIp).append("\r\n");
+        content.append("t=0 0\r\n");
+
+        if ("TCP-PASSIVE".equalsIgnoreCase(deviceBO.getStreamMode()) || "TCP-ACTIVE".equalsIgnoreCase(deviceBO.getStreamMode())) {
+            content.append("m=video ").append(ssrcInfo.getPort()).append(" TCP/RTP/AVP 96 97 98 99\r\n");
+        } else {
+            content.append("m=video ").append(ssrcInfo.getPort()).append(" RTP/AVP 96 97 98 99\r\n");
+        }
+        content.append("a=recvonly\r\n");
+        content.append("a=rtpmap:96 PS/90000\r\n");
+        content.append("a=rtpmap:98 H264/90000\r\n");
+        content.append("a=rtpmap:97 MPEG4/90000\r\n");
+        content.append("a=rtpmap:99 H265/90000\r\n");
+        if ("TCP-PASSIVE".equalsIgnoreCase(deviceBO.getStreamMode())) { // tcp被动模式
+            content.append("a=setup:passive\r\n");
+            content.append("a=connection:new\r\n");
+        } else if ("TCP-ACTIVE".equalsIgnoreCase(deviceBO.getStreamMode())) { // tcp主动模式
+            content.append("a=setup:active\r\n");
+            content.append("a=connection:new\r\n");
+        }
+
+        content.append("y=").append(ssrcInfo.getSsrc()).append("\r\n");// ssrc
+        // f字段:f= v/编码格式/分辨率/帧率/码率类型/码率大小a/编码格式/码率大小/采样率
+        // content.append("f=v/2/5/25/1/4000a/1/8/1" + "\r\n"); // 未发现支持此特性的设备
+
+        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
+        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
+        String time = Long.toString(System.currentTimeMillis());
+
+        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
+                : udpSipProvider.getNewCallId();
+        Request request = sipRequestHeaderProvider.createRequest(Request.INVITE, deviceBO, channelId, content.toString(), "z9hG4bK" + time, time, null, callIdHeader,"sdp");
+        sipSender.transmitRequest(sipProperties.getIp(), request);
+        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 请求预览视频流", deviceBO.getAddress());
+    }
+
 }

@@ -292,7 +292,7 @@ public class ZLMManager {
         String ssrcPrefix = sipProperties.getDomain().substring(3, 8);
         String key = String.format(RedisConstant.SSRC_INFO, mediaServerId);
         List<String> ssrcList = new ArrayList<>();
-        for (int i = 1; i < ZLMConstant.STREAM_MAX_COUNT; i++) {
+        for (int i = 0; i < ZLMConstant.STREAM_MAX_COUNT; i++) {
             String ssrc = String.format("%s%04d", ssrcPrefix, i);
             ssrcList.add(ssrc);
         }

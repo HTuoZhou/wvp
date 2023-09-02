@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.service;
 
+import com.htuozhou.wvp.business.bo.ConfigInfoBO;
 import com.htuozhou.wvp.business.bo.MediaServerLoadBO;
 import com.htuozhou.wvp.business.bo.ResourceInfoBO;
 import com.htuozhou.wvp.business.bo.SystemInfoBO;
@@ -32,4 +33,11 @@ public interface ISystemService {
      * @return
      */
     ResourceInfoBO getResourceInfo();
+
+    /**
+     * 获取配置信息
+     *
+     * @return
+     */
+    ConfigInfoBO getConfigInfo();
 }

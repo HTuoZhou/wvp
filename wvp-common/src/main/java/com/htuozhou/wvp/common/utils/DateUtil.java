@@ -3,7 +3,10 @@ package com.htuozhou.wvp.common.utils;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
@@ -30,6 +33,10 @@ public class DateUtil {
 
     public static Instant localDateTime2Instant(LocalDateTime localDateTime, Long seconds) {
         return localDateTime.plusSeconds(seconds).atZone(ZONE_ID).toInstant();
+    }
+
+    public static Calendar localDateTime2Calendar(LocalDateTime localDateTime){
+        return GregorianCalendar.from(ZonedDateTime.of(localDateTime, ZONE_ID));
     }
 
 }

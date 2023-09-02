@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.sip.*;
+import javax.sip.header.CSeqHeader;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +36,7 @@ public class SIPProcessorObserver implements ISIPProcessorObserver {
         String method = requestEvent.getRequest().getMethod();
         ISIPRequestProcessor sipRequestProcessor = requestProcessorMap.get(method);
         if (Objects.isNull(sipRequestProcessor)) {
-            log.warn("[SIP REQUEST :{}] 暂不支持", method);
+            log.warn("[SIP REQUEST {}] 暂不支持", method);
             return;
         }
         requestProcessorMap.get(method).process(requestEvent);
@@ -43,26 +44,34 @@ public class SIPProcessorObserver implements ISIPProcessorObserver {
 
     @Override
     public void processResponse(ResponseEvent responseEvent) {
+        CSeqHeader cSeqHeader = (CSeqHeader) responseEvent.getResponse().getHeader(CSeqHeader.NAME);
+        String method = cSeqHeader.getMethod();
+        ISIPResponseProcessor sipResponseProcessor = responseProcessorMap.get(method);
 
+        if (Objects.isNull(sipResponseProcessor)) {
+            log.warn("[SIP RESPONSE {}] 暂不支持", method);
+            return;
+        }
+        responseProcessorMap.get(method).process(responseEvent);
     }
 
     @Override
     public void processTimeout(TimeoutEvent timeoutEvent) {
-
+        log.info("[SIP TIMEOUT :{}]", timeoutEvent);
     }
 
     @Override
     public void processIOException(IOExceptionEvent exceptionEvent) {
-
+        log.info("[SIP IOException :{}]", exceptionEvent);
     }
 
     @Override
     public void processTransactionTerminated(TransactionTerminatedEvent transactionTerminatedEvent) {
-
+        log.info("[SIP TransactionTerminated :{}]", transactionTerminatedEvent);
     }
 
     @Override
     public void processDialogTerminated(DialogTerminatedEvent dialogTerminatedEvent) {
-
+        log.info("[SIP DialogTerminated :{}]", dialogTerminatedEvent);
     }
 }

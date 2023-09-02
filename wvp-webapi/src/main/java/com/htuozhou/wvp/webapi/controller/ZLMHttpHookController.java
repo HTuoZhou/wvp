@@ -41,7 +41,7 @@ public class ZLMHttpHookController {
 
             zlmService.setKeepAliveTime(param.getMediaServerId());
         } else {
-            log.warn("[ZLM HTTP HOOK] [ZLM ADDRESS {}]不存在", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.warn("[ZLM HTTP HOOK] [ZLM ADDRESS {}] 不存在", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
         }
         return ZLM_RES_SUCCESS;
     }
@@ -50,11 +50,24 @@ public class ZLMHttpHookController {
     public JSONObject onServerStarted(@RequestBody ZLMHttpHookParam param) {
         MediaServerBO bo = zlmService.getMediaServer(param.getMediaServerId());
         if (Objects.nonNull(bo)) {
-            log.info("[ZLM HTTP HOOK] 收到 [ZLM  ADDRESS：{}] 启动上报", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.info("[ZLM HTTP HOOK] 收到 [ZLM ADDRESS：{}] 启动上报", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
 
             zlmService.online(param.getMediaServerId());
         } else {
-            log.warn("[ZLM HTTP HOOK] [ZLM  ADDRESS {}]不存在", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.warn("[ZLM HTTP HOOK] [ZLM ADDRESS {}] 不存在", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+        }
+        return ZLM_RES_SUCCESS;
+    }
+
+    @PostMapping( "/on_stream_changed")
+    public JSONObject onStreamChanged(@RequestBody ZLMHttpHookParam param) {
+        MediaServerBO bo = zlmService.getMediaServer(param.getMediaServerId());
+        if (Objects.nonNull(bo)) {
+            log.info("[ZLM HTTP HOOK] 收到 [ZLM ADDRESS：{}] 流注册注销", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+
+            zlmService.online(param.getMediaServerId());
+        } else {
+            log.warn("[ZLM HTTP HOOK] [ZLM  ADDRESS {}] 不存在", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
         }
         return ZLM_RES_SUCCESS;
     }

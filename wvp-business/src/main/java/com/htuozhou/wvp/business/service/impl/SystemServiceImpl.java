@@ -4,10 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.htuozhou.wvp.business.bean.ResourceBaseInfo;
-import com.htuozhou.wvp.business.bo.MediaServerBO;
-import com.htuozhou.wvp.business.bo.MediaServerLoadBO;
-import com.htuozhou.wvp.business.bo.ResourceInfoBO;
-import com.htuozhou.wvp.business.bo.SystemInfoBO;
+import com.htuozhou.wvp.business.bo.*;
+import com.htuozhou.wvp.business.properties.SIPProperties;
 import com.htuozhou.wvp.business.service.ISystemService;
 import com.htuozhou.wvp.common.constant.RedisConstant;
 import com.htuozhou.wvp.common.utils.RedisUtil;
@@ -19,6 +17,7 @@ import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
 import com.htuozhou.wvp.persistence.service.IDeviceService;
 import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +45,9 @@ public class SystemServiceImpl implements ISystemService {
 
     @Autowired
     private IDeviceChannelService deviceChannelService;
+
+    @Autowired
+    private SIPProperties sipProperties;
 
     /**
      * 获取系统信息
@@ -124,6 +126,19 @@ public class SystemServiceImpl implements ISystemService {
         bo.setChannel(channel);
         bo.setPush(push);
         bo.setProxy(proxy);
+
+        return bo;
+    }
+
+    /**
+     * 获取配置信息
+     *
+     * @return
+     */
+    @Override
+    public ConfigInfoBO getConfigInfo() {
+        ConfigInfoBO bo = new ConfigInfoBO();
+        BeanUtils.copyProperties(sipProperties,bo);
 
         return bo;
     }

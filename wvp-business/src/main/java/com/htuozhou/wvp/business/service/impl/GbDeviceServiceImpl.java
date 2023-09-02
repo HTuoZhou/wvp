@@ -200,6 +200,14 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
         requestMessage.setKey(key);
         requestMessage.setId(uuid);
 
+        resultHolder.put(requestMessage.getKey(), requestMessage.getId(), result);
+
+        result.onTimeout(() -> {
+            log.error("[国标设备点播超时] deviceId:{},channelId:{}", deviceId, channelId);
+            requestMessage.setData(ApiFinalResult.error(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT));
+            resultHolder.invokeAllResult(requestMessage);
+        });
+
         log.info("[国标设备点播] deviceId:{},channelId:{}, ", deviceId, channelId);
 
         DevicePO devicePO = deviceService.getOne(Wrappers.<DevicePO>lambdaQuery()
@@ -218,15 +226,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
             throw new BusinessException(ResultCodeEnum.TCP_ACTIVE_NOT_SUPPORT);
         }
 
-        result.onTimeout(() -> {
-            log.error("[国标设备点播超时] deviceId:{},channelId:{}", deviceId, channelId);
-            requestMessage.setData(ApiFinalResult.error(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT));
-            resultHolder.invokeAllResult(requestMessage);
-        });
-
-        resultHolder.put(requestMessage.getKey(), requestMessage.getId(), result);
-
-        playService.play(MediaServerBO.po2bo(mediaServerPO), deviceId, channelId, null, uuid, (code, msg, data) -> {
+        playService.play(MediaServerBO.po2bo(mediaServerPO), DeviceBO.po2bo(devicePO), channelId, null, uuid, (code, msg, data) -> {
             ApiFinalResult<StreamContent> apiFinalResult = new ApiFinalResult<>(code, msg);
             if (Objects.equals(code, ResultCodeEnum.SUCCESS.getCode())) {
                 apiFinalResult.setData((StreamContent) data);

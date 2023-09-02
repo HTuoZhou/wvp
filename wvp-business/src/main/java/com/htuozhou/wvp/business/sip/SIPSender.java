@@ -37,10 +37,6 @@ public class SIPSender {
         transmitRequest(ip, message, null, null);
     }
 
-    public void transmitRequest(String ip, Message message, SIPSubscribe.Event errorEvent) throws Exception {
-        transmitRequest(ip, message, errorEvent, null);
-    }
-
     public void transmitRequest(String ip, Message message, SIPSubscribe.Event errorEvent, SIPSubscribe.Event okEvent) throws Exception {
         ViaHeader viaHeader = (ViaHeader) message.getHeader(ViaHeader.NAME);
         String transport = "UDP";
@@ -57,6 +53,7 @@ public class SIPSender {
         }
 
         CallIdHeader callIdHeader = (CallIdHeader) message.getHeader(CallIdHeader.NAME);
+
         if ("TCP".equals(transport)) {
             SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider(ip);
             if (message instanceof Request) {

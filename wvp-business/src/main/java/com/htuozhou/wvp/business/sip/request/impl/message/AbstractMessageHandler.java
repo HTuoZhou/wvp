@@ -30,7 +30,7 @@ public abstract class AbstractMessageHandler extends AbstractSIPRequestProcessor
         String cmdType = XmlUtil.getText(rootElement, "CmdType");
         IMessageHandler messageHandler = messageHandlerMap.get(cmdType);
         if (Objects.isNull(messageHandler)) {
-            log.warn("[SIP MESSAGE {} :{}] 暂不支持", rootElement.getName().toUpperCase(), cmdType.toUpperCase());
+            log.warn("[SIP REQUEST MESSAGE {} :{}] 暂不支持", rootElement.getName().toUpperCase(), cmdType.toUpperCase());
             return;
         }
 

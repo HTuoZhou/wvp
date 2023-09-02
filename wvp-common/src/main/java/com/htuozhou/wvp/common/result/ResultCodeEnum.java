@@ -6,29 +6,14 @@ package com.htuozhou.wvp.common.result;
  */
 public enum ResultCodeEnum {
 
-    /**
-     * 请求成功
-     */
     SUCCESS(2000000, "请求成功"),
 
-    /**
-     * 请求失败
-     */
     FAIL(2000001, "请求失败"),
 
-    /**
-     * 参数校验异常
-     */
     PARAMETER(2000002, "参数校验异常"),
 
-    /**
-     * 导入模板不正确
-     */
     IMPORT_TEMPLATE_ERROR(200003, "导入模板不正确"),
 
-    /**
-     * 导入数据不正确
-     */
     IMPORT_DATA_ERROR(200004, "导入数据不正确"),
 
     ZLM_CONNECT_EXIST(200005, "当前连接已存在"),
@@ -45,14 +30,8 @@ public enum ResultCodeEnum {
     SSRC_UN_USABLE(200014, "没有可用的SSRC"),
     ;
 
-    /**
-     * 状态码
-     */
     private final Integer code;
 
-    /**
-     * 状态描述信息
-     */
     private final String msg;
 
     ResultCodeEnum(int code, String msg) {

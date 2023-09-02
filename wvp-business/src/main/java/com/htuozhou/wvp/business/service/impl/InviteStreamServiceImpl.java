@@ -46,7 +46,6 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     @Override
     public void addDeviceInviteInfo(InviteInfo inviteInfo) {
         String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
-        ;
         redisUtil.set(key, inviteInfo);
     }
 

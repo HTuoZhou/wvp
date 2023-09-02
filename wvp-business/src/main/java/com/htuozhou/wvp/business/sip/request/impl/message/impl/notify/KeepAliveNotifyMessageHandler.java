@@ -57,11 +57,11 @@ public class KeepAliveNotifyMessageHandler extends AbstractSIPRequestProcessor i
         SIPRequest request = (SIPRequest) requestEvent.getRequest();
         RequestEventExt requestEventExt = (RequestEventExt) requestEvent;
         String requestAddress = requestEventExt.getRemoteIpAddress() + ":" + requestEventExt.getRemotePort();
-        log.info("[SIP MESSAGE NOTIFY] 收到 [SIP ADDRESS:{}] 心跳", requestAddress);
+        log.info("[SIP REQUEST MESSAGE NOTIFY] 收到 [SIP ADDRESS:{}] 心跳", requestAddress);
 
         Response response = getMessageFactory().createResponse(Response.OK, request);
         sipSender.transmitRequest(request.getLocalAddress().getHostAddress(), response);
-        log.info("[SIP MESSAGE NOTIFY] 回复 [SIP ADDRESS:{}] 心跳", requestAddress);
+        log.info("[SIP REQUEST MESSAGE NOTIFY] 心跳回复 [SIP ADDRESS:{}]", requestAddress);
 
         deviceBO.setStatus(Boolean.TRUE);
         deviceBO.setIp(request.getRemoteAddress().getHostAddress());

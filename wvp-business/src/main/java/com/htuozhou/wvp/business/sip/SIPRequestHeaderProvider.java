@@ -33,7 +33,7 @@ public class SIPRequestHeaderProvider {
     @Autowired
     private Environment environment;
 
-    public Request createRequest(String requestType, DeviceBO deviceBO, String channelId, String content, String branch, String fromTag, String toTag, CallIdHeader callIdHeader) throws Exception {
+    public Request createRequest(String requestType, DeviceBO deviceBO, String channelId, String content, String branch, String fromTag, String toTag, CallIdHeader callIdHeader,String contentType) throws Exception {
         Request request = null;
         // sipuri
         SipURI requestURI = sipRunner.getSipFactory().createAddressFactory().createSipURI(
@@ -64,7 +64,7 @@ public class SIPRequestHeaderProvider {
         request.addHeader(sipRunner.getSipFactory().createHeaderFactory().createUserAgentHeader(Collections.singletonList(environment.getProperty(CommonConstant.SPRING_APPLICATION_NAME))));
 
         if (StrUtil.isNotBlank(content)) {
-            ContentTypeHeader contentTypeHeader = sipRunner.getSipFactory().createHeaderFactory().createContentTypeHeader("Application", "MANSCDP+xml");
+            ContentTypeHeader contentTypeHeader = sipRunner.getSipFactory().createHeaderFactory().createContentTypeHeader("Application", contentType);
             request.setContent(content, contentTypeHeader);
         }
         return request;

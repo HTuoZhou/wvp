@@ -58,7 +58,7 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
         String name = rootElement.getName();
         IMessageHandler messageHandler = messageHandlerMap.get(name);
         if (Objects.isNull(messageHandler)) {
-            log.warn("[SIP MESSAGE :{}] 暂不支持", name);
+            log.warn("[SIP REQUEST MESSAGE :{}] 暂不支持", name);
             return;
         }
 
@@ -68,7 +68,7 @@ public class MessageRequestProcessor extends AbstractSIPRequestProcessor impleme
         String deviceId = uri.getUser();
         DeviceBO deviceBO = sipService.getDevice(deviceId);
         if (Objects.isNull(deviceBO)) {
-            log.warn("[SIP MESSAGE 设备{}]不存在]", deviceId);
+            log.warn("[SIP REQUEST MESSAGE 设备{}]不存在]", deviceId);
             return;
         }
 

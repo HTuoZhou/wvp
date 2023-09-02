@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.htuozhou.wvp.business.bo.MediaServerLoadBO;
 import com.htuozhou.wvp.business.service.ISystemService;
 import com.htuozhou.wvp.common.result.ApiFinalResult;
+import com.htuozhou.wvp.webapi.vo.ConfigInfoVO;
 import com.htuozhou.wvp.webapi.vo.MediaServerLoadVO;
 import com.htuozhou.wvp.webapi.vo.ResourceInfoVO;
 import com.htuozhou.wvp.webapi.vo.SystemInfoVO;
@@ -59,6 +60,16 @@ public class SystemController {
     @GetMapping("/getResourceInfo")
     public ApiFinalResult<ResourceInfoVO> getResourceInfo() {
         return ApiFinalResult.success(ResourceInfoVO.bo2vo(systemService.getResourceInfo()));
+    }
+
+    /**
+     * 获取配置信息
+     *
+     * @return
+     */
+    @GetMapping("/getConfigInfo")
+    public ApiFinalResult<ConfigInfoVO> getConfigInfo(){
+        return ApiFinalResult.success(ConfigInfoVO.bo2vo(systemService.getConfigInfo()));
     }
 
 }
