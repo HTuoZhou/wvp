@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SSRCInfo {
     private Integer port;
-    private Integer ssrc;
+    private String ssrc;
     private String StreamId;
 }

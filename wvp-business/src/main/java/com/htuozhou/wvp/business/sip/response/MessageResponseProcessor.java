@@ -17,14 +17,14 @@ import javax.sip.message.Request;
  */
 @Component
 @Slf4j
-public class MessageResponseProcessor extends AbstractSIPResponseProcessor implements InitializingBean,ISIPResponseProcessor {
+public class MessageResponseProcessor extends AbstractSIPResponseProcessor implements InitializingBean, ISIPResponseProcessor {
 
     @Autowired
     private SIPProcessorObserver sipProcessorObserver;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        sipProcessorObserver.addResponseProcessor(Request.MESSAGE,this);
+        sipProcessorObserver.addResponseProcessor(Request.MESSAGE, this);
     }
 
     @Override

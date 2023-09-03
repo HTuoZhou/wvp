@@ -17,9 +17,9 @@ public class ConfigInfoVO {
     private String id;
     private String password;
 
-    public static ConfigInfoVO bo2vo(ConfigInfoBO bo){
+    public static ConfigInfoVO bo2vo(ConfigInfoBO bo) {
         ConfigInfoVO vo = new ConfigInfoVO();
-        BeanUtils.copyProperties(bo,vo);
+        BeanUtils.copyProperties(bo, vo);
 
         return vo;
     }

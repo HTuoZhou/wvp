@@ -9,11 +9,14 @@ import com.htuozhou.wvp.common.result.ErrorCallback;
  * @date 2023/8/13
  */
 public interface IInviteStreamService {
+
+    void addInviteInfo(InviteInfo inviteInfo);
+
+    void removeInviteInfo(InviteInfo inviteInfo);
+
     InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
 
-    void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
-
-    void addDeviceInviteInfo(InviteInfo inviteInfo);
+    InviteInfo getStreamInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String streamId);
 
     void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, ErrorCallback<Object> callback);
 

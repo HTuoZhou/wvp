@@ -70,8 +70,6 @@ public class ZLMServiceImpl implements IZLMService {
     public void saveOrUpdateMediaServer(MediaServerBO bo) {
         mediaServerService.saveOrUpdate(bo.bo2po());
 
-        zlmManager.initSsrc(bo.getMediaServerId());
-
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, bo.getMediaServerId());
         dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3L);
     }
@@ -83,8 +81,6 @@ public class ZLMServiceImpl implements IZLMService {
                 .eq(MediaServerPO::getMediaServerId, mediaServerId));
         po.setStatus(Boolean.TRUE);
         mediaServerService.updateById(po);
-
-        zlmManager.initSsrc(mediaServerId);
 
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, MediaServerBO.po2bo(po).getMediaServerId());
         dynamicTask.startDelay(key, () -> offline(MediaServerBO.po2bo(po)), MediaServerBO.po2bo(po).getHookAliveInterval() * 3L);
@@ -117,13 +113,11 @@ public class ZLMServiceImpl implements IZLMService {
     /**
      * 获取流媒体服务列表
      *
-     * @param status
      * @return
      */
     @Override
-    public List<MediaServerBO> getMediaServerList(Boolean status) {
-        List<MediaServerPO> pos = mediaServerService.list(Wrappers.<MediaServerPO>lambdaQuery()
-                .eq(Objects.nonNull(status), MediaServerPO::getStatus, status));
+    public List<MediaServerBO> getMediaServerList() {
+        List<MediaServerPO> pos = mediaServerService.list(Wrappers.<MediaServerPO>emptyWrapper());
         if (CollectionUtil.isEmpty(pos)) {
             return Collections.emptyList();
         }
@@ -204,6 +198,8 @@ public class ZLMServiceImpl implements IZLMService {
                     .eq(MediaServerPO::getMediaServerId, mediaServerItem.getMediaServerId())))) {
                 throw new BusinessException(ResultCodeEnum.ZLM_ID_EXIST);
             }
+
+            zlmManager.initSsrc(bo.getMediaServerId());
         } else {
             if (Objects.nonNull(mediaServerService.getOne(Wrappers.<MediaServerPO>lambdaQuery()
                     .ne(MediaServerPO::getId, bo.getId())
@@ -226,8 +222,6 @@ public class ZLMServiceImpl implements IZLMService {
         }
         zlmManager.setServerConfig(bo);
         mediaServerService.saveOrUpdate(bo.bo2po());
-
-        zlmManager.initSsrc(bo.getMediaServerId());
 
         String key = String.format(DynamicTaskConstant.ZLM_STATUS, bo.getMediaServerId());
         dynamicTask.startDelay(key, () -> offline(bo), bo.getHookAliveInterval() * 3L);

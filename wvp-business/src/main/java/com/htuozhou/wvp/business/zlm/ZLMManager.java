@@ -244,7 +244,7 @@ public class ZLMManager {
      * @param tcpMode
      * @return
      */
-    public Integer openRtpServer(MediaServerBO bo, String streamId, Integer ssrc, Integer port, Boolean reUsePort, Integer tcpMode) {
+    public Integer openRtpServer(MediaServerBO bo, String streamId, String ssrc, Integer port, Boolean reUsePort, Integer tcpMode) {
         int result = -1;
         try {
             Map<String, Object> param = new HashMap<>();
@@ -267,7 +267,7 @@ public class ZLMManager {
         return result;
     }
 
-    public Integer createRtpSever(MediaServerBO bo, String streamId, Integer ssrc, Integer port, Boolean reUsePort, Integer tcpMode) {
+    public Integer createRtpSever(MediaServerBO bo, String streamId, String ssrc, Integer port, Boolean reUsePort, Integer tcpMode) {
         int rtpServerPort = -1;
         JSONObject rtpInfo = getRtpInfo(bo, streamId);
         if (Objects.isNull(rtpInfo)) {
@@ -289,6 +289,7 @@ public class ZLMManager {
     }
 
     public void initSsrc(String mediaServerId) {
+        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] INIT SSRC", mediaServerId);
         String ssrcPrefix = sipProperties.getDomain().substring(3, 8);
         String key = String.format(RedisConstant.SSRC_INFO, mediaServerId);
         List<String> ssrcList = new ArrayList<>();
@@ -306,8 +307,9 @@ public class ZLMManager {
      * @param mediaServerId
      * @return
      */
-    public Integer getPlaySsrc(String mediaServerId) {
-        return Integer.valueOf(("0" + getSN(mediaServerId)));
+    public String getPlaySsrc(String mediaServerId) {
+        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAY SSRC", mediaServerId);
+        return "0" + getSN(mediaServerId);
     }
 
     /**
@@ -316,8 +318,9 @@ public class ZLMManager {
      * @param mediaServerId
      * @return
      */
-    public Integer getPlayBackSsrc(String mediaServerId) {
-        return Integer.valueOf(("1" + getSN(mediaServerId)));
+    public String getPlayBackSsrc(String mediaServerId) {
+        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAYBACK SSRC", mediaServerId);
+        return "1" + getSN(mediaServerId);
     }
 
     /**
@@ -343,9 +346,10 @@ public class ZLMManager {
      *
      * @param ssrc 需要重置的ssrc
      */
-    public void releaseSsrc(String mediaServerId, Integer ssrc) {
+    public void releaseSsrc(String mediaServerId, String ssrc) {
+        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] RELEASE SSRC", mediaServerId);
         String key = String.format(RedisConstant.SSRC_INFO, mediaServerId);
-        String sn = (String.valueOf(ssrc)).substring(1);
+        String sn = ssrc.substring(1);
         redisUtil.sSet(key, sn);
     }
 

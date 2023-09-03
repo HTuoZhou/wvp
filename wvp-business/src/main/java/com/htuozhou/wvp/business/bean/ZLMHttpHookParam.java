@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class ZLMHttpHookParam {
 
+    /**
+     * 服务器id,通过配置文件设置
+     */
     private String mediaServerId;
 
 }

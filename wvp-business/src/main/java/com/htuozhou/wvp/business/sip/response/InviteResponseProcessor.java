@@ -1,18 +1,18 @@
 package com.htuozhou.wvp.business.sip.response;
 
-import com.htuozhou.wvp.business.properties.SIPProperties;
-import com.htuozhou.wvp.business.sip.SIPProcessorObserver;
-import com.htuozhou.wvp.business.sip.SIPSender;
+import com.htuozhou.wvp.business.bean.SDPItem;
+import com.htuozhou.wvp.business.sip.*;
 import gov.nist.javax.sip.ResponseEventExt;
 import gov.nist.javax.sip.message.SIPResponse;
-import gov.nist.javax.sip.stack.SIPClientTransactionImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.sdp.SessionDescription;
 import javax.sip.ResponseEvent;
+import javax.sip.address.SipURI;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
@@ -31,7 +31,10 @@ public class InviteResponseProcessor extends AbstractSIPResponseProcessor implem
     private SIPSender sipSender;
 
     @Autowired
-    private SIPProperties sipProperties;
+    private SIPRunner sipRunner;
+
+    @Autowired
+    private SIPRequestHeaderProvider sipRequestHeaderProvider;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -49,9 +52,13 @@ public class InviteResponseProcessor extends AbstractSIPResponseProcessor implem
 
         int statusCode = response.getStatusCode();
         if (statusCode == Response.OK) {
-            SIPClientTransactionImpl transaction = (SIPClientTransactionImpl) responseEventExt.getOriginalTransaction();
-            Request request = transaction.createAck();
-            sipSender.transmitRequest(sipProperties.getIp(), request);
+            String contentString = new String(response.getRawContent());
+            SDPItem sdpItem = SIPUtil.parseSDP(contentString);
+            SessionDescription sdp = sdpItem.getBaseSdb();
+            SipURI requestUri = sipRunner.getSipFactory().createAddressFactory().createSipURI(sdp.getOrigin().getUsername(), responseAddress);
+            Request request = sipRequestHeaderProvider.createAckRequest(response.getLocalAddress().getHostAddress(), requestUri, response);
+
+            sipSender.transmitRequest(response.getLocalAddress().getHostAddress(), request);
             log.info("[SIP RESPONSE INVITE] 回复ACK [SIP ADDRESS:{}]", responseAddress);
         }
     }

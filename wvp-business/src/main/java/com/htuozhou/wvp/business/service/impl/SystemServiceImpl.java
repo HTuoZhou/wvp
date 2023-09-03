@@ -138,7 +138,7 @@ public class SystemServiceImpl implements ISystemService {
     @Override
     public ConfigInfoBO getConfigInfo() {
         ConfigInfoBO bo = new ConfigInfoBO();
-        BeanUtils.copyProperties(sipProperties,bo);
+        BeanUtils.copyProperties(sipProperties, bo);
 
         return bo;
     }

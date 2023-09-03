@@ -13,26 +13,30 @@ public interface IZLMHttpHookSubscribe {
 
     /**
      * 获取hook类型
+     *
      * @return hook类型
      */
     ZLMHttpHookType getHookType();
 
     /**
      * 获取hook的具体内容
+     *
      * @return hook的具体内容
      */
     JSONObject getContent();
 
     /**
+     * 获取过期时间
+     *
+     * @return 过期时间
+     */
+    LocalDateTime getExpires();
+
+    /**
      * 设置过期时间
+     *
      * @param localDateTime 过期时间
      */
     void setExpires(LocalDateTime localDateTime);
 
-    /**
-     * 获取过期时间
-     * @return 过期时间
-     */
-    LocalDateTime getExpires();
-    
 }

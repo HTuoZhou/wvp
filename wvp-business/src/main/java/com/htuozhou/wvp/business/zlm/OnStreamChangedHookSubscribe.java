@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @author hanzai
  * @date 2023/9/2
  */
-public class OnStreamChangedHookSubscribe implements IZLMHttpHookSubscribe{
+public class OnStreamChangedHookSubscribe implements IZLMHttpHookSubscribe {
 
     private ZLMHttpHookType hookType = ZLMHttpHookType.on_stream_changed;
     private JSONObject content;
@@ -30,12 +30,12 @@ public class OnStreamChangedHookSubscribe implements IZLMHttpHookSubscribe{
     }
 
     @Override
-    public void setExpires(LocalDateTime expires) {
-        this.expires = expires;
+    public LocalDateTime getExpires() {
+        return expires;
     }
 
     @Override
-    public LocalDateTime getExpires() {
-        return expires;
+    public void setExpires(LocalDateTime expires) {
+        this.expires = expires;
     }
 }

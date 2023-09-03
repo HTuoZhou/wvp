@@ -21,10 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ZlmHttpHookSubscribe {
 
-    public interface Event {
-        void response(MediaServerBO mediaServerBO, ZLMHttpHookParam hookParam);
-    }
-
     private Map<ZLMHttpHookType, Map<IZLMHttpHookSubscribe, Event>> subscribes = new ConcurrentHashMap<>();
 
     public void addSubscribe(IZLMHttpHookSubscribe subscribe, ZlmHttpHookSubscribe.Event event) {
@@ -55,14 +51,14 @@ public class ZlmHttpHookSubscribe {
                 for (String s : content.keySet()) {
                     if (result == null) {
                         result = content.getString(s).equals(hookSubscribe.getContent().getString(s));
-                    }else {
+                    } else {
                         if (content.getString(s) == null) {
                             continue;
                         }
                         result = result && content.getString(s).equals(hookSubscribe.getContent().getString(s));
                     }
                 }
-                if (result){
+                if (result) {
                     entriesToRemove.add(entry);
                 }
             }
@@ -77,6 +73,35 @@ public class ZlmHttpHookSubscribe {
             }
 
         }
+    }
+
+    public ZlmHttpHookSubscribe.Event sendNotify(ZLMHttpHookType hookType, JSONObject jsonObject) {
+        ZlmHttpHookSubscribe.Event event = null;
+        Map<IZLMHttpHookSubscribe, Event> eventMap = subscribes.get(hookType);
+        if (eventMap == null) {
+            return null;
+        }
+        for (IZLMHttpHookSubscribe key : eventMap.keySet()) {
+            Boolean result = null;
+            for (String s : key.getContent().keySet()) {
+                if (result == null) {
+                    result = key.getContent().getString(s).equals(jsonObject.getString(s));
+                } else {
+                    if (key.getContent().getString(s) == null) {
+                        continue;
+                    }
+                    result = result && key.getContent().getString(s).equals(jsonObject.getString(s));
+                }
+            }
+            if (null != result && result) {
+                event = eventMap.get(key);
+            }
+        }
+        return event;
+    }
+
+    public interface Event {
+        void response(MediaServerBO mediaServerBO, ZLMHttpHookParam hookParam);
     }
 
 }

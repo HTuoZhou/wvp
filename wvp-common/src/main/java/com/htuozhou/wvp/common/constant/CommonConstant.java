@@ -33,4 +33,13 @@ public class CommonConstant {
 
     public static final String NULL_STR = "null";
 
+    public static final String HTTP_PROTOCOL = "http://";
+    public static final String HTTPS_PROTOCOL = "https://";
+    public static final String WS_PROTOCOL = "ws://";
+    public static final String WSSS_PROTOCOL = "wss://";
+    public static final String RTMP_PROTOCOL = "rtmp://";
+    public static final String RTMPS_PROTOCOL = "rtmps://";
+    public static final String RTSP_PROTOCOL = "rtsp://";
+    public static final String RTSPS_PROTOCOL = "rtsps://";
+
 }

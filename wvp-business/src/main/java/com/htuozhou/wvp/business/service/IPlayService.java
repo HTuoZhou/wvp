@@ -10,5 +10,5 @@ import com.htuozhou.wvp.common.result.ErrorCallback;
  */
 public interface IPlayService {
 
-    void play(MediaServerBO mediaServerBO, DeviceBO deviceBO, String channelId, Integer ssrc, String uuid, ErrorCallback<Object> callback);
+    void play(MediaServerBO mediaServerBO, DeviceBO deviceBO, String channelId, String ssrc, String uuid, ErrorCallback<Object> callback);
 }

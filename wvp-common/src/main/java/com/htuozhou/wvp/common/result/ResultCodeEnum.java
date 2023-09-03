@@ -28,6 +28,7 @@ public enum ResultCodeEnum {
     PORT_ASSIGN_ERROR(200012, "端口分配失败"),
     RECEIVE_STREAM_TIMEOUT(200013, "收流超时"),
     SSRC_UN_USABLE(200014, "没有可用的SSRC"),
+    SIP_COMMAND_SEND_ERROR(200015, "SIP命令发送失败"),
     ;
 
     private final Integer code;

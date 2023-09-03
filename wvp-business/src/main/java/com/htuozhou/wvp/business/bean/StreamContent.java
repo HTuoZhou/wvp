@@ -1,5 +1,8 @@
 package com.htuozhou.wvp.business.bean;
 
+import com.htuozhou.wvp.business.bo.MediaServerBO;
+import com.htuozhou.wvp.common.constant.CommonConstant;
+import com.htuozhou.wvp.common.constant.ZLMConstant;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -27,6 +30,28 @@ public class StreamContent {
     private String ip;
 
     /**
+     * 流媒体服务ID
+     */
+    private String mediaServerId;
+
+    /**
+     * 流编码信息
+     */
+    private Object tracks;
+
+    /**
+     * 开始时间
+     */
+    private LocalDateTime startTime;
+
+    /**
+     * 结束时间
+     */
+    private LocalDateTime endTime;
+
+    private Double progress;
+
+    /**
      * HTTP-FLV流地址
      */
     private String flv;
@@ -34,17 +59,17 @@ public class StreamContent {
     /**
      * HTTPS-FLV流地址
      */
-    private String https_flv;
+    private String httpsFlv;
 
     /**
      * Websocket-FLV流地址
      */
-    private String ws_flv;
+    private String wsFlv;
 
     /**
      * Websockets-FLV流地址
      */
-    private String wss_flv;
+    private String wssFlv;
 
     /**
      * HTTP-FMP4流地址
@@ -54,17 +79,17 @@ public class StreamContent {
     /**
      * HTTPS-FMP4流地址
      */
-    private String https_fmp4;
+    private String httpsFmp4;
 
     /**
      * Websocket-FMP4流地址
      */
-    private String ws_fmp4;
+    private String wsFmp4;
 
     /**
      * Websockets-FMP4流地址
      */
-    private String wss_fmp4;
+    private String wssFmp4;
 
     /**
      * HLS流地址
@@ -74,17 +99,17 @@ public class StreamContent {
     /**
      * HTTPS-HLS流地址
      */
-    private String https_hls;
+    private String httpsHls;
 
     /**
      * Websocket-HLS流地址
      */
-    private String ws_hls;
+    private String wsHls;
 
     /**
      * Websockets-HLS流地址
      */
-    private String wss_hls;
+    private String wssHls;
 
     /**
      * HTTP-TS流地址
@@ -94,17 +119,17 @@ public class StreamContent {
     /**
      * HTTPS-TS流地址
      */
-    private String https_ts;
+    private String httpsTs;
 
     /**
      * Websocket-TS流地址
      */
-    private String ws_ts;
+    private String wsTs;
 
     /**
      * Websockets-TS流地址
      */
-    private String wss_ts;
+    private String wssTs;
 
     /**
      * RTMP流地址
@@ -136,26 +161,43 @@ public class StreamContent {
      */
     private String rtcs;
 
-    /**
-     * 流媒体服务ID
-     */
-    private String mediaServerId;
+    public static StreamContent convert(MediaServerBO mediaServerBO, OnStreamChangedHookParam param) {
+        StreamContent streamContent = new StreamContent();
+        streamContent.setApp(param.getApp());
+        streamContent.setStreamId(param.getStream());
+        streamContent.setMediaServerId(mediaServerBO.getMediaServerId());
+        streamContent.setIp(mediaServerBO.getStreamIp());
+        streamContent.setTracks(param.getTracks());
 
-    /**
-     * 流编码信息
-     */
-    private Object tracks;
+        streamContent.setFlv(CommonConstant.HTTP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_FLV_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setHttpsFlv(CommonConstant.HTTPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_FLV_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
+        streamContent.setWsFlv(CommonConstant.WS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_FLV_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setWssFlv(CommonConstant.WSSS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_FLV_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
 
-    /**
-     * 开始时间
-     */
-    private LocalDateTime startTime;
+        streamContent.setFmp4(CommonConstant.HTTP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_MP4_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setHttpsFmp4(CommonConstant.HTTPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_MP4_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
+        streamContent.setWsFmp4(CommonConstant.WS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_MP4_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setWssFmp4(CommonConstant.WSSS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_MP4_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
 
-    /**
-     * 结束时间
-     */
-    private LocalDateTime endTime;
+        streamContent.setHls(CommonConstant.HTTP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_HLS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setHttpsHls(CommonConstant.HTTPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_HLS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
+        streamContent.setWsHls(CommonConstant.WS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_HLS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setWssHls(CommonConstant.WSSS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_HLS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
 
-    private double progress;
+        streamContent.setTs(CommonConstant.HTTP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_TS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setHttpsTs(CommonConstant.HTTPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_TS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
+        streamContent.setWsTs(CommonConstant.WS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_TS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setWssTs(CommonConstant.WSSS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_TS_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
 
+        streamContent.setRtmp(CommonConstant.RTMP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTMP_RTSP_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getRtmpPort(), param.getApp(), param.getStream()));
+        streamContent.setRtmps(CommonConstant.RTMPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTMP_RTSP_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getRtmpSslPort(), param.getApp(), param.getStream()));
+
+        streamContent.setRtsp(CommonConstant.RTSP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTMP_RTSP_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getRtspPort(), param.getApp(), param.getStream()));
+        streamContent.setRtsps(CommonConstant.RTSPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTMP_RTSP_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getRtspSslPort(), param.getApp(), param.getStream()));
+
+        streamContent.setRtc(CommonConstant.HTTP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTC_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpPort(), param.getApp(), param.getStream()));
+        streamContent.setRtcs(CommonConstant.HTTPS_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTC_FMT, mediaServerBO.getStreamIp(), mediaServerBO.getHttpSslPort(), param.getApp(), param.getStream()));
+
+        return streamContent;
+    }
 }

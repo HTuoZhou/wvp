@@ -30,23 +30,28 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     private RedisUtil redisUtil;
 
     @Override
+    public void addInviteInfo(InviteInfo inviteInfo) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
+        redisUtil.set(key, inviteInfo);
+    }
+
+    @Override
+    public void removeInviteInfo(InviteInfo inviteInfo) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
+        redisUtil.delete(key);
+        inviteErrorCallbackMap.remove(buildKey(inviteInfo.getInviteSessionTypeDict(), inviteInfo.getDeviceId(), inviteInfo.getChannelId(), inviteInfo.getStreamId()));
+    }
+
+    @Override
     public InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
         String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
         return (InviteInfo) redisUtil.get(key);
     }
 
     @Override
-    public void removeDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
-        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
-        InviteInfo inviteInfo = (InviteInfo) redisUtil.get(key);
-        redisUtil.delete(key);
-        inviteErrorCallbackMap.remove(buildKey(inviteSessionTypeDict, deviceId, channelId, inviteInfo.getStreamId()));
-    }
-
-    @Override
-    public void addDeviceInviteInfo(InviteInfo inviteInfo) {
-        String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
-        redisUtil.set(key, inviteInfo);
+    public InviteInfo getStreamInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String streamId) {
+        String key = String.format(RedisConstant.INVITE_INFO_PREFIX, inviteSessionTypeDict.getType()) + streamId;
+        return (InviteInfo) redisUtil.get(key);
     }
 
     @Override

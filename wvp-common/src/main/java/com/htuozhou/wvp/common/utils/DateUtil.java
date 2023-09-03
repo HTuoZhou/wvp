@@ -35,7 +35,7 @@ public class DateUtil {
         return localDateTime.plusSeconds(seconds).atZone(ZONE_ID).toInstant();
     }
 
-    public static Calendar localDateTime2Calendar(LocalDateTime localDateTime){
+    public static Calendar localDateTime2Calendar(LocalDateTime localDateTime) {
         return GregorianCalendar.from(ZonedDateTime.of(localDateTime, ZONE_ID));
     }
 

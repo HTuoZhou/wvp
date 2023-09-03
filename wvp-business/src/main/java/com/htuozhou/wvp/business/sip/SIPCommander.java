@@ -59,7 +59,7 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader,"MANSCDP+xml");
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader, "MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备信息", deviceBO.getAddress());
     }
@@ -85,7 +85,7 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader,"MANSCDP+xml");
+        Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader, "MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备通道信息", deviceBO.getAddress());
     }
@@ -103,7 +103,7 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader,null);
+        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader, null);
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER] [SIP ADDRESS:{}] BYE", deviceBO.getAddress());
     }
@@ -130,10 +130,8 @@ public class SIPCommander {
         jsonObject.put("mediaServerId", mediaServerBO.getMediaServerId());
         hookSubscribe.setContent(jsonObject);
         zlmHttpHookSubscribe.addSubscribe(hookSubscribe, (bo, param) -> {
-            if (event != null) {
-                event.response(bo, param);
-                zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
-            }
+            event.response(bo, param);
+            zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
         });
 
         StringBuilder content = new StringBuilder(200);
@@ -171,7 +169,7 @@ public class SIPCommander {
 
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(Request.INVITE, deviceBO, channelId, content.toString(), "z9hG4bK" + time, time, null, callIdHeader,"sdp");
+        Request request = sipRequestHeaderProvider.createRequest(Request.INVITE, deviceBO, channelId, content.toString(), "z9hG4bK" + time, time, null, callIdHeader, "sdp");
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 请求预览视频流", deviceBO.getAddress());
     }

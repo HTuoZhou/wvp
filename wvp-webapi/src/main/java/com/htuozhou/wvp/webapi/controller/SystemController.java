@@ -68,7 +68,7 @@ public class SystemController {
      * @return
      */
     @GetMapping("/getConfigInfo")
-    public ApiFinalResult<ConfigInfoVO> getConfigInfo(){
+    public ApiFinalResult<ConfigInfoVO> getConfigInfo() {
         return ApiFinalResult.success(ConfigInfoVO.bo2vo(systemService.getConfigInfo()));
     }
 
