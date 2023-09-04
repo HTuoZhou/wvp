@@ -50,7 +50,7 @@ public interface IGbDeviceService {
     Boolean delete(String deviceId);
 
     /**
-     * 查询国标设备树
+     * 查询国标设备通道树
      *
      * @param deviceId
      * @param parentId
@@ -59,11 +59,19 @@ public interface IGbDeviceService {
     List<BaseTree<DeviceChannelBO>> tree(String deviceId, String parentId);
 
     /**
-     * 国标设备点播
+     * 国标设备通道点播
      *
      * @param deviceId
      * @param channelId
      * @return
      */
     DeferredResult<ApiFinalResult<StreamContent>> play(String deviceId, String channelId);
+
+    /**
+     * 国标设备通道切换音频
+     *
+     * @param id
+     * @return
+     */
+    Boolean switchAudio(Integer id);
 }

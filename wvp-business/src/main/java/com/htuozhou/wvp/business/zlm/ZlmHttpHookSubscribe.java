@@ -1,9 +1,9 @@
 package com.htuozhou.wvp.business.zlm;
 
 import com.alibaba.fastjson.JSONObject;
-import com.htuozhou.wvp.business.bean.ZLMHttpHookParam;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.enumerate.ZLMHttpHookType;
+import com.htuozhou.wvp.business.zlm.param.ZLMHttpHookParam;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

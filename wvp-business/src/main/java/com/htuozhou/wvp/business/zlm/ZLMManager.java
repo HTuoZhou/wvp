@@ -49,16 +49,15 @@ public class ZLMManager {
         try {
             Map<String, Object> param = new HashMap<>();
             param.put("secret", bo.getSecret());
+            log.info("[ZLM ADDRESS {}] 获取服务器配置,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.GET_SERVER_CONFIG), param);
             log.info("[ZLM ADDRESS {}] 获取服务器配置,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 获取服务器配置成功", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 JSONArray jsonArray = JSON.parseArray(JSON.toJSONString(jsonObject.get("data")));
                 result = JSON.parseObject(JSON.toJSONString(jsonArray.get(0)), MediaServerItem.class);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 获取服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 获取服务器配置失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -105,22 +104,20 @@ public class ZLMManager {
         param.put("rtp_proxy.port_range", bo.getRtpPortRange());
 
         try {
+            log.info("[ZLM ADDRESS {}] 设置服务器配置,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.SET_SERVER_CONFIG), param);
             log.info("[ZLM ADDRESS {}] 设置服务器配置,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
                 if (jsonObject.getInteger("changed") > 0) {
-                    log.info("[ZLM ADDRESS {}] 设置服务器配置成功,存在配置变更,重启以保证配置生效", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                     if (restartServer(bo)) {
                         result = Boolean.TRUE;
                     }
                 } else {
-                    log.info("[ZLM ADDRESS {}] 设置服务器配置成功,不存在配置变更", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                     result = Boolean.TRUE;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 设置服务器配置失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 设置服务器配置失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -136,15 +133,14 @@ public class ZLMManager {
         try {
             Map<String, Object> param = new HashMap<>();
             param.put("secret", bo.getSecret());
+            log.info("[ZLM ADDRESS {}] 重启服务器,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.RESTART_SERVER), param);
             log.info("[ZLM ADDRESS {}] 重启服务器,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 重启服务器成功,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject.getString("msg"));
                 result = Boolean.TRUE;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 重启服务器失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 重启服务器失败,{}}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -168,15 +164,14 @@ public class ZLMManager {
             param.put("scheme", scheme);
             param.put("stream", streamId);
             param.put("vhost", ZLMConstant.VHOST);
+            log.info("[ZLM ADDRESS {}] 获取流列表,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.GET_MEDIA_LIST), param);
             log.info("[ZLM ADDRESS {}] 获取流列表,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 获取流列表成功", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 result = JSON.parseArray(JSON.toJSONString(jsonObject.get("data")));
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 获取流列表失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 获取流列表失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -194,15 +189,14 @@ public class ZLMManager {
             Map<String, Object> param = new HashMap<>();
             param.put("secret", bo.getSecret());
             param.put("stream_id", streamId);
+            log.info("[ZLM ADDRESS {}] 获取RTP推流信息,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.GET_RTP_INFO), param);
             log.info("[ZLM ADDRESS {}] 获取RTP推流信息,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 获取RTP推流信息成功", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 result = jsonObject;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 获取RTP推流信息失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 获取RTP推流信息失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -220,6 +214,7 @@ public class ZLMManager {
             Map<String, Object> param = new HashMap<>();
             param.put("secret", bo.getSecret());
             param.put("stream_id", streamId);
+            log.info("[ZLM ADDRESS {}] 关闭RTP服务器服务器配置,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.CLOSE_RTP_SERVER), param);
             log.info("[ZLM ADDRESS {}] 关闭RTP服务器服务器配置,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
@@ -227,8 +222,7 @@ public class ZLMManager {
                 result = jsonObject;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 关闭RTP服务器失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 关闭RTP服务器失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }
@@ -250,19 +244,18 @@ public class ZLMManager {
             Map<String, Object> param = new HashMap<>();
             param.put("secret", bo.getSecret());
             param.put("stream_id", streamId);
-            param.put("ssrc", ssrc);
+            param.put("ssrc", Integer.valueOf(ssrc));
             param.put("port", port);
             param.put("re_use_port", reUsePort);
             param.put("tcp_mode", tcpMode);
+            log.info("[ZLM ADDRESS {}] 创建RTP服务器服务器,请求的参数是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), param);
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.OPEN_RTP_SERVER), param);
             log.info("[ZLM ADDRESS {}] 创建RTP服务器服务器,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 创建RTP服务器成功", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 result = jsonObject.getInteger("port");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("[ZLM ADDRESS {}] 创建RTP服务器失败,请确认ZLM是否启动", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
+            log.error("[ZLM ADDRESS {}] 创建RTP服务器失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
         }
         return result;
     }

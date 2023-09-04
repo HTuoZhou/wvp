@@ -133,7 +133,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     }
 
     /**
-     * 查询国标设备树
+     * 查询国标设备通道树
      *
      * @param deviceId
      * @param parentId
@@ -183,7 +183,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     }
 
     /**
-     * 国标设备点播
+     * 国标设备通道点播
      *
      * @param deviceId
      * @param channelId
@@ -236,5 +236,19 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
         });
 
         return result;
+    }
+
+    /**
+     * 国标设备通道切换音频
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean switchAudio(Integer id) {
+        DeviceChannelPO deviceChannelPO = deviceChannelService.getById(id);
+        deviceChannelPO.setHasAudio(!deviceChannelPO.getHasAudio());
+        return deviceChannelService.updateById(deviceChannelPO);
     }
 }

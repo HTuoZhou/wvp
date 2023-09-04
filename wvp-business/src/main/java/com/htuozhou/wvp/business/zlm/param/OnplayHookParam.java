@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.bean;
+package com.htuozhou.wvp.business.zlm.param;
 
 import lombok.Data;
 

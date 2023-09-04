@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.bean;
+package com.htuozhou.wvp.business.zlm.param;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2023/9/3
  */
 @Data
-public class OnStreamNoneReader extends ZLMHttpHookParam {
+public class OnStreamNoneReaderParam extends ZLMHttpHookParam {
 
     /**
      * 流应用名

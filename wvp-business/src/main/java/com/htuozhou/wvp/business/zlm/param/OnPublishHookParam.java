@@ -1,13 +1,13 @@
-package com.htuozhou.wvp.business.bean;
+package com.htuozhou.wvp.business.zlm.param;
 
 import lombok.Data;
 
 /**
  * @author hanzai
- * @date 2023/9/3
+ * @date 2023/9/2
  */
 @Data
-public class OnStreamNotFoundHookParam extends ZLMHttpHookParam {
+public class OnPublishHookParam extends ZLMHttpHookParam {
 
     /**
      * TCP链接唯一ID
@@ -25,22 +25,22 @@ public class OnStreamNotFoundHookParam extends ZLMHttpHookParam {
     private String stream;
 
     /**
-     * 播放器ip
+     * 推流器ip
      */
     private String ip;
 
     /**
-     * 播放url参数
+     * 推流url参数
      */
     private String params;
 
     /**
-     * 播放器端口号
+     * 推流器端口号
      */
-    private Integer port;
+    private int port;
 
     /**
-     * 播放的协议，可能是rtsp、rtmp、http
+     * 推流的协议，可能是rtsp、rtmp
      */
     private String schema;
 

@@ -1,6 +1,7 @@
 package com.htuozhou.wvp.business.bean;
 
 import com.htuozhou.wvp.business.bo.MediaServerBO;
+import com.htuozhou.wvp.business.zlm.param.OnStreamChangedHookParam;
 import com.htuozhou.wvp.common.constant.CommonConstant;
 import com.htuozhou.wvp.common.constant.ZLMConstant;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.htuozhou.wvp.business.bean;
+package com.htuozhou.wvp.business.zlm.param;
 
 import lombok.Data;
 
@@ -109,17 +109,17 @@ public class OnStreamChangedHookParam extends ZLMHttpHookParam {
         /**
          * H264 = 0, H265 = 1, AAC = 2, G711A = 3, G711U = 4
          */
-        private int codecId;
+        private int codec_id;
 
         /**
          * 编码类型名称 CodecAAC CodecH264
          */
-        private String codecIdName;
+        private String codec_id_name;
 
         /**
          * Video = 0, Audio = 1
          */
-        private int codecType;
+        private int codec_type;
 
         /**
          * 轨道是否准备就绪
@@ -129,12 +129,12 @@ public class OnStreamChangedHookParam extends ZLMHttpHookParam {
         /**
          * 音频采样位数
          */
-        private int sampleBit;
+        private int sample_bit;
 
         /**
          * 音频采样率
          */
-        private int sampleRate;
+        private int sample_rate;
 
         /**
          * 视频fps

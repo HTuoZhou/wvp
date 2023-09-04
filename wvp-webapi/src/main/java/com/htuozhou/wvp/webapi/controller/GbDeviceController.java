@@ -78,7 +78,7 @@ public class GbDeviceController {
     }
 
     /**
-     * 查询国标设备树
+     * 查询国标设备通道树
      *
      * @param deviceId
      * @param parentId
@@ -108,7 +108,7 @@ public class GbDeviceController {
     }
 
     /**
-     * 国标设备点播
+     * 国标设备通道点播
      *
      * @param deviceId
      * @param channelId
@@ -118,6 +118,17 @@ public class GbDeviceController {
     public DeferredResult<ApiFinalResult<StreamContent>> play(@PathVariable("deviceId") String deviceId,
                                                               @PathVariable("channelId") String channelId) {
         return gbDeviceService.play(deviceId, channelId);
+    }
+
+    /**
+     * 国标设备通道切换音频
+     *
+     * @param id
+     * @return
+     */
+    @PutMapping("/channel/switchAudio/{id}")
+    public ApiFinalResult<Boolean> switchAudio(@PathVariable("id") Integer id) {
+        return ApiFinalResult.success(gbDeviceService.switchAudio(id));
     }
 
 }
