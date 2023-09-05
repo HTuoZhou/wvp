@@ -254,7 +254,7 @@ public class ZLMHttpHookController {
 
                 result.onTimeout(() -> {
                     log.info("[ZLM HTTP HOOK] 收到 [ZLM ADDRESS：{}] 预览流未找到,发起自动点播,点播超时,deviceId:{},channelId:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), deviceId, channelId);
-                    requestMessage.setData(new ZLMHttpHookResult(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getCode(),ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getMsg()));
+                    requestMessage.setData(new ZLMHttpHookResult(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getCode(), ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getMsg()));
                     resultHolder.invokeAllResult(requestMessage);
                 });
 

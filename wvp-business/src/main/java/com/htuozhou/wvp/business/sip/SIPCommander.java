@@ -1,17 +1,21 @@
 package com.htuozhou.wvp.business.sip;
 
-import com.alibaba.fastjson.JSONObject;
 import com.htuozhou.wvp.business.bean.SSRCInfo;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
+import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
 import com.htuozhou.wvp.business.properties.SIPProperties;
+import com.htuozhou.wvp.business.service.IStreamSessionService;
 import com.htuozhou.wvp.business.zlm.OnStreamChangedHookSubscribe;
 import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribe;
+import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribeFactory;
 import gov.nist.javax.sip.SipProviderImpl;
+import gov.nist.javax.sip.message.SIPResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.sip.ResponseEvent;
 import javax.sip.header.CallIdHeader;
 import javax.sip.message.Request;
 
@@ -37,6 +41,9 @@ public class SIPCommander {
 
     @Autowired
     private ZlmHttpHookSubscribe zlmHttpHookSubscribe;
+
+    @Autowired
+    private IStreamSessionService streamSessionService;
 
     /**
      * 查询设备信息
@@ -91,6 +98,8 @@ public class SIPCommander {
     }
 
     /**
+     * BYE
+     *
      * @param requestType
      * @param deviceBO
      * @param channelId
@@ -117,18 +126,12 @@ public class SIPCommander {
      * @param channelId
      * @param event
      */
-    public void playStreamCmd(MediaServerBO mediaServerBO, SSRCInfo ssrcInfo, DeviceBO deviceBO, String channelId, ZlmHttpHookSubscribe.Event event) throws Exception {
+    public void playStreamCmd(MediaServerBO mediaServerBO, SSRCInfo ssrcInfo, DeviceBO deviceBO, String channelId,
+                              ZlmHttpHookSubscribe.Event event, SIPSubscribe.Event okEvent, SIPSubscribe.Event errorEvent) throws Exception {
         String streamId = ssrcInfo.getStreamId();
         String sdpIp = mediaServerBO.getSdpIp();
 
-        OnStreamChangedHookSubscribe hookSubscribe = new OnStreamChangedHookSubscribe();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("app", "rtp");
-        jsonObject.put("stream", streamId);
-        jsonObject.put("regist", Boolean.TRUE);
-        jsonObject.put("schema", "rtsp");
-        jsonObject.put("mediaServerId", mediaServerBO.getMediaServerId());
-        hookSubscribe.setContent(jsonObject);
+        OnStreamChangedHookSubscribe hookSubscribe = ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId());
         zlmHttpHookSubscribe.addSubscribe(hookSubscribe, (bo, param) -> {
             event.response(bo, param);
             zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
@@ -170,7 +173,15 @@ public class SIPCommander {
         CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
                 : udpSipProvider.getNewCallId();
         Request request = sipRequestHeaderProvider.createRequest(Request.INVITE, deviceBO, channelId, content.toString(), "z9hG4bK" + time, time, null, callIdHeader, "sdp");
-        sipSender.transmitRequest(sipProperties.getIp(), request);
+        sipSender.transmitRequest(sipProperties.getIp(), request, (okEventResult) -> {
+            ResponseEvent responseEvent = (ResponseEvent) okEventResult.event;
+            SIPResponse response = (SIPResponse) responseEvent.getResponse();
+            streamSessionService.put(deviceBO.getDeviceId(), channelId, "play", ssrcInfo.getStreamId(), ssrcInfo.getSsrc(), mediaServerBO.getMediaServerId(), response, InviteSessionTypeDict.PLAY);
+            okEvent.response(okEventResult);
+        }, (errorEventResult) -> {
+            streamSessionService.remove(deviceBO.getDeviceId(), channelId, ssrcInfo.getStreamId());
+            errorEvent.response(errorEventResult);
+        });
         log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 请求预览视频流", deviceBO.getAddress());
     }
 

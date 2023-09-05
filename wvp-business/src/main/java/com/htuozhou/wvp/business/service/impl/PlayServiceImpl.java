@@ -15,6 +15,8 @@ import com.htuozhou.wvp.business.service.IPlayService;
 import com.htuozhou.wvp.business.sip.SIPCommander;
 import com.htuozhou.wvp.business.task.DynamicTask;
 import com.htuozhou.wvp.business.zlm.ZLMManager;
+import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribe;
+import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribeFactory;
 import com.htuozhou.wvp.business.zlm.param.OnStreamChangedHookParam;
 import com.htuozhou.wvp.common.constant.DeferredResultConstant;
 import com.htuozhou.wvp.common.constant.SIPConstant;
@@ -64,6 +66,9 @@ public class PlayServiceImpl implements IPlayService {
 
     @Autowired
     private SIPCommander sipCommander;
+
+    @Autowired
+    private ZlmHttpHookSubscribe zlmHttpHookSubscribe;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -143,6 +148,8 @@ public class PlayServiceImpl implements IPlayService {
                     inviteStreamService.removeInviteInfo(deviceInviteInfo);
                     zlmManager.releaseSsrc(mediaServerBO.getMediaServerId(), ssrcInfo.getSsrc());
                     zlmManager.closeRtpServer(mediaServerBO, streamId);
+
+                    zlmHttpHookSubscribe.removeSubscribe(ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId()));
                 }
             }
         }, DeferredResultConstant.PLAY_TIME_OUT);
@@ -167,6 +174,10 @@ public class PlayServiceImpl implements IPlayService {
                         .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId())
                         .eq(DeviceChannelPO::getChannelId, channelId));
                 inviteStreamService.addInviteInfo(deviceInviteInfo);
+            }, (okEventResult) -> {
+
+            }, (errorEventResult) -> {
+
             });
         } catch (Exception e) {
             log.error("[国标设备点播,请求预览视频流失败] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
