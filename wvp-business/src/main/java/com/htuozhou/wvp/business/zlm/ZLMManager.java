@@ -218,7 +218,6 @@ public class ZLMManager {
             JSONObject jsonObject = postForm(getZLMUrl(bo, ZLMConstant.CLOSE_RTP_SERVER), param);
             log.info("[ZLM ADDRESS {}] 关闭RTP服务器服务器配置,返回的结果是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), jsonObject);
             if (Objects.nonNull(jsonObject) && jsonObject.getInteger("code") == 0) {
-                log.info("[ZLM ADDRESS {}] 关闭RTP服务器成功", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()));
                 result = jsonObject;
             }
         } catch (Exception e) {

@@ -18,7 +18,6 @@ import com.htuozhou.wvp.business.zlm.result.*;
 import com.htuozhou.wvp.common.config.DeferredResultHolder;
 import com.htuozhou.wvp.common.constant.DeferredResultConstant;
 import com.htuozhou.wvp.common.constant.ZLMConstant;
-import com.htuozhou.wvp.common.result.ApiFinalResult;
 import com.htuozhou.wvp.common.result.RequestMessage;
 import com.htuozhou.wvp.common.result.ResultCodeEnum;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
@@ -255,7 +254,7 @@ public class ZLMHttpHookController {
 
                 result.onTimeout(() -> {
                     log.info("[ZLM HTTP HOOK] 收到 [ZLM ADDRESS：{}] 预览流未找到,发起自动点播,点播超时,deviceId:{},channelId:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), deviceId, channelId);
-                    requestMessage.setData(ApiFinalResult.error(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT));
+                    requestMessage.setData(new ZLMHttpHookResult(ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getCode(),ResultCodeEnum.GB_DEVICE_PLAY_TIMEOUT.getMsg()));
                     resultHolder.invokeAllResult(requestMessage);
                 });
 
