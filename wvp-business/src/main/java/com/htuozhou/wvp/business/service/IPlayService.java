@@ -2,7 +2,7 @@ package com.htuozhou.wvp.business.service;
 
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
-import com.htuozhou.wvp.common.result.ErrorCallback;
+import com.htuozhou.wvp.common.result.Callback;
 
 /**
  * @author hanzai
@@ -10,5 +10,6 @@ import com.htuozhou.wvp.common.result.ErrorCallback;
  */
 public interface IPlayService {
 
-    void play(MediaServerBO mediaServerBO, DeviceBO deviceBO, String channelId, String ssrc, String uuid, ErrorCallback<Object> callback);
+    void play(MediaServerBO mediaServerBO, DeviceBO deviceBO, String channelId, String ssrc, String uuid, Callback<Object> callback);
+
 }

@@ -12,8 +12,6 @@ public class SSRCTransactionInfo {
 
     private String deviceId;
     private String channelId;
-    private String callId;
-    private String streamId;
     private String mediaServerId;
     private String ssrc;
     private SIPTransactionInfo sipTransactionInfo;

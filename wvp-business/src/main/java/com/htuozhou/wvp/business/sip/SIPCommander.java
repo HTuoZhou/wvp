@@ -1,6 +1,7 @@
 package com.htuozhou.wvp.business.sip;
 
 import com.htuozhou.wvp.business.bean.SSRCInfo;
+import com.htuozhou.wvp.business.bean.SSRCTransactionInfo;
 import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
@@ -9,7 +10,6 @@ import com.htuozhou.wvp.business.service.IStreamSessionService;
 import com.htuozhou.wvp.business.zlm.OnStreamChangedHookSubscribe;
 import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribe;
 import com.htuozhou.wvp.business.zlm.ZlmHttpHookSubscribeFactory;
-import gov.nist.javax.sip.SipProviderImpl;
 import gov.nist.javax.sip.message.SIPResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.sip.ResponseEvent;
 import javax.sip.header.CallIdHeader;
 import javax.sip.message.Request;
+import java.util.Objects;
 
 /**
  * @author hanzai
@@ -60,12 +61,8 @@ public class SIPCommander {
         catalogXml.append("<DeviceID>" + deviceBO.getDeviceId() + "</DeviceID>\r\n");
         catalogXml.append("</Query>\r\n");
 
-        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
-        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
         String time = Long.toString(System.currentTimeMillis());
-
-        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
-                : udpSipProvider.getNewCallId();
+        CallIdHeader callIdHeader = sipSender.getCallIdHeader(deviceBO.getIp(), deviceBO.getTransport());
         Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader, "MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备信息", deviceBO.getAddress());
@@ -86,12 +83,8 @@ public class SIPCommander {
         catalogXml.append("  <DeviceID>" + deviceBO.getDeviceId() + "</DeviceID>\r\n");
         catalogXml.append("</Query>\r\n");
 
-        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
-        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
         String time = Long.toString(System.currentTimeMillis());
-
-        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
-                : udpSipProvider.getNewCallId();
+        CallIdHeader callIdHeader = sipSender.getCallIdHeader(deviceBO.getIp(), deviceBO.getTransport());
         Request request = sipRequestHeaderProvider.createRequest(Request.MESSAGE, deviceBO, null, catalogXml.toString(), "z9hG4bK" + time, time, null, callIdHeader, "MANSCDP+xml");
         sipSender.transmitRequest(sipProperties.getIp(), request);
         log.info("[SIP COMMANDER MESSAGE] [SIP ADDRESS:{}] 查询设备通道信息", deviceBO.getAddress());
@@ -105,16 +98,15 @@ public class SIPCommander {
      * @param channelId
      * @throws Exception
      */
-    public void streamBye(String requestType, DeviceBO deviceBO, String channelId) throws Exception {
-        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
-        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
-        String time = Long.toString(System.currentTimeMillis());
-
-        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
-                : udpSipProvider.getNewCallId();
-        Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, "z9hG4bK" + time, time, null, callIdHeader, null);
-        sipSender.transmitRequest(sipProperties.getIp(), request);
-        log.info("[SIP COMMANDER] [SIP ADDRESS:{}] BYE", deviceBO.getAddress());
+    public void streamByeCmd(String requestType, DeviceBO deviceBO, String channelId) throws Exception {
+        SSRCTransactionInfo ssrcTransaction = streamSessionService.getSSRCTransactionInfo(deviceBO.getDeviceId(), channelId);
+        if (Objects.nonNull(ssrcTransaction)) {
+            String time = Long.toString(System.currentTimeMillis());
+            CallIdHeader callIdHeader = sipRunner.getSipFactory().createHeaderFactory().createCallIdHeader(ssrcTransaction.getSipTransactionInfo().getCallId());
+            Request request = sipRequestHeaderProvider.createRequest(requestType, deviceBO, channelId, null, ssrcTransaction.getSipTransactionInfo().getViaBranch() + time, time, null, callIdHeader, null);
+            sipSender.transmitRequest(sipProperties.getIp(), request);
+            log.info("[SIP COMMANDER] [SIP ADDRESS:{}] BYE", deviceBO.getAddress());
+        }
     }
 
     /**
@@ -131,11 +123,14 @@ public class SIPCommander {
         String streamId = ssrcInfo.getStreamId();
         String sdpIp = mediaServerBO.getSdpIp();
 
-        OnStreamChangedHookSubscribe hookSubscribe = ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId());
-        zlmHttpHookSubscribe.addSubscribe(hookSubscribe, (bo, param) -> {
-            event.response(bo, param);
-            zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
-        });
+        if (Objects.nonNull(event)) {
+            log.info("[国标设备点播,添加ON_STREAM_CHANGED订阅] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
+            OnStreamChangedHookSubscribe hookSubscribe = ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId());
+            zlmHttpHookSubscribe.addSubscribe(hookSubscribe, (bo, param) -> {
+                event.response(bo, param);
+                zlmHttpHookSubscribe.removeSubscribe(hookSubscribe);
+            });
+        }
 
         StringBuilder content = new StringBuilder(200);
         content.append("v=0\r\n");
@@ -165,21 +160,16 @@ public class SIPCommander {
         content.append("y=").append(ssrcInfo.getSsrc()).append("\r\n");// ssrc
         // f字段:f= v/编码格式/分辨率/帧率/码率类型/码率大小a/编码格式/码率大小/采样率
         // content.append("f=v/2/5/25/1/4000a/1/8/1" + "\r\n"); // 未发现支持此特性的设备
-
-        SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider();
-        SipProviderImpl udpSipProvider = sipRunner.getUdpSipProvider();
         String time = Long.toString(System.currentTimeMillis());
-
-        CallIdHeader callIdHeader = deviceBO.getTransport().equals("TCP") ? tcpSipProvider.getNewCallId()
-                : udpSipProvider.getNewCallId();
+        CallIdHeader callIdHeader = sipSender.getCallIdHeader(deviceBO.getIp(), deviceBO.getTransport());
         Request request = sipRequestHeaderProvider.createRequest(Request.INVITE, deviceBO, channelId, content.toString(), "z9hG4bK" + time, time, null, callIdHeader, "sdp");
         sipSender.transmitRequest(sipProperties.getIp(), request, (okEventResult) -> {
             ResponseEvent responseEvent = (ResponseEvent) okEventResult.event;
             SIPResponse response = (SIPResponse) responseEvent.getResponse();
-            streamSessionService.put(deviceBO.getDeviceId(), channelId, "play", ssrcInfo.getStreamId(), ssrcInfo.getSsrc(), mediaServerBO.getMediaServerId(), response, InviteSessionTypeDict.PLAY);
+            streamSessionService.put(deviceBO.getDeviceId(), channelId, ssrcInfo.getSsrc(), mediaServerBO.getMediaServerId(), response, InviteSessionTypeDict.PLAY);
             okEvent.response(okEventResult);
         }, (errorEventResult) -> {
-            streamSessionService.remove(deviceBO.getDeviceId(), channelId, ssrcInfo.getStreamId());
+            streamSessionService.remove(deviceBO.getDeviceId(), channelId);
             errorEvent.response(errorEventResult);
         });
         log.info("[SIP COMMANDER] [SIP ADDRESS:{}] 请求预览视频流", deviceBO.getAddress());

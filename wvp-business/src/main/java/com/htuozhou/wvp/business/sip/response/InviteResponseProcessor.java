@@ -14,7 +14,6 @@ import javax.sdp.SessionDescription;
 import javax.sip.ResponseEvent;
 import javax.sip.address.SipURI;
 import javax.sip.message.Request;
-import javax.sip.message.Response;
 
 /**
  * @author hanzai
@@ -50,16 +49,13 @@ public class InviteResponseProcessor extends AbstractSIPResponseProcessor implem
 
         log.info("[SIP RESPONSE INVITE] 收到 [SIP ADDRESS:{}]", responseAddress);
 
-        int statusCode = response.getStatusCode();
-        if (statusCode == Response.OK) {
-            String contentString = new String(response.getRawContent());
-            SDPItem sdpItem = SIPUtil.parseSDP(contentString);
-            SessionDescription sdp = sdpItem.getBaseSdb();
-            SipURI requestUri = sipRunner.getSipFactory().createAddressFactory().createSipURI(sdp.getOrigin().getUsername(), responseAddress);
-            Request request = sipRequestHeaderProvider.createAckRequest(response.getLocalAddress().getHostAddress(), requestUri, response);
+        String contentString = new String(response.getRawContent());
+        SDPItem sdpItem = SIPUtil.parseSDP(contentString);
+        SessionDescription sdp = sdpItem.getBaseSdb();
+        SipURI requestUri = sipRunner.getSipFactory().createAddressFactory().createSipURI(sdp.getOrigin().getUsername(), responseAddress);
+        Request request = sipRequestHeaderProvider.createAckRequest(response.getLocalAddress().getHostAddress(), requestUri, response);
 
-            sipSender.transmitRequest(response.getLocalAddress().getHostAddress(), request);
-            log.info("[SIP RESPONSE INVITE] 回复ACK [SIP ADDRESS:{}]", responseAddress);
-        }
+        sipSender.transmitRequest(response.getLocalAddress().getHostAddress(), request);
+        log.info("[SIP RESPONSE INVITE] 回复ACK [SIP ADDRESS:{}]", responseAddress);
     }
 }

@@ -159,7 +159,7 @@ public class ZLMHttpHookController {
 
                 if (Objects.equals("rtp", param.getApp()) && Objects.equals("rtsp", param.getSchema())) {
                     InviteInfo inviteInfo = inviteStreamService.getStreamInviteInfo(InviteSessionTypeDict.PLAY, param.getStream());
-                    inviteStreamService.removeInviteInfo(inviteInfo);
+                    inviteStreamService.removeInviteInfo(InviteSessionTypeDict.PLAY, inviteInfo.getDeviceId(), inviteInfo.getChannelId(), inviteInfo.getStreamId());
                     zlmManager.releaseSsrc(bo.getMediaServerId(), inviteInfo.getSsrcInfo().getSsrc());
                     deviceChannelService.update(Wrappers.<DeviceChannelPO>lambdaUpdate()
                             .set(DeviceChannelPO::getStreamId, null)

@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.service;
 
+import com.htuozhou.wvp.business.bean.SSRCTransactionInfo;
 import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
 import gov.nist.javax.sip.message.SIPResponse;
 
@@ -9,8 +10,10 @@ import gov.nist.javax.sip.message.SIPResponse;
  */
 public interface IStreamSessionService {
 
-    void put(String deviceId, String channelId, String callId, String streamId, String ssrc, String mediaServerId, SIPResponse response, InviteSessionTypeDict inviteSessionTypeDict);
+    SSRCTransactionInfo getSSRCTransactionInfo(String deviceId, String channelId);
 
-    void remove(String deviceId, String channelId, String streamId);
+    void put(String deviceId, String channelId, String ssrc, String mediaServerId, SIPResponse response, InviteSessionTypeDict inviteSessionTypeDict);
+
+    void remove(String deviceId, String channelId);
 
 }

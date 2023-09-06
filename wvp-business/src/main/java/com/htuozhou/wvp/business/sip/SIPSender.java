@@ -1,5 +1,6 @@
 package com.htuozhou.wvp.business.sip;
 
+import cn.hutool.core.util.StrUtil;
 import com.htuozhou.wvp.common.constant.CommonConstant;
 import gov.nist.javax.sip.SipProviderImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -53,13 +54,13 @@ public class SIPSender {
         }
 
         CallIdHeader callIdHeader = (CallIdHeader) message.getHeader(CallIdHeader.NAME);
-        if (okEvent != null) {
+        if (Objects.nonNull(okEvent)) {
             sipSubscribe.addOkSubscribe(callIdHeader.getCallId(), (okeventResult) -> {
                 okEvent.response(okeventResult);
                 sipSubscribe.removeOkSubscribe(okeventResult.callId);
             });
         }
-        if (errorEvent != null) {
+        if (Objects.nonNull(errorEvent)) {
             sipSubscribe.addErrorSubscribe(callIdHeader.getCallId(), (errorEventResult) -> {
                 errorEvent.response(errorEventResult);
                 sipSubscribe.removeErrorSubscribe(errorEventResult.callId);
@@ -84,4 +85,23 @@ public class SIPSender {
         }
     }
 
+    public CallIdHeader getCallIdHeader(String ip, String transport) {
+        if (StrUtil.isBlank(transport)) {
+            return sipRunner.getUdpSipProvider().getNewCallId();
+        }
+
+        SipProviderImpl sipProvider;
+        if (StrUtil.isBlank(ip)) {
+            sipProvider = transport.equalsIgnoreCase("TCP") ? sipRunner.getTcpSipProvider()
+                    : sipRunner.getUdpSipProvider();
+        } else {
+            sipProvider = transport.equalsIgnoreCase("TCP") ? sipRunner.getTcpSipProvider(ip)
+                    : sipRunner.getUdpSipProvider(ip);
+        }
+
+        if (Objects.isNull(sipProvider)) {
+            sipProvider = sipRunner.getUdpSipProvider();
+        }
+        return sipProvider.getNewCallId();
+    }
 }

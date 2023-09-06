@@ -5,7 +5,7 @@ import com.htuozhou.wvp.business.bean.InviteInfo;
 import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
 import com.htuozhou.wvp.business.service.IInviteStreamService;
 import com.htuozhou.wvp.common.constant.RedisConstant;
-import com.htuozhou.wvp.common.result.ErrorCallback;
+import com.htuozhou.wvp.common.result.Callback;
 import com.htuozhou.wvp.common.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class InviteStreamServiceImpl implements IInviteStreamService {
 
-    private final Map<String, List<ErrorCallback<Object>>> inviteErrorCallbackMap = new ConcurrentHashMap<>();
+    private final Map<String, List<Callback<Object>>> inviteErrorCallbackMap = new ConcurrentHashMap<>();
 
     @Autowired
     private RedisUtil redisUtil;
@@ -36,10 +36,10 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     }
 
     @Override
-    public void removeInviteInfo(InviteInfo inviteInfo) {
-        String key = String.format(RedisConstant.INVITE_INFO, inviteInfo.getInviteSessionTypeDict().getType(), inviteInfo.getDeviceId(), inviteInfo.getChannelId());
+    public void removeInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId) {
+        String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
         redisUtil.delete(key);
-        inviteErrorCallbackMap.remove(buildKey(inviteInfo.getInviteSessionTypeDict(), inviteInfo.getDeviceId(), inviteInfo.getChannelId(), inviteInfo.getStreamId()));
+        inviteErrorCallbackMap.remove(buildKey(inviteSessionTypeDict, deviceId, channelId, streamId));
     }
 
     @Override
@@ -55,9 +55,9 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     }
 
     @Override
-    public void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, ErrorCallback<Object> callback) {
+    public void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, Callback<Object> callback) {
         String key = buildKey(inviteSessionTypeDict, deviceId, channelId, streamId);
-        List<ErrorCallback<Object>> callbacks = inviteErrorCallbackMap.get(key);
+        List<Callback<Object>> callbacks = inviteErrorCallbackMap.get(key);
         if (callbacks == null) {
             callbacks = new CopyOnWriteArrayList<>();
             inviteErrorCallbackMap.put(key, callbacks);
@@ -68,11 +68,11 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     @Override
     public void call(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, Integer code, String msg, Object data) {
         String key = buildKey(inviteSessionTypeDict, deviceId, channelId, streamId);
-        List<ErrorCallback<Object>> callbacks = inviteErrorCallbackMap.get(key);
+        List<Callback<Object>> callbacks = inviteErrorCallbackMap.get(key);
         if (callbacks == null) {
             return;
         }
-        for (ErrorCallback<Object> callback : callbacks) {
+        for (Callback<Object> callback : callbacks) {
             callback.run(code, msg, data);
         }
         inviteErrorCallbackMap.remove(key);

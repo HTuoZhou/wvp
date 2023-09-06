@@ -19,5 +19,6 @@ public class RedisConstant {
     public static final String INVITE_INFO = "INVITE_INFO_%d_%s_%s";
 
     public static final String SSRC_INFO = "SSRC_INFO_%s";
+    public static final String STREAM_SESSION_INFO = "STREAM_SESSION_INFO_%s_%s";
 
 }
