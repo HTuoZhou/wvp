@@ -12,8 +12,8 @@ import com.htuozhou.wvp.business.bo.DeviceBO;
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
 import com.htuozhou.wvp.business.bo.MediaServerBO;
 import com.htuozhou.wvp.business.service.IGbDeviceService;
-import com.htuozhou.wvp.business.service.IInviteStreamService;
 import com.htuozhou.wvp.business.service.IPlayService;
+import com.htuozhou.wvp.business.zlm.ZLMManager;
 import com.htuozhou.wvp.common.config.DeferredResultHolder;
 import com.htuozhou.wvp.common.constant.DeferredResultConstant;
 import com.htuozhou.wvp.common.constant.SIPConstant;
@@ -63,7 +63,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
     private IPlayService playService;
 
     @Autowired
-    private IInviteStreamService inviteStreamService;
+    private ZLMManager zlmManager;
 
     /**
      * 分页查询国标设备
@@ -232,7 +232,7 @@ public class GbDeviceServiceImpl implements IGbDeviceService {
                 apiFinalResult.setData((StreamContent) data);
             }
             requestMessage.setData(apiFinalResult);
-            resultHolder.invokeResult(requestMessage);
+            resultHolder.invokeAllResult(requestMessage);
         });
 
         return result;

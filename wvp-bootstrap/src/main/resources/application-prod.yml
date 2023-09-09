@@ -6,6 +6,10 @@ server:
 spring:
   application:
     name: wvp
+  web:
+    resources:
+      #      static-locations: classpath:/META-INF/resources/, classpath:/resources/, classpath:/static/, classpath:/public/
+      static-locations: file:./snap
   flyway:
     enabled: true
   # mysql数据库配置
@@ -64,7 +68,7 @@ zlm:
   # zlm服务器的hook所使用的ip
   hook-ip: 127.0.0.1
   # zlm服务器的http.port
-  http-port: 8080
+  http-port: 8484
   # zlm服务器的http.sslport
   http-ssl-port: 443
   # zlm服务器的rtsp.port

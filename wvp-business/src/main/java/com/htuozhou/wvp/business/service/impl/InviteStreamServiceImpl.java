@@ -43,14 +43,8 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
     }
 
     @Override
-    public InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
+    public InviteInfo getInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId) {
         String key = String.format(RedisConstant.INVITE_INFO, inviteSessionTypeDict.getType(), deviceId, channelId);
-        return (InviteInfo) redisUtil.get(key);
-    }
-
-    @Override
-    public InviteInfo getStreamInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String streamId) {
-        String key = String.format(RedisConstant.INVITE_INFO_PREFIX, inviteSessionTypeDict.getType()) + streamId;
         return (InviteInfo) redisUtil.get(key);
     }
 

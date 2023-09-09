@@ -41,7 +41,7 @@
 2. **创建容器：**
 
    ```shell
-   sudo docker run --name zlmediakit --restart=always -d -p 8080:80 -p 8554:554 -p 8935:1935 -p 10000:10000 -p 10000:10000/udp -p 8000:8000/udp -p 30000-30500:30000-30500 -p 30000-30500:30000-30500/udp -v /Users/hanzai/Docker/zlmediakit/conf/config.ini:/opt/media/conf/config.ini zlmediakit/zlmediakit:master
+   sudo docker run --name zlmediakit --restart=always -d -p 8484:80 -p 8554:554 -p 8935:1935 -p 10000:10000 -p 10000:10000/udp -p 8000:8000/udp -p 30000-30500:30000-30500 -p 30000-30500:30000-30500/udp -v /Users/hanzai/Docker/zlmediakit/conf/config.ini:/opt/media/conf/config.ini zlmediakit/zlmediakit:master
    ```
 
 3. **config.ini默认内容：**

@@ -85,8 +85,7 @@ public class GbDeviceController {
      * @return
      */
     @GetMapping("/channel/tree/{deviceId}/{parentId}")
-    public ApiFinalResult<List<BaseTree<DeviceChannelVO>>> tree(@PathVariable("deviceId") String deviceId,
-                                                                @PathVariable("parentId") String parentId) {
+    public ApiFinalResult<List<BaseTree<DeviceChannelVO>>> tree(@PathVariable("deviceId") String deviceId, @PathVariable("parentId") String parentId) {
         List<BaseTree<DeviceChannelBO>> bos = gbDeviceService.tree(deviceId, parentId);
         if (CollUtil.isEmpty(bos)) {
             return ApiFinalResult.success(Collections.emptyList());
@@ -115,8 +114,7 @@ public class GbDeviceController {
      * @return
      */
     @GetMapping("/channel/play/{deviceId}/{channelId}")
-    public DeferredResult<ApiFinalResult<StreamContent>> play(@PathVariable("deviceId") String deviceId,
-                                                              @PathVariable("channelId") String channelId) {
+    public DeferredResult<ApiFinalResult<StreamContent>> play(@PathVariable("deviceId") String deviceId, @PathVariable("channelId") String channelId) {
         return gbDeviceService.play(deviceId, channelId);
     }
 

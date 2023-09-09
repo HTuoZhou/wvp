@@ -1,12 +1,9 @@
 package com.htuozhou.wvp.business.service.impl;
 
-import com.htuozhou.wvp.business.bean.SIPTransactionInfo;
 import com.htuozhou.wvp.business.bean.SSRCTransactionInfo;
-import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
 import com.htuozhou.wvp.business.service.IStreamSessionService;
 import com.htuozhou.wvp.common.constant.RedisConstant;
 import com.htuozhou.wvp.common.utils.RedisUtil;
-import gov.nist.javax.sip.message.SIPResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,15 +25,7 @@ public class StreamSessionServiceServiceImpl implements IStreamSessionService {
     }
 
     @Override
-    public void put(String deviceId, String channelId, String ssrc, String mediaServerId, SIPResponse response, InviteSessionTypeDict inviteSessionTypeDict) {
-        SSRCTransactionInfo ssrcTransaction = new SSRCTransactionInfo();
-        ssrcTransaction.setDeviceId(deviceId);
-        ssrcTransaction.setChannelId(channelId);
-        ssrcTransaction.setSipTransactionInfo(new SIPTransactionInfo(response));
-        ssrcTransaction.setSsrc(ssrc);
-        ssrcTransaction.setMediaServerId(mediaServerId);
-        ssrcTransaction.setInviteSessionTypeDict(inviteSessionTypeDict);
-
+    public void put(String deviceId, String channelId, SSRCTransactionInfo ssrcTransaction) {
         redisUtil.set(String.format(RedisConstant.STREAM_SESSION_INFO, deviceId, channelId), ssrcTransaction);
     }
 

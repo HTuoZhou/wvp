@@ -10,11 +10,11 @@ import lombok.Data;
 @Data
 public class SSRCTransactionInfo {
 
+    private String mediaServerId;
+    private InviteSessionTypeDict inviteSessionTypeDict;
     private String deviceId;
     private String channelId;
-    private String mediaServerId;
     private String ssrc;
-    private SIPTransactionInfo sipTransactionInfo;
-    private InviteSessionTypeDict inviteSessionTypeDict;
+    private String callId;
 
 }

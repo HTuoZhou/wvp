@@ -12,6 +12,7 @@ import com.htuozhou.wvp.business.dict.InviteSessionStatusDict;
 import com.htuozhou.wvp.business.dict.InviteSessionTypeDict;
 import com.htuozhou.wvp.business.service.IInviteStreamService;
 import com.htuozhou.wvp.business.service.IPlayService;
+import com.htuozhou.wvp.business.service.IStreamSessionService;
 import com.htuozhou.wvp.business.sip.SIPCommander;
 import com.htuozhou.wvp.business.task.DynamicTask;
 import com.htuozhou.wvp.business.zlm.ZLMManager;
@@ -22,10 +23,8 @@ import com.htuozhou.wvp.common.constant.DeferredResultConstant;
 import com.htuozhou.wvp.common.constant.SIPConstant;
 import com.htuozhou.wvp.common.result.Callback;
 import com.htuozhou.wvp.common.result.ResultCodeEnum;
-import com.htuozhou.wvp.common.utils.RedisUtil;
 import com.htuozhou.wvp.persistence.po.DeviceChannelPO;
 import com.htuozhou.wvp.persistence.service.IDeviceChannelService;
-import com.htuozhou.wvp.persistence.service.IDeviceService;
 import com.htuozhou.wvp.persistence.service.IMediaServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +55,6 @@ public class PlayServiceImpl implements IPlayService {
     private IDeviceChannelService deviceChannelService;
 
     @Autowired
-    private IDeviceService deviceService;
-
-    @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
     private DynamicTask dynamicTask;
 
     @Autowired
@@ -70,25 +63,21 @@ public class PlayServiceImpl implements IPlayService {
     @Autowired
     private ZlmHttpHookSubscribe zlmHttpHookSubscribe;
 
+    @Autowired
+    private IStreamSessionService streamSessionService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void play(MediaServerBO mediaServerBO, DeviceBO deviceBO, String channelId, String ssrc, String uuid, Callback<Object> callback) {
-        InviteInfo inviteInfo = inviteStreamService.getDeviceInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId);
+        InviteInfo inviteInfo = inviteStreamService.getInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId);
         if (Objects.nonNull(inviteInfo)) {
             if (Objects.isNull(inviteInfo.getStreamContent())) {
-                log.info("[国标设备点播,等待结果],deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
+                log.info("[国标设备点播,请求中,等待结果],deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
                 inviteStreamService.add(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, callback);
                 return;
             } else {
                 StreamContent streamContent = inviteInfo.getStreamContent();
                 String streamId = streamContent.getStreamId();
-                if (StrUtil.isBlank(streamId)) {
-                    log.error("[国标设备点播失败,{}],deviceId:{},,channelId:{}", ResultCodeEnum.STREAM_ID_NOT_EXIST.getMsg(), deviceBO.getDeviceId(), channelId);
-                    callback.run(ResultCodeEnum.STREAM_ID_NOT_EXIST.getCode(), ResultCodeEnum.STREAM_ID_NOT_EXIST.getMsg(), null);
-                    inviteStreamService.call(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, ResultCodeEnum.STREAM_ID_NOT_EXIST.getCode(),
-                            ResultCodeEnum.STREAM_ID_NOT_EXIST.getMsg(), null);
-                    return;
-                }
                 JSONArray jsonArray = zlmManager.getMediaList(mediaServerBO, "rtp", null, streamId);
                 if (jsonArray != null && !jsonArray.isEmpty()) {
                     log.info("[国标设备点播,流已存在,直接返回结果],deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
@@ -130,38 +119,35 @@ public class PlayServiceImpl implements IPlayService {
 
         dynamicTask.startDelay(uuid, () -> {
             // 执行超时任务时查询是否已经成功，成功了则不执行超时任务，防止超时任务取消失败的情况
-            InviteInfo deviceInviteInfo = inviteStreamService.getDeviceInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId);
-            if (Objects.isNull(deviceInviteInfo.getStreamContent())) {
+            if (Objects.isNull(inviteStreamService.getInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId).getStreamContent())) {
                 log.error("[国标设备点播失败,{}] deviceId:{},channelId:{}", ResultCodeEnum.RECEIVE_STREAM_TIMEOUT.getMsg(), deviceBO.getDeviceId(), channelId);
                 callback.run(ResultCodeEnum.RECEIVE_STREAM_TIMEOUT.getCode(), ResultCodeEnum.RECEIVE_STREAM_TIMEOUT.getMsg(), null);
                 inviteStreamService.call(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, ResultCodeEnum.RECEIVE_STREAM_TIMEOUT.getCode(),
                         ResultCodeEnum.RECEIVE_STREAM_TIMEOUT.getMsg(), null);
                 try {
-                    log.error("[国标设备点播失败,发送BYE] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
+                    log.error("[国标设备点播失败,BYE] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
                     sipCommander.streamByeCmd(Request.BYE, deviceBO, channelId);
                 } catch (Exception e) {
-                    log.error("[国标设备点播失败,发送BY失败] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
+                    log.error("[国标设备点播失败,BYE失败] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
                     callback.run(ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(), ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
                     inviteStreamService.call(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(),
                             ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
-                } finally {
-                    inviteStreamService.removeInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, streamId);
-                    zlmManager.releaseSsrc(mediaServerBO.getMediaServerId(), ssrcInfo.getSsrc());
-                    zlmManager.closeRtpServer(mediaServerBO, streamId);
-
-                    zlmHttpHookSubscribe.removeSubscribe(ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId()));
                 }
+                inviteStreamService.removeInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, streamId);
+                zlmManager.releaseSsrc(mediaServerBO.getMediaServerId(), ssrcInfo.getSsrc());
+                zlmManager.closeRtpServer(mediaServerBO, streamId);
+                zlmHttpHookSubscribe.removeSubscribe(ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId()));
             }
         }, DeferredResultConstant.PLAY_TIME_OUT);
 
         try {
             sipCommander.playStreamCmd(mediaServerBO, ssrcInfo, deviceBO, channelId, (bo, param) -> {
                 OnStreamChangedHookParam onStreamChangedHookParam = (OnStreamChangedHookParam) param;
-                log.info("[国标设备点播成功,收到ON_STREAM_CHANGED订阅] deviceId:{},channelId:{},onStreamChangedHookParam:{}", deviceBO.getDeviceId(), channelId, onStreamChangedHookParam);
+                log.info("[国标设备点播,收到ON_STREAM_CHANGED订阅] deviceId:{},channelId:{},onStreamChangedHookParam:{}", deviceBO.getDeviceId(), channelId, onStreamChangedHookParam);
                 dynamicTask.cancel(uuid);
 
                 StreamContent streamContent = StreamContent.convert(mediaServerBO, onStreamChangedHookParam);
-                InviteInfo deviceInviteInfo = inviteStreamService.getDeviceInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId);
+                InviteInfo deviceInviteInfo = inviteStreamService.getInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId);
                 deviceInviteInfo.setInviteSessionStatusDict(InviteSessionStatusDict.OK);
                 deviceInviteInfo.setStreamContent(streamContent);
 
@@ -174,29 +160,20 @@ public class PlayServiceImpl implements IPlayService {
                         .eq(DeviceChannelPO::getDeviceId, deviceBO.getDeviceId())
                         .eq(DeviceChannelPO::getChannelId, channelId));
                 inviteStreamService.addInviteInfo(deviceInviteInfo);
-            }, (okEventResult) -> {
-                log.info("[国标设备点播成功,收到OK订阅] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
-            }, (errorEventResult) -> {
-                log.error("[国标设备点播失败,收到ERROR订阅] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
-                dynamicTask.cancel(uuid);
-
-                callback.run(ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(), ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
-                inviteStreamService.call(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(),
-                        ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
-                inviteStreamService.removeInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, streamId);
-                zlmManager.releaseSsrc(mediaServerBO.getMediaServerId(), ssrcInfo.getSsrc());
-                zlmManager.closeRtpServer(mediaServerBO, streamId);
+                zlmManager.getSnap(bo, deviceBO.getDeviceId(), channelId);
             });
         } catch (Exception e) {
-            log.error("[国标设备点播,请求预览视频流失败] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
             dynamicTask.cancel(uuid);
 
+            log.error("[国标设备点播,请求预览视频流失败] deviceId:{},channelId:{}", deviceBO.getDeviceId(), channelId);
             callback.run(ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(), ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
             inviteStreamService.call(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, null, ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getCode(),
                     ResultCodeEnum.SIP_COMMAND_SEND_ERROR.getMsg(), null);
+
             inviteStreamService.removeInviteInfo(InviteSessionTypeDict.PLAY, deviceBO.getDeviceId(), channelId, streamId);
             zlmManager.releaseSsrc(mediaServerBO.getMediaServerId(), ssrcInfo.getSsrc());
             zlmManager.closeRtpServer(mediaServerBO, streamId);
+            zlmHttpHookSubscribe.removeSubscribe(ZlmHttpHookSubscribeFactory.onStreamChanged("rtp", streamId, Boolean.TRUE, "rtsp", mediaServerBO.getMediaServerId()));
         }
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.sip.*;
 import javax.sip.header.CSeqHeader;
-import javax.sip.header.CallIdHeader;
-import javax.sip.message.Response;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,34 +55,7 @@ public class SIPProcessorObserver implements ISIPProcessorObserver {
             return;
         }
 
-        Response response = responseEvent.getResponse();
-        int statusCode = response.getStatusCode();
-        if (statusCode == Response.OK) {
-            responseProcessorMap.get(method).process(responseEvent);
-
-            CallIdHeader callIdHeader = (CallIdHeader) response.getHeader(CallIdHeader.NAME);
-            if (Objects.nonNull(callIdHeader)) {
-                SIPSubscribe.Event subscribe = sipSubscribe.getOkSubscribe(callIdHeader.getCallId());
-                if (Objects.nonNull(subscribe)) {
-                    SIPSubscribe.EventResult eventResult = new SIPSubscribe.EventResult(responseEvent);
-                    sipSubscribe.removeOkSubscribe(callIdHeader.getCallId());
-                    subscribe.response(eventResult);
-                }
-            }
-
-        } else if (statusCode == Response.TRYING){
-            return;
-        } else {
-            CallIdHeader callIdHeader = (CallIdHeader) response.getHeader(CallIdHeader.NAME);
-            if (Objects.nonNull(callIdHeader)) {
-                SIPSubscribe.Event subscribe = sipSubscribe.getErrorSubscribe(callIdHeader.getCallId());
-                if (Objects.nonNull(subscribe)) {
-                    SIPSubscribe.EventResult eventResult = new SIPSubscribe.EventResult(responseEvent);
-                    sipSubscribe.removeErrorSubscribe(callIdHeader.getCallId());
-                    subscribe.response(eventResult);
-                }
-            }
-        }
+        responseProcessorMap.get(method).process(responseEvent);
     }
 
     @Override

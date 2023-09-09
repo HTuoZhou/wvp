@@ -20,4 +20,6 @@ public class SIPConstant {
 
     public static final String CIVIL_CODE_PATH = "civilCode.csv";
 
+    public static final String BRANCH = "z9hG4bK";
+
 }

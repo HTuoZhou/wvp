@@ -54,18 +54,6 @@ public class SIPSender {
         }
 
         CallIdHeader callIdHeader = (CallIdHeader) message.getHeader(CallIdHeader.NAME);
-        if (Objects.nonNull(okEvent)) {
-            sipSubscribe.addOkSubscribe(callIdHeader.getCallId(), (okeventResult) -> {
-                okEvent.response(okeventResult);
-                sipSubscribe.removeOkSubscribe(okeventResult.callId);
-            });
-        }
-        if (Objects.nonNull(errorEvent)) {
-            sipSubscribe.addErrorSubscribe(callIdHeader.getCallId(), (errorEventResult) -> {
-                errorEvent.response(errorEventResult);
-                sipSubscribe.removeErrorSubscribe(errorEventResult.callId);
-            });
-        }
 
         if ("TCP".equals(transport)) {
             SipProviderImpl tcpSipProvider = sipRunner.getTcpSipProvider(ip);

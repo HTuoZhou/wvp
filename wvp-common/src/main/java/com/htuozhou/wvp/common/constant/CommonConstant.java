@@ -42,4 +42,7 @@ public class CommonConstant {
     public static final String RTSP_PROTOCOL = "rtsp://";
     public static final String RTSPS_PROTOCOL = "rtsps://";
 
+    public static final String SNAP_PATH = "snap";
+    public static final String SNAP_NAME = "%s_%s_snap.jpg";
+
 }

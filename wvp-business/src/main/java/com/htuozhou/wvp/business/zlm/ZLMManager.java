@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -97,6 +99,7 @@ public class ZLMManager {
         param.put("hook.on_send_rtp_stopped", String.format("%s/on_send_rtp_stopped", hookPrefix));
         param.put("hook.on_server_keepalive", String.format("%s/on_server_keepalive", hookPrefix));
         param.put("hook.on_server_started", String.format("%s/on_server_started", hookPrefix));
+        param.put("hook.on_server_exited", String.format("%s/on_server_started", hookPrefix));
         param.put("hook.on_shell_login", String.format("%s/on_shell_login", hookPrefix));
         param.put("hook.on_stream_changed", String.format("%s/on_stream_changed", hookPrefix));
         param.put("hook.on_stream_none_reader", String.format("%s/on_stream_none_reader", hookPrefix));
@@ -259,6 +262,30 @@ public class ZLMManager {
         return result;
     }
 
+    /**
+     * 获取截图
+     *
+     * @param bo
+     */
+    public void getSnap(MediaServerBO bo, String deviceId, String channelId) {
+        String requestUrl = getZLMUrl(bo, ZLMConstant.GET_SNAP) +
+                "?secret=" + bo.getSecret() +
+                "&url=" + String.format(CommonConstant.RTSP_PROTOCOL + String.format(ZLMConstant.STREAM_LIVE_RTMP_RTSP_FMT, bo.getStreamIp(), bo.getRtspPort(), "rtp", String.format("%s_%s", deviceId, channelId))) +
+                "&timeout_sec=10&expire_sec=1";
+        log.info("[ZLM ADDRESS {}] 获取截图,请求的地址是:{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), requestUrl);
+        byte[] bytes = downloadBytes(requestUrl);
+        File snapPath = new File(CommonConstant.SNAP_PATH);
+        if (!snapPath.exists()) {
+            boolean mkdir = snapPath.mkdir();
+        }
+        File snapName = new File(snapPath + File.separator + String.format(CommonConstant.SNAP_NAME, deviceId, channelId));
+        try (FileOutputStream os = new FileOutputStream(snapName)) {
+            os.write(bytes);
+        } catch (Exception e) {
+            log.error("[ZLM ADDRESS {}] 获取截图失败,{}", String.format(ZLMConstant.ADDRESS, bo.getIp(), bo.getHttpPort()), e.getLocalizedMessage());
+        }
+    }
+
     public Integer createRtpSever(MediaServerBO bo, String streamId, String ssrc, Integer port, Boolean reUsePort, Integer tcpMode) {
         int rtpServerPort = -1;
         JSONObject rtpInfo = getRtpInfo(bo, streamId);
@@ -281,7 +308,7 @@ public class ZLMManager {
     }
 
     public void initSsrc(String mediaServerId) {
-        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] INIT SSRC", mediaServerId);
+        log.info("[ZLM] [ZLM MEDIA SERVER ID {}] INIT SSRC", mediaServerId);
         String ssrcPrefix = sipProperties.getDomain().substring(3, 8);
         String key = String.format(RedisConstant.SSRC_INFO, mediaServerId);
         List<String> ssrcList = new ArrayList<>();
@@ -300,7 +327,7 @@ public class ZLMManager {
      * @return
      */
     public String getPlaySsrc(String mediaServerId) {
-        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAY SSRC", mediaServerId);
+        log.info("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAY SSRC", mediaServerId);
         return "0" + getSN(mediaServerId);
     }
 
@@ -311,7 +338,7 @@ public class ZLMManager {
      * @return
      */
     public String getPlayBackSsrc(String mediaServerId) {
-        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAYBACK SSRC", mediaServerId);
+        log.info("[ZLM] [ZLM MEDIA SERVER ID {}] GET PLAYBACK SSRC", mediaServerId);
         return "1" + getSN(mediaServerId);
     }
 
@@ -339,7 +366,7 @@ public class ZLMManager {
      * @param ssrc 需要重置的ssrc
      */
     public void releaseSsrc(String mediaServerId, String ssrc) {
-        log.error("[ZLM] [ZLM MEDIA SERVER ID {}] RELEASE SSRC", mediaServerId);
+        log.info("[ZLM] [ZLM MEDIA SERVER ID {}] RELEASE SSRC", mediaServerId);
         String key = String.format(RedisConstant.SSRC_INFO, mediaServerId);
         String sn = ssrc.substring(1);
         redisUtil.sSet(key, sn);
@@ -348,6 +375,10 @@ public class ZLMManager {
     private JSONObject postForm(String url, Map<String, Object> param) {
         String s = HttpUtil.post(url, param);
         return JSON.parseObject(s);
+    }
+
+    private byte[] downloadBytes(String url) {
+        return HttpUtil.downloadBytes(url);
     }
 
     private String getZLMUrl(MediaServerBO bo, String apiName) {

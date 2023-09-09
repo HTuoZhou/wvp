@@ -14,9 +14,7 @@ public interface IInviteStreamService {
 
     void removeInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId);
 
-    InviteInfo getDeviceInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
-
-    InviteInfo getStreamInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String streamId);
+    InviteInfo getInviteInfo(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId);
 
     void add(InviteSessionTypeDict inviteSessionTypeDict, String deviceId, String channelId, String streamId, Callback<Object> callback);
 
