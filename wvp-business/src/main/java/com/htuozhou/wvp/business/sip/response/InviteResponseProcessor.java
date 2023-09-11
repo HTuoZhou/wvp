@@ -48,9 +48,10 @@ public class InviteResponseProcessor extends AbstractSIPResponseProcessor implem
         ResponseEventExt responseEventExt = (ResponseEventExt) responseEvent;
         String responseAddress = responseEventExt.getRemoteIpAddress() + ":" + responseEventExt.getRemotePort();
 
-        log.info("[SIP RESPONSE INVITE] 收到 [SIP ADDRESS:{}]", responseAddress);
         int statusCode = response.getStatusCode();
         if (statusCode == Response.OK) {
+            log.info("[SIP RESPONSE INVITE] 收到 [SIP ADDRESS:{}]", responseAddress);
+
             String contentString = new String(response.getRawContent());
             SDPItem sdpItem = SIPUtil.parseSDP(contentString);
             SessionDescription sdp = sdpItem.getBaseSdb();

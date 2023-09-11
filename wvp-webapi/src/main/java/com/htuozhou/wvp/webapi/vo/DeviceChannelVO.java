@@ -1,6 +1,7 @@
 package com.htuozhou.wvp.webapi.vo;
 
 import com.htuozhou.wvp.business.bo.DeviceChannelBO;
+import com.htuozhou.wvp.common.constant.CommonConstant;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -225,9 +226,15 @@ public class DeviceChannelVO {
      */
     private Boolean channelType;
 
+    /**
+     * 截图
+     */
+    private String snap;
+
     public static DeviceChannelVO bo2vo(DeviceChannelBO bo) {
         DeviceChannelVO vo = new DeviceChannelVO();
         BeanUtils.copyProperties(bo, vo);
+        vo.setSnap(String.format(CommonConstant.SNAP_NAME,bo.getDeviceId(),bo.getChannelId()));
 
         return vo;
     }
